@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW — Sign In</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --bg: #f1f3f5;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --border: #d1d5db;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+      width: 100%;
+      max-width: 400px;
+      padding: 40px 32px;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .logo span { color: var(--blue); }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* ─── Screens ─── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .screen-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .screen-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .screen-desc strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ─── Inputs ─── */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+    }
+
+    input[type="email"]:focus {
+      border-color: var(--blue);
+    }
+
+    /* ─── OTP Inputs ─── */
+    .otp-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .otp-input {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 52px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+      transition: border-color 0.15s;
+      font-family: inherit;
+      caret-color: var(--blue);
+    }
+
+    .otp-input:focus {
+      border-color: var(--blue);
+    }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      margin-top: 20px;
+    }
+
+    .btn-primary:hover:not(:disabled) { background: var(--blue-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary.loading {
+      position: relative;
+      color: transparent;
+    }
+
+    .btn-primary.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 20px; height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Links ─── */
+    .link-row {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--blue);
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .link-btn:hover { text-decoration: underline; }
+
+    /* ─── Error ─── */
+    .error-msg {
+      display: none;
+      padding: 10px 14px;
+      background: var(--error-bg);
+      color: var(--error);
+      font-size: 13px;
+      border-radius: var(--radius);
+      margin-top: 12px;
+      line-height: 1.4;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* ─── Tenant Picker ─── */
+    .tenant-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tenant-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: var(--card);
+    }
+
+    .tenant-card:hover {
+      border-color: var(--blue);
+      background: #f8faff;
+    }
+
+    .tenant-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .tenant-info { flex: 1; }
+
+    .tenant-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .tenant-role {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* ─── Success ─── */
+    .success-icon {
+      width: 48px;
+      height: 48px;
+      background: #dcfce7;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .success-icon svg { color: #16a34a; }
+
+    .success-text {
+      text-align: center;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    /* ─── Resend countdown ─── */
+    .resend-row {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="logo">REIW<span>.</span></div>
+  <div class="subtitle">Real Estate Investment Workshop</div>
+
+  <!-- Screen 1: Email -->
+  <div id="screen-email" class="screen active">
+    <div class="screen-title">Sign in</div>
+    <div class="screen-desc">Enter your email and we'll send you a login code.</div>
+    <label for="email-input">Email address</label>
+    <input type="email" id="email-input" placeholder="you@example.com" autocomplete="email" autofocus>
+    <div id="email-error" class="error-msg"></div>
+    <button id="btn-send" class="btn btn-primary" onclick="sendOTP()">Send code</button>
+  </div>
+
+  <!-- Screen 2: OTP -->
+  <div id="screen-otp" class="screen">
+    <div class="screen-title">Check your email</div>
+    <div class="screen-desc">Enter the 6-digit code sent to <strong id="otp-email-display"></strong></div>
+    <div class="otp-row" id="otp-row"></div>
+    <div id="otp-error" class="error-msg"></div>
+    <button id="btn-verify" class="btn btn-primary" onclick="verifyOTP()">Verify</button>
+    <div class="resend-row">
+      <span id="resend-timer"></span>
+      <button id="btn-resend" class="link-btn" onclick="resendOTP()" style="display:none;">Resend code</button>
+    </div>
+    <div class="link-row">
+      <button class="link-btn" onclick="showScreen('email')">Use a different email</button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Tenant Picker -->
+  <div id="screen-tenants" class="screen">
+    <div class="screen-title">Choose an account</div>
+    <div class="screen-desc">Your email is associated with multiple accounts.</div>
+    <div id="tenant-list" class="tenant-list"></div>
+    <div id="tenant-error" class="error-msg"></div>
+    <div class="link-row">
+      <button class="link-btn" onclick="showScreen('email')">Use a different email</button>
+    </div>
+  </div>
+
+  <!-- Screen 4: Success -->
+  <div id="screen-success" class="screen">
+    <div class="success-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <div class="screen-title" style="text-align:center;">You're in</div>
+    <div class="success-text">Redirecting…</div>
+  </div>
+</div>
+
+<script>
+const API = 'https://reiw-worker.reiw.app';
+let currentEmail = '';
+let tenantList = [];
+let resendCountdown = null;
+
+// ─── Screen Management ───
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  clearErrors();
+
+  if (name === 'email') {
+    document.getElementById('email-input').focus();
+  }
+  if (name === 'otp') {
+    buildOTPInputs();
+    startResendTimer();
+  }
+}
+
+function clearErrors() {
+  document.querySelectorAll('.error-msg').forEach(e => {
+    e.textContent = '';
+    e.classList.remove('visible');
+  });
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+}
+
+// ─── OTP Inputs ───
+
+function buildOTPInputs() {
+  const row = document.getElementById('otp-row');
+  row.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.inputMode = 'numeric';
+    inp.maxLength = 1;
+    inp.className = 'otp-input';
+    inp.dataset.idx = i;
+    inp.autocomplete = 'one-time-code';
+
+    inp.addEventListener('input', (e) => {
+      const val = e.target.value.replace(/\D/g, '');
+      e.target.value = val;
+      if (val && i < 5) {
+        row.children[i + 1].focus();
+      }
+      // Auto-verify when all 6 filled
+      if (getOTPValue().length === 6) {
+        verifyOTP();
+      }
+    });
+
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && i > 0) {
+        row.children[i - 1].focus();
+      }
+    });
+
+    // Handle paste of full code
+    inp.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const data = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+      for (let j = 0; j < data.length && j < 6; j++) {
+        row.children[j].value = data[j];
+      }
+      if (data.length === 6) {
+        verifyOTP();
+      } else if (data.length > 0) {
+        row.children[Math.min(data.length, 5)].focus();
+      }
+    });
+
+    row.appendChild(inp);
+  }
+  // Focus first input after a tick (screen transition)
+  setTimeout(() => row.children[0]?.focus(), 50);
+}
+
+function getOTPValue() {
+  return Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
+}
+
+// ─── Resend Timer ───
+
+function startResendTimer() {
+  let seconds = 60;
+  const timerEl = document.getElementById('resend-timer');
+  const resendBtn = document.getElementById('btn-resend');
+  resendBtn.style.display = 'none';
+
+  if (resendCountdown) clearInterval(resendCountdown);
+
+  timerEl.textContent = 'Resend code in ' + seconds + 's';
+  resendCountdown = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) {
+      clearInterval(resendCountdown);
+      timerEl.textContent = '';
+      resendBtn.style.display = 'inline';
+    } else {
+      timerEl.textContent = 'Resend code in ' + seconds + 's';
+    }
+  }, 1000);
+}
+
+// ─── API Calls ───
+
+async function sendOTP() {
+  const email = document.getElementById('email-input').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    showError('email-error', 'Enter a valid email address.');
+    return;
+  }
+
+  currentEmail = email;
+  setLoading('btn-send', true);
+
+  try {
+    const res = await fetch(API + '/auth/otp/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError('email-error', data.error || 'Something went wrong.');
+      return;
+    }
+
+    document.getElementById('otp-email-display').textContent = email;
+    showScreen('otp');
+  } catch (err) {
+    showError('email-error', 'Could not connect. Try again.');
+  } finally {
+    setLoading('btn-send', false);
+  }
+}
+
+async function resendOTP() {
+  setLoading('btn-verify', true);
+  try {
+    await fetch(API + '/auth/otp/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email: currentEmail }),
+    });
+    // Clear existing inputs
+    document.querySelectorAll('.otp-input').forEach(i => i.value = '');
+    document.querySelector('.otp-input')?.focus();
+    startResendTimer();
+  } catch (err) {
+    showError('otp-error', 'Could not resend. Try again.');
+  } finally {
+    setLoading('btn-verify', false);
+  }
+}
+
+async function verifyOTP() {
+  const code = getOTPValue();
+  if (code.length !== 6) {
+    showError('otp-error', 'Enter all 6 digits.');
+    return;
+  }
+
+  setLoading('btn-verify', true);
+
+  try {
+    const res = await fetch(API + '/auth/otp/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email: currentEmail, code }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError('otp-error', data.error || 'Verification failed.');
+      // Clear inputs on failure
+      document.querySelectorAll('.otp-input').forEach(i => i.value = '');
+      document.querySelector('.otp-input')?.focus();
+      return;
+    }
+
+    // Multi-tenant: show picker
+    if (data.action === 'pick_tenant') {
+      tenantList = data.tenants;
+      renderTenantPicker();
+      showScreen('tenants');
+      return;
+    }
+
+    // Single tenant: logged in
+    loginSuccess(data);
+  } catch (err) {
+    showError('otp-error', 'Could not connect. Try again.');
+  } finally {
+    setLoading('btn-verify', false);
+  }
+}
+
+async function pickTenant(tenantId) {
+  // Disable all cards
+  document.querySelectorAll('.tenant-card').forEach(c => c.style.pointerEvents = 'none');
+
+  try {
+    const res = await fetch(API + '/auth/switch-tenant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ tenant_id: tenantId }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError('tenant-error', data.error || 'Could not select account.');
+      document.querySelectorAll('.tenant-card').forEach(c => c.style.pointerEvents = 'auto');
+      return;
+    }
+
+    loginSuccess(data);
+  } catch (err) {
+    showError('tenant-error', 'Could not connect. Try again.');
+    document.querySelectorAll('.tenant-card').forEach(c => c.style.pointerEvents = 'auto');
+  }
+}
+
+// ─── Tenant Picker ───
+
+function renderTenantPicker() {
+  const list = document.getElementById('tenant-list');
+  list.innerHTML = '';
+
+  tenantList.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'tenant-card';
+    card.onclick = () => pickTenant(t.tenant_id);
+
+    const color = t.primary_color || '#2563eb';
+    const initial = (t.tenant_name || '?')[0].toUpperCase();
+
+    card.innerHTML = `
+      <div class="tenant-icon" style="background:${color}">${initial}</div>
+      <div class="tenant-info">
+        <div class="tenant-name">${escHTML(t.tenant_name)}</div>
+        <div class="tenant-role">${t.role}</div>
+      </div>
+    `;
+
+    list.appendChild(card);
+  });
+}
+
+// ─── Login Success ───
+
+function loginSuccess(data) {
+  showScreen('success');
+  // Redirect after brief pause
+  setTimeout(() => {
+    window.location.href = '/';
+  }, 1000);
+}
+
+// ─── Utilities ───
+
+function escHTML(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// Enter key on email input
+document.getElementById('email-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendOTP();
+});
+</script>
+
+</body>
+</html>
