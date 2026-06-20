@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW — Real Estate Investment Workshop</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --bg: #ffffff;
+      --light: #f8f9fb;
+      --border: #e2e5e9;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Nav ─── */
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav-logo span { color: var(--blue); }
+
+    .nav-links { display: flex; gap: 8px; }
+
+    .nav-link {
+      display: inline-block;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-link-muted {
+      color: var(--muted);
+    }
+
+    .nav-link-muted:hover { color: var(--text); }
+
+    .nav-link-primary {
+      background: var(--blue);
+      color: #fff;
+    }
+
+    .nav-link-primary:hover { background: var(--blue-hover); }
+
+    /* ─── Hero ─── */
+    .hero {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 32px 60px;
+      text-align: center;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: var(--blue);
+    }
+
+    .hero-desc {
+      font-size: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      background: var(--blue);
+      color: #fff;
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: background 0.15s;
+    }
+
+    .hero-cta:hover { background: var(--blue-hover); }
+
+    /* ─── Modules ─── */
+    .modules-section {
+      background: var(--light);
+      padding: 60px 32px;
+    }
+
+    .modules-inner {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .modules-title {
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .modules-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .mod-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .mod-abbr {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--blue);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .mod-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .mod-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ─── Footer ─── */
+    .footer {
+      padding: 32px;
+      text-align: center;
+      font-size: 13px;
+      color: #ccc;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 600px) {
+      .hero-title { font-size: 30px; }
+      .hero-desc { font-size: 16px; }
+      .hero { padding: 48px 20px 40px; }
+      .nav { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">REIW<span>.</span></a>
+  <div class="nav-links">
+    <a href="/dashboard.html" class="nav-link nav-link-muted">Dashboard</a>
+    <a href="/login.html" class="nav-link nav-link-primary">Sign in</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1 class="hero-title">Analyze deals.<br>Model loans.<br><em>Make better decisions.</em></h1>
+  <p class="hero-desc">REIW is a complete real estate investment analysis platform — built for investors who run the numbers before they write the check.</p>
+  <a href="/login.html" class="hero-cta">Get started</a>
+</div>
+
+<div class="modules-section">
+  <div class="modules-inner">
+    <div class="modules-title">Eight tools, one platform</div>
+    <div class="modules-subtitle">Everything from loan modeling to financial statements to deal evaluation.</div>
+
+    <div class="modules-grid">
+      <div class="mod-card">
+        <div class="mod-abbr">CFW</div>
+        <div class="mod-name">Creative Financier</div>
+        <div class="mod-desc">Model any loan structure with fine-tuned adjustments and full amortization schedules.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-abbr">BRH</div>
+        <div class="mod-name">Buy Rent & Hold</div>
+        <div class="mod-desc">Analyze rental properties with 10-year cash flow projections.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-abbr">BFS</div>
+        <div class="mod-name">Buy Fix & Sell</div>
+        <div class="mod-desc">Evaluate flips with repair costs, holding costs, and profit analysis.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-abbr">LO</div>
+        <div class="mod-name">Lease Option</div>
+        <div class="mod-desc">Standard and sandwich lease option deal evaluator.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-abbr">PAW</div>
+        <div class="mod-name">Property Analysis</div>
+        <div class="mod-desc">Central hub for property-level investment analysis.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-abbr">FSW</div>
+        <div class="mod-name">Financial Statement</div>
+        <div class="mod-desc">Build personal financial statements with schedules A through G.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-abbr">OCW</div>
+        <div class="mod-name">Offers & Contracts</div>
+        <div class="mod-desc">Generate offers and contract documents.</div>
+      </div>
+      <div class="mod-card">
+        <div class="mod-abbr">FL</div>
+        <div class="mod-name">Farmer Logic</div>
+        <div class="mod-desc">Structured deal evaluation framework.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  index v1.0 &middot; &copy; 2026 REIW
+</div>
+
+</body>
+</html>
