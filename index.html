@@ -1,13 +1,12 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.6.5</title>
+<title>REIW Creative Loan Modeler v0.7</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  
 :root {
   --bg: #f5f6f8;
   --surface: #ffffff;
@@ -157,7 +156,7 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
 <div class="app">
   <header>
     <h1>Creative Loan Modeler</h1>
-    <span class="vpill">v0.6.5</span>
+    <span class="vpill">v0.7</span>
   </header>
 
   <!-- ─── Compact Loan Bar ─────────────────────────────── -->
@@ -746,6 +745,11 @@ function generateSchedule(def) {
 function getDateStep(ppy){switch(ppy){case 1:return{months:12};case 2:return{months:6};case 4:return{months:3};case 12:return{months:1};case 26:return{days:14};case 52:return{days:7};default:return{months:1};}}
 function advanceDate(d,s){const n=new Date(d);if(s.months)n.setMonth(n.getMonth()+s.months);else if(s.days)n.setDate(n.getDate()+s.days);return n;}
 function fmtDateISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+// ═══════════════════════════════════════════════════════════
+// Configuration
+// ═══════════════════════════════════════════════════════════
+const PDF_WORKER_URL = 'https://reiw-pdf.reiw.app'; // Update after worker deploy
 
 // ═══════════════════════════════════════════════════════════
 // UI State
@@ -1429,35 +1433,29 @@ async function exportPDF() {
     doc.text('REIW Creative Loan Modeler', margin, ph - 18);
   }
 
-  const filename = (currentLoan.name || 'Loan_Amortization').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_');
-  const pdfBlob = doc.output('blob');
-  const pdfUrl = URL.createObjectURL(pdfBlob);
+  const filename = (currentLoan.name || 'Loan_Amortization').replace(/[^a-zA-Z0-9_\- ]/g, '').replace(/\s+/g, '_') + '.pdf';
+  const pdfBase64 = doc.output('datauristring').split(',')[1];
 
-  // Build a wrapper HTML page with the correct title + embedded PDF
-  const viewLabel = isYearly ? 'Yearly Summary' : 'Full Detail';
-  const wrapperHTML = '<!DOCTYPE html><html><head><meta charset="UTF-8">'
-    + '<title>' + filename + '</title>'
-    + '<style>*{margin:0;padding:0}body{overflow:hidden}iframe{width:100%;height:100vh;border:none}'
-    + '.dl-bar{position:fixed;top:0;left:0;right:0;height:32px;background:#333;display:flex;align-items:center;padding:0 12px;z-index:10;gap:10px}'
-    + '.dl-bar span{color:#ccc;font:12px -apple-system,sans-serif}'
-    + '.dl-bar a{color:#7aa0f7;font:12px -apple-system,sans-serif;text-decoration:none;cursor:pointer}'
-    + '.dl-bar a:hover{text-decoration:underline}'
-    + 'iframe{margin-top:32px;height:calc(100vh - 32px)}</style>'
-    + '</head><body>'
-    + '<div class="dl-bar"><span>' + (currentLoan.name || 'Loan Amortization') + ' — ' + viewLabel + '</span>'
-    + '<a id="dlLink" download="' + filename + '.pdf">Save as ' + filename + '.pdf</a></div>'
-    + '<iframe id="pdfFrame"></iframe>'
-    + '<script>'
-    + 'var pdfData=window.opener.__reiw_pdfUrl;'
-    + 'if(pdfData){document.getElementById("pdfFrame").src=pdfData;'
-    + 'document.getElementById("dlLink").href=pdfData;}'
-    + '<\/script></body></html>';
-
-  // Pass the PDF URL to the new window via opener
-  window.__reiw_pdfUrl = pdfUrl;
-  const wrapperBlob = new Blob([wrapperHTML], { type: 'text/html' });
-  const wrapperUrl = URL.createObjectURL(wrapperBlob);
-  window.open(wrapperUrl, '_blank');
+  // POST via hidden form to open the worker response in a new tab.
+  // Worker receives base64 PDF, decodes it, returns with Content-Disposition.
+  try {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = PDF_WORKER_URL + '/pdf/' + encodeURIComponent(filename);
+    form.target = '_blank';
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'pdf';
+    input.value = pdfBase64;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+  } catch (err) {
+    // Fallback: direct save if worker is unavailable
+    console.warn('PDF worker unavailable, falling back to direct save:', err);
+    doc.save(filename);
+  }
 }
 
 // ─── Init ────────────────────────────────────────────────
