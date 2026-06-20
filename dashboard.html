@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW — Dashboard</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --bg: #f1f3f5;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --border: #e2e5e9;
+      --radius: 8px;
+      --locked-bg: #f8f9fa;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+    }
+
+    /* ─── Header ─── */
+    .header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 16px; }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span { color: var(--blue); }
+
+    .tenant-badge {
+      font-size: 12px;
+      font-weight: 600;
+      background: #eef2ff;
+      color: var(--blue);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .user-email { font-weight: 500; color: var(--text); }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      color: var(--muted);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .btn-logout:hover { border-color: var(--text); color: var(--text); }
+
+    /* ─── Main ─── */
+    .main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .page-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* ─── Module Grid ─── */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .module-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .module-card:hover:not(.locked) {
+      border-color: var(--blue);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+    }
+
+    .module-card.locked {
+      background: var(--locked-bg);
+      cursor: default;
+    }
+
+    .module-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .module-abbr {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--blue);
+    }
+
+    .module-card.locked .module-abbr { color: var(--muted); }
+
+    .module-status {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .status-live { background: #dcfce7; color: #16a34a; }
+    .status-soon { background: #f1f3f5; color: var(--muted); }
+
+    .module-name {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .module-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ─── Account Switcher ─── */
+    .switcher-section {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .switcher-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .switcher-list {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .switcher-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.15s;
+    }
+
+    .switcher-btn:hover { border-color: var(--blue); }
+
+    .switcher-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ─── Loading ─── */
+    .loading-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100dvh;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    /* ─── Version ─── */
+    .version {
+      position: fixed;
+      bottom: 8px;
+      right: 12px;
+      font-size: 11px;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading" class="loading-screen">Loading…</div>
+
+<div id="app" style="display:none;">
+  <div class="header">
+    <div class="header-left">
+      <div class="logo">REIW<span>.</span></div>
+      <div class="tenant-badge" id="tenant-name"></div>
+    </div>
+    <div class="header-right">
+      <span class="user-email" id="user-email"></span>
+      <span id="user-role"></span>
+      <button class="btn-logout" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="page-title">Modules</div>
+    <div class="page-desc">Real estate investment analysis tools</div>
+
+    <div class="module-grid" id="module-grid"></div>
+
+    <div id="switcher-section" class="switcher-section" style="display:none;">
+      <div class="switcher-title">Switch account</div>
+      <div class="switcher-list" id="switcher-list"></div>
+    </div>
+  </div>
+</div>
+
+<div class="version">dashboard v1.0</div>
+
+<script>
+const API = 'https://reiw-worker.reiw.app';
+
+const MODULES = [
+  { abbr: 'CFW', name: 'Creative Financier', desc: 'Loan modeler with fine tuner and amortization schedules.', href: '/index.html', live: true, free: true },
+  { abbr: 'PAW', name: 'Property Analysis', desc: 'Central hub for property-level investment analysis.', href: null, live: false, free: false },
+  { abbr: 'BRH', name: 'Buy Rent & Hold', desc: 'Rental property analysis with 10-year projections.', href: null, live: false, free: false },
+  { abbr: 'BFS', name: 'Buy Fix & Sell', desc: 'Flip analysis with repair costs, holding costs, and profit.', href: null, live: false, free: false },
+  { abbr: 'LO',  name: 'Lease Option', desc: 'Standard and sandwich lease option evaluator.', href: null, live: false, free: false },
+  { abbr: 'FSW', name: 'Financial Statement', desc: 'Personal financial statement builder.', href: null, live: false, free: false },
+  { abbr: 'OCW', name: 'Offers & Contracts', desc: 'Document and offer generator.', href: null, live: false, free: false },
+  { abbr: 'FL',  name: 'Farmer Logic', desc: 'Deal evaluation framework.', href: null, live: false, free: false },
+];
+
+let currentUser = null;
+
+async function init() {
+  try {
+    const res = await fetch(API + '/auth/me', { credentials: 'include' });
+    if (!res.ok) {
+      window.location.href = '/login.html';
+      return;
+    }
+    const data = await res.json();
+    currentUser = data;
+    render(data);
+  } catch (err) {
+    window.location.href = '/login.html';
+  }
+}
+
+function render(data) {
+  document.getElementById('tenant-name').textContent = data.tenant.name;
+  document.getElementById('user-email').textContent = data.user.email;
+  document.getElementById('user-role').textContent = data.user.role;
+
+  const grid = document.getElementById('module-grid');
+  grid.innerHTML = '';
+
+  MODULES.forEach(mod => {
+    const isFree = data.user.tier === 'free';
+    const locked = !mod.live || (isFree && !mod.free);
+
+    const card = document.createElement(locked ? 'div' : 'a');
+    card.className = 'module-card' + (locked ? ' locked' : '');
+    if (!locked) card.href = mod.href;
+
+    let statusHTML;
+    if (mod.live) {
+      statusHTML = '<span class="module-status status-live">Live</span>';
+    } else {
+      statusHTML = '<span class="module-status status-soon">Coming soon</span>';
+    }
+
+    card.innerHTML = `
+      <div class="module-card-header">
+        <span class="module-abbr">${mod.abbr}</span>
+        ${statusHTML}
+      </div>
+      <div class="module-name">${mod.name}</div>
+      <div class="module-desc">${mod.desc}</div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  // Account switcher
+  if (data.other_tenants && data.other_tenants.length > 0) {
+    document.getElementById('switcher-section').style.display = 'block';
+    const list = document.getElementById('switcher-list');
+    list.innerHTML = '';
+
+    data.other_tenants.forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'switcher-btn';
+      const color = t.primary_color || '#2563eb';
+      const initial = (t.tenant_name || '?')[0].toUpperCase();
+      btn.innerHTML = `
+        <div class="switcher-icon" style="background:${color}">${initial}</div>
+        <span>${t.tenant_name} (${t.role})</span>
+      `;
+      btn.onclick = () => switchTenant(t.tenant_id);
+      list.appendChild(btn);
+    });
+  }
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+async function switchTenant(tenantId) {
+  try {
+    const res = await fetch(API + '/auth/switch-tenant', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ tenant_id: tenantId }),
+    });
+    if (res.ok) {
+      window.location.reload();
+    }
+  } catch (err) {
+    console.error('Switch failed:', err);
+  }
+}
+
+async function logout() {
+  try {
+    await fetch(API + '/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+  } catch (err) {
+    // continue to redirect even if fetch fails
+  }
+  window.location.href = '/login.html';
+}
+
+init();
+</script>
+
+</body>
+</html>
