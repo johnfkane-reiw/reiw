@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW Settings v1.1</title>
+  <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f6f8;--surface:#fff;--border:#d4d7de;--border-focus:#4a7adb;--text:#1d2028;--text-muted:#5f6672;--accent:#4a7adb;--accent-hover:#3a66c4;--green:#2d8a5e;--green-bg:#e8f5ee;--red:#c44040;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.header-left{display:flex;align-items:center;gap:12px}
+.logo{font-size:18px;font-weight:700}.logo span{color:var(--accent)}
+.nav-link{font-size:13px;color:var(--text-muted);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
+.nav-link:hover{background:var(--bg)}
+.main{max-width:800px;margin:0 auto;padding:20px}
+.page-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.page-desc{font-size:14px;color:var(--text-muted);margin-bottom:24px}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px}
+.section-header{padding:12px 16px;font-weight:600;font-size:14px;border-bottom:1px solid var(--border);background:#fafbfc;border-radius:var(--radius) var(--radius) 0 0}
+.section-body{padding:16px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:12px;font-weight:500;color:var(--text-muted)}
+.form-group input,.form-group select{padding:7px 10px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;background:#fff}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--border-focus)}
+.btn{padding:8px 18px;font-size:13px;font-weight:600;border:none;border-radius:var(--radius);cursor:pointer;font-family:inherit}
+.btn-accent{background:var(--accent);color:#fff}.btn-accent:hover{background:var(--accent-hover)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.status-bar{padding:8px 16px;font-size:13px;border-radius:var(--radius);margin-bottom:8px;display:none}
+.status-bar.ok{display:block;background:var(--green-bg);color:var(--green)}
+.status-bar.error{display:block;background:var(--red-bg);color:var(--red)}
+.loan-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px}
+.loan-bar input{flex:1;padding:8px 12px;font-size:15px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit}
+.loan-bar.modified input{border-color:var(--orange);background:var(--orange-bg)}
+.modified-tag{font-size:12px;font-weight:600;color:var(--orange)}
+#undoArea{margin-bottom:12px}
+.undo-link{color:var(--accent);cursor:pointer;font-size:13px}.undo-link:hover{text-decoration:underline}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:#fff;border-radius:10px;padding:24px;width:90%;max-width:480px;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:12px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.load-search{width:100%;padding:8px 10px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;font-family:inherit}
+.load-list{max-height:300px;overflow-y:auto}
+.load-row{padding:10px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.load-row:hover{border-color:var(--accent);background:#f8f9ff}
+.load-row .loan-name{font-weight:600;font-size:14px}
+.load-row .loan-meta{font-size:12px;color:var(--text-muted)}
+.delete-btn{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:0 4px}
+.default-check{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:13px}
+.default-check input{margin:0}
+.version{position:fixed;bottom:8px;right:12px;font-size:11px;color:#ccc}
+  </style>
+</head>
+<body>
+<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span style="font-size:14px;font-weight:600;">Settings</span></div><div><a href="/dashboard" class="nav-link">Dashboard</a></div></div>
+<div class="main">
+  <div class="page-title">Settings</div>
+  <div class="page-desc">Set defaults for new analyses and manage investor entities.</div>
+
+  <!-- Global Analysis Defaults -->
+  <div class="section">
+    <div class="section-header">Analysis Defaults</div>
+    <div class="section-body">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:14px">These values prefill new analyses. You can override them within any individual analysis.</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Residential Dep. Years</label><input type="text" id="s_rdep" onblur="saveSettings()"></div>
+        <div class="form-group"><label>Commercial Dep. Years</label><input type="text" id="s_cdep" onblur="saveSettings()"></div>
+        <div class="form-group"><label>Vacancy %</label><input type="text" id="s_vacancy" onblur="saveSettings()"></div>
+        <div class="form-group"><label>Expense Increase %</label><input type="text" id="s_expinc" onblur="saveSettings()"></div>
+        <div class="form-group"><label>Rental Increase %</label><input type="text" id="s_rentinc" onblur="saveSettings()"></div>
+        <div class="form-group"><label>CI Increase %</label><input type="text" id="s_ciinc" onblur="saveSettings()"></div>
+        <div class="form-group"><label>Cash-on-Cash Based On</label><select id="s_coc" onchange="saveSettings()"><option value="downPayment">Down Payment Only</option><option value="totalCash">Total Initial Cash</option></select></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="settingsStatus" class="status-bar"></div>
+
+  <!-- Investor Entities — Save/New/Load pattern -->
+  <div class="section">
+    <div class="section-header">Investor Entities</div>
+    <div class="section-body">
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:14px">Entities represent the individuals or companies doing the investing. Each carries its own tax rates and contact info for reports.</p>
+    </div>
+  </div>
+
+  <div class="loan-bar" id="entityBar">
+    <input type="text" id="entityName" placeholder="Entity name" oninput="markEntityDirty()">
+    <span class="modified-tag" id="entityModifiedTag" style="display:none">Modified</span>
+    <button class="btn btn-accent" onclick="clickEntitySave()">Save</button>
+    <button class="btn" onclick="clickEntityNew()">New</button>
+    <button class="btn" onclick="showEntityLoadModal()">Load</button>
+  </div>
+
+  <div id="entityStatus" class="status-bar"></div>
+  <div id="entityUndoArea"></div>
+
+  <div class="section">
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1"><label>Address</label><input type="text" id="e_address" oninput="markEntityDirty()"></div>
+        <div class="form-group" style="grid-column:1/-1"><label>City / State / Zip</label><input type="text" id="e_city" oninput="markEntityDirty()"></div>
+        <div class="form-group"><label>Phone</label><input type="text" id="e_phone" oninput="markEntityDirty()"></div>
+        <div class="form-group"><label>Cell</label><input type="text" id="e_cell" oninput="markEntityDirty()"></div>
+        <div class="form-group" style="grid-column:1/-1"><label>Email</label><input type="text" id="e_email" oninput="markEntityDirty()"></div>
+        <div class="form-group"><label>Marginal Tax Rate %</label><input type="text" id="e_marginal" oninput="markEntityDirty()"></div>
+        <div class="form-group"><label>Capital Gains Rate %</label><input type="text" id="e_cg" oninput="markEntityDirty()"></div>
+      </div>
+      <label class="default-check"><input type="checkbox" id="e_default" onchange="markEntityDirty()"> Set as default entity</label>
+    </div>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div class="version">settings v1.1</div>
+
+<script>
+const API='https://reiw-worker.reiw.app';
+let savingSettings=false;
+let currentEntity={id:null,name:''};
+let entitySnapshot=null;
+let lastLoadedEntityId=null;
+let cachedEntities=[];
+
+// Auth + init
+(async function(){try{const r=await fetch(API+'/auth/me',{credentials:'include'});if(!r.ok)throw 0;await loadSettings();await refreshEntities()}catch{window.location.href='/login.html'}})();
+
+function el(id){return document.getElementById(id)}
+function closeModal(){el('modalRoot').innerHTML=''}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+// ─── Settings ───
+function showSettingsStatus(t,m){el('settingsStatus').className='status-bar '+t;el('settingsStatus').textContent=m;setTimeout(()=>{el('settingsStatus').className='status-bar'},3000)}
+
+async function loadSettings(){
+  const r=await fetch(API+'/api/settings',{credentials:'include'});if(!r.ok)return;
+  const s=await r.json();
+  el('s_rdep').value=s.residential_dep_years||'27.5';
+  el('s_cdep').value=s.commercial_dep_years||'39';
+  el('s_vacancy').value=s.vacancy_pct||'5';
+  el('s_expinc').value=s.expense_increase_pct||'3';
+  el('s_rentinc').value=s.rental_increase_pct||'3';
+  el('s_ciinc').value=s.ci_increase_pct||'3';
+  el('s_coc').value=s.coc_method||'downPayment';
+}
+
+async function saveSettings(){
+  if(savingSettings)return;savingSettings=true;
+  try{
+    const r=await fetch(API+'/api/settings',{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({
+      residential_dep_years:parseFloat(el('s_rdep').value)||27.5,commercial_dep_years:parseFloat(el('s_cdep').value)||39,
+      vacancy_pct:parseFloat(el('s_vacancy').value)||5,expense_increase_pct:parseFloat(el('s_expinc').value)||3,
+      rental_increase_pct:parseFloat(el('s_rentinc').value)||3,ci_increase_pct:parseFloat(el('s_ciinc').value)||3,
+      coc_method:el('s_coc').value||'downPayment'
+    })});
+    if(r.ok)showSettingsStatus('ok','Defaults saved');else showSettingsStatus('error','Could not save');
+  }catch{showSettingsStatus('error','Connection error')}
+  savingSettings=false;
+}
+
+// ─── Entity State ───
+function readEntity(){
+  return{name:el('entityName').value.trim(),address:el('e_address').value.trim(),city:el('e_city').value.trim(),
+    phone:el('e_phone').value.trim(),cell:el('e_cell').value.trim(),email:el('e_email').value.trim(),
+    marginal_rate:parseFloat(el('e_marginal').value)||25,capital_gains_rate:parseFloat(el('e_cg').value)||15,
+    is_default:el('e_default').checked}
+}
+
+function populateEntity(e){
+  el('entityName').value=e.name||'';el('e_address').value=e.address||'';el('e_city').value=e.city||'';
+  el('e_phone').value=e.phone||'';el('e_cell').value=e.cell||'';el('e_email').value=e.email||'';
+  el('e_marginal').value=e.marginal_rate||25;el('e_cg').value=e.capital_gains_rate||15;
+  el('e_default').checked=!!e.is_default;
+}
+
+function clearEntity(){
+  el('entityName').value='';el('e_address').value='';el('e_city').value='';
+  el('e_phone').value='';el('e_cell').value='';el('e_email').value='';
+  el('e_marginal').value='25';el('e_cg').value='15';el('e_default').checked=false;
+  el('entityBar').classList.remove('modified');el('entityModifiedTag').style.display='none';
+}
+
+function markEntityDirty(){
+  if(!entitySnapshot)return;
+  if(JSON.stringify(readEntity())!==entitySnapshot){el('entityBar').classList.add('modified');el('entityModifiedTag').style.display=''}
+  else{el('entityBar').classList.remove('modified');el('entityModifiedTag').style.display='none'}
+}
+
+function showEntityStatus(t,m){el('entityStatus').className='status-bar '+t;el('entityStatus').textContent=m}
+function clearEntityStatus(){el('entityStatus').className='status-bar'}
+
+// ─── Entity Save/New/Load ───
+async function refreshEntities(){
+  try{const r=await fetch(API+'/api/entities',{credentials:'include'});if(r.ok){const d=await r.json();cachedEntities=d.entities||[]}}catch{}
+}
+
+function clickEntitySave(){
+  const name=el('entityName').value.trim();if(!name){el('entityName').focus();return}
+  if(currentEntity.id){
+    el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Save Entity</h3><p>"'+esc(name)+'" already exists. Overwrite it, or save as a new entity?</p><div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button><button class="btn btn-sm" onclick="doEntitySave(true)">Save as New</button><button class="btn btn-accent btn-sm" onclick="doEntitySave(false)">Overwrite</button></div></div></div>';
+  } else {
+    const ex=cachedEntities.find(e=>e.name.toLowerCase()===name.toLowerCase());
+    if(ex){currentEntity.id=ex.id;el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Save Entity</h3><p>"'+esc(name)+'" already exists. Overwrite it, or save as a new entity?</p><div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button><button class="btn btn-sm" onclick="doEntitySave(true)">Save as New</button><button class="btn btn-accent btn-sm" onclick="doEntitySave(false)">Overwrite</button></div></div></div>'}
+    else doEntitySave(false);
+  }
+}
+
+async function doEntitySave(asNew){
+  const data=readEntity();if(!data.name)return;
+  try{
+    let r;
+    if(currentEntity.id&&!asNew){r=await fetch(API+'/api/entities/'+currentEntity.id,{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(data)})}
+    else{r=await fetch(API+'/api/entities',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(data)})}
+    if(!r.ok){showEntityStatus('error','Save failed');return}
+    const result=await r.json();
+    if(!currentEntity.id||asNew)currentEntity.id=result.id;
+    currentEntity.name=data.name;
+    await refreshEntities();
+  }catch{showEntityStatus('error','Could not save.');return}
+  closeModal();
+  const jid=currentEntity.id,jname=data.name;
+  lastLoadedEntityId=jid;
+  currentEntity={id:null,name:''};entitySnapshot=null;
+  clearEntity();
+  showEntityStatus('ok','Saved "'+jname+'"');
+  el('entityUndoArea').innerHTML='<span class="undo-link" onclick="loadEntity(\''+jid+'\')">Load "'+esc(jname)+'"</span>';
+}
+
+function clickEntityNew(){
+  const hid=currentEntity.id,hn=currentEntity.name;
+  currentEntity={id:null,name:''};entitySnapshot=null;
+  clearEntity();clearEntityStatus();
+  if(hid)el('entityUndoArea').innerHTML='<span class="undo-link" onclick="loadEntity(\''+hid+'\')">Load "'+esc(hn)+'"</span>';
+}
+
+async function showEntityLoadModal(){
+  await refreshEntities();
+  const list=cachedEntities;
+  let body;
+  if(!list.length)body='<div style="color:var(--text-muted);padding:20px;text-align:center">No entities yet.</div>';
+  else body='<input class="load-search" placeholder="Search..." oninput="filterEntityList()"><div class="load-list" id="entityLoadList">'+buildEntityRows(list)+'</div>';
+  el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Load Entity</h3>'+body+'<div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button></div></div></div>';
+}
+
+function buildEntityRows(list){
+  return list.map(e=>{
+    const meta=[e.city,e.marginal_rate?e.marginal_rate+'% marginal':''].filter(Boolean).join(' · ');
+    const badge=e.is_default?' <span style="font-size:10px;background:var(--accent);color:#fff;padding:1px 6px;border-radius:8px">default</span>':'';
+    return'<div class="load-row" onclick="loadEntity(\''+e.id+'\')" data-name="'+e.name.toLowerCase()+'"><div><div class="loan-name">'+esc(e.name)+badge+'</div><div class="loan-meta">'+esc(meta)+'</div></div><button class="delete-btn" onclick="deleteEntityFromModal(\''+e.id+'\',event)">×</button></div>';
+  }).join('');
+}
+
+function filterEntityList(){
+  const q=(document.querySelector('.load-search')?.value||'').toLowerCase();
+  document.querySelectorAll('.load-row').forEach(r=>r.style.display=r.getAttribute('data-name').includes(q)?'':'none');
+}
+
+async function loadEntity(id){
+  closeModal();
+  let e=cachedEntities.find(x=>x.id===id);
+  if(!e){await refreshEntities();e=cachedEntities.find(x=>x.id===id)}
+  if(!e)return;
+  currentEntity={id:e.id,name:e.name};
+  populateEntity(e);
+  entitySnapshot=JSON.stringify(readEntity());
+  el('entityBar').classList.remove('modified');el('entityModifiedTag').style.display='none';
+  lastLoadedEntityId=id;
+  showEntityStatus('ok','Loaded "'+e.name+'"');
+  el('entityUndoArea').innerHTML='';
+}
+
+async function deleteEntityFromModal(id,ev){
+  ev.stopPropagation();
+  if(!confirm('Delete this entity?'))return;
+  try{await fetch(API+'/api/entities/'+id,{method:'DELETE',credentials:'include'});await refreshEntities()}catch{}
+  if(currentEntity.id===id){currentEntity={id:null,name:''};entitySnapshot=null}
+  const list=el('entityLoadList');
+  if(list)list.innerHTML=cachedEntities.length?buildEntityRows(cachedEntities):'<div style="color:var(--text-muted);padding:20px;text-align:center">No entities.</div>';
+}
+</script>
+</body>
+</html>
