@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Buy Rent & Hold v3.0</title>
+  <title>REIW Buy Rent & Hold v3.1</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
@@ -27,7 +27,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .form-group label{font-size:12px;font-weight:500;color:var(--text-muted);display:flex;align-items:center;gap:4px}
 .form-group input,.form-group select{padding:7px 10px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;background:#fff}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--border-focus)}
-.tip{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--border);color:#fff;font-size:9px;text-align:center;line-height:14px;cursor:help;flex-shrink:0}
+.tip{position:relative;display:inline-block;width:14px;height:14px;border-radius:50%;background:#ccc;color:#fff;font-size:9px;text-align:center;line-height:14px;cursor:help;flex-shrink:0}
+.tip:hover::after{content:attr(data-tip);position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:6px 10px;border-radius:4px;font-size:11px;white-space:normal;width:220px;z-index:50;font-weight:400;line-height:1.4}
+.tip:hover::before{content:'';position:absolute;bottom:110%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#333}
 .loan-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
 .loan-bar input{flex:1;padding:8px 12px;font-size:15px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit}
 .loan-bar.modified input{border-color:var(--orange);background:var(--orange-bg)}
@@ -89,7 +91,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.0</span></div>
+<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.1</span></div>
   <div class="nav-links"><a href="#" class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="main">
@@ -97,34 +99,34 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   <div class="entity-bar"><label style="color:var(--text-muted)">Entity for PDF:</label><select id="entitySelect" onchange="markDirty()"><option value="">— None —</option></select><a href="/settings" style="font-size:12px;color:var(--accent)">Manage entities</a></div>
   <div id="statusBar" class="status-bar"></div><div id="undoArea"></div>
   <div class="section"><div class="section-header">Property Information</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>Purchase Price <span class="tip" title="The agreed price for the property at closing.">?</span></label><input type="text" id="purchasePrice" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Down Payment <span class="tip" title="Cash paid at closing toward the purchase price, excluding closing costs.">?</span></label><input type="text" id="downPayment" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Closing Costs <span class="tip" title="Fees paid at closing: title insurance, attorney, recording, etc.">?</span></label><input type="text" id="closingCosts" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Market Value <span class="tip" title="Current estimated market value. Used to calculate ending equity (not appreciation).">?</span></label><input type="text" id="marketValue" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Amount Depreciable <span class="tip" title="The portion of purchase price allocated to the building (not land). Used for depreciation calculations.">?</span></label><input type="text" id="amountDepreciable" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Analysis Date (Closing) <span class="tip" title="Expected closing date. All 10 years of the analysis start from this date.">?</span></label><input type="date" id="analysisDate" onchange="onAnalysisDateChange()"></div>
-    <div class="form-group"><label>Property Type <span class="tip" title="Determines the default depreciation period: 27.5 years residential, 39 years commercial.">?</span></label><select id="propertyType" onchange="onPropertyTypeChange();markDirty();autoRecalc()"><option value="residential">Residential</option><option value="commercial">Commercial</option></select></div>
-    <div class="form-group"><label>Depreciation Years <span class="tip" title="Number of years for straight-line depreciation. Can be overridden from the default.">?</span></label><input type="text" id="depYears" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Purchase Price <span class="tip" data-tip="The agreed price for the property at closing.">?</span></label><input type="text" id="purchasePrice" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Down Payment <span class="tip" data-tip="Cash paid at closing toward the purchase price, excluding closing costs.">?</span></label><input type="text" id="downPayment" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Closing Costs <span class="tip" data-tip="Fees paid at closing: title insurance, attorney, recording, etc.">?</span></label><input type="text" id="closingCosts" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Market Value <span class="tip" data-tip="Current estimated market value. Used to calculate ending equity (not appreciation).">?</span></label><input type="text" id="marketValue" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Amount Depreciable <span class="tip" data-tip="The portion of purchase price allocated to the building (not land). Used for depreciation calculations.">?</span></label><input type="text" id="amountDepreciable" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Analysis Date (Closing) <span class="tip" data-tip="Expected closing date. All 10 years of the analysis start from this date.">?</span></label><input type="date" id="analysisDate" onchange="onAnalysisDateChange()"></div>
+    <div class="form-group"><label>Property Type <span class="tip" data-tip="Determines the default depreciation period: 27.5 years residential, 39 years commercial.">?</span></label><select id="propertyType" onchange="onPropertyTypeChange();markDirty();autoRecalc()"><option value="residential">Residential</option><option value="commercial">Commercial</option></select></div>
+    <div class="form-group"><label>Depreciation Years <span class="tip" data-tip="Number of years for straight-line depreciation. Can be overridden from the default.">?</span></label><input type="text" id="depYears" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Income</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>Monthly Rental Income <span class="tip" title="Gross monthly rent collected from all units.">?</span></label><input type="text" id="rentalIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Monthly Other Income <span class="tip" title="Laundry, parking, storage, pet fees, or other non-rent income per month.">?</span></label><input type="text" id="otherIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual Rental Increase % <span class="tip" title="Expected annual percentage increase in rental and other income.">?</span></label><input type="text" id="rentalIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Monthly Rental Income <span class="tip" data-tip="Gross monthly rent collected from all units.">?</span></label><input type="text" id="rentalIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Monthly Other Income <span class="tip" data-tip="Laundry, parking, storage, pet fees, or other non-rent income per month.">?</span></label><input type="text" id="otherIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual Rental Increase % <span class="tip" data-tip="Expected annual percentage increase in rental and other income.">?</span></label><input type="text" id="rentalIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Operating Expenses</div><div class="section-body"><div class="form-grid" style="grid-template-columns:1fr 1fr">
-    <div class="form-group"><label>Monthly Operating Expenses <span class="tip" title="Total monthly expenses: taxes, insurance, maintenance, management, utilities, etc.">?</span></label><input type="text" id="monthlyExpenses" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual Expense Increase % <span class="tip" title="Expected annual percentage increase in operating expenses.">?</span></label><input type="text" id="expenseIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Monthly Operating Expenses <span class="tip" data-tip="Total monthly expenses: taxes, insurance, maintenance, management, utilities, etc.">?</span></label><input type="text" id="monthlyExpenses" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual Expense Increase % <span class="tip" data-tip="Expected annual percentage increase in operating expenses.">?</span></label><input type="text" id="expenseIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Financing &amp; Tax Assumptions</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>Vacancy % <span class="tip" title="Expected percentage of time the property is vacant in a typical year.">?</span></label><input type="text" id="vacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>First Year Vacancy % <span class="tip" title="Additional vacancy expected in the first year (renovation, finding tenants). Added to regular vacancy for year 1 only.">?</span></label><input type="text" id="firstYearVacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Marginal Tax Rate % <span class="tip" title="Your highest income tax bracket. Used to calculate tax impact of rental income and depreciation deductions.">?</span></label><input type="text" id="marginalRate" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Cash-on-Cash Based On <span class="tip" title="Denominator for cash-on-cash return: just the down payment, or total initial cash outlay including closing costs and first year CI.">?</span></label><select id="cocMethod" onchange="markDirty();autoRecalc()"><option value="downPayment">Down Payment Only</option><option value="totalCash">Total Initial Cash</option></select></div>
+    <div class="form-group"><label>Vacancy % <span class="tip" data-tip="Expected percentage of time the property is vacant in a typical year.">?</span></label><input type="text" id="vacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>First Year Vacancy % <span class="tip" data-tip="Additional vacancy expected in the first year (renovation, finding tenants). Added to regular vacancy for year 1 only.">?</span></label><input type="text" id="firstYearVacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Marginal Tax Rate % <span class="tip" data-tip="Your highest income tax bracket. Used to calculate tax impact of rental income and depreciation deductions.">?</span></label><input type="text" id="marginalRate" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Cash-on-Cash Based On <span class="tip" data-tip="Denominator for cash-on-cash return: just the down payment, or total initial cash outlay including closing costs and first year CI.">?</span></label><select id="cocMethod" onchange="markDirty();autoRecalc()"><option value="downPayment">Down Payment Only</option><option value="totalCash">Total Initial Cash</option></select></div>
   </div></div></div>
   <div class="section"><div class="section-header">Capital Improvements</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>First Year CI <span class="tip" title="One-time capital improvements in the first year (rehab, major repairs). Depreciable.">?</span></label><input type="text" id="firstYearCI" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual Ongoing CI <span class="tip" title="Recurring annual capital improvements (appliance replacement, upgrades). Grows by CI Increase %.">?</span></label><input type="text" id="ongoingCI" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual CI Increase % <span class="tip" title="Expected annual increase in capital improvement costs.">?</span></label><input type="text" id="ciIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>First Year CI <span class="tip" data-tip="One-time capital improvements in the first year (rehab, major repairs). Depreciable.">?</span></label><input type="text" id="firstYearCI" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual Ongoing CI <span class="tip" data-tip="Recurring annual capital improvements (appliance replacement, upgrades). Grows by CI Increase %.">?</span></label><input type="text" id="ongoingCI" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual CI Increase % <span class="tip" data-tip="Expected annual increase in capital improvement costs.">?</span></label><input type="text" id="ciIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Debt Service</div><div class="section-body">
     <div id="linkedLoansArea"><p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p></div>
@@ -189,7 +191,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">brh v3.0</div>
+<div class="version">brh v3.1</div>
 
 <script>
 const API='https://reiw-worker.reiw.app',MODULE_TYPE='brh';
@@ -312,7 +314,7 @@ function calculate(){
   el('btnPdf').style.display=hasContent?'':'none';
   // Ending equity
   const mv=inp.marketValue;const remainBal=yearlyDebt.length>=10?yearlyDebt[9].endBalance:0;
-  if(mv>0&&hasContent){el('equityBox').style.display='';el('equityVal').textContent='$'+fmt(mv-remainBal)}
+  if(mv>0&&hasContent){el('equityBox').style.display='block';el('equityVal').textContent='$'+fmt(mv-remainBal)}
   else{el('equityBox').style.display='none'}
   if(hasContent)showStatus('ok','10-year analysis complete');else clearStatus();
 }
@@ -341,7 +343,7 @@ async function doLoad(id){closeModal();const a=cachedAnalyses.find(x=>x.id===id)
 function undoLoad(id){doLoad(id)}
 async function doDeleteFromModal(id,e){e.stopPropagation();try{await fetch(API+'/api/analyses/'+id,{method:'DELETE',credentials:'include'});await refreshAnalyses()}catch{}if(currentAnalysis.id===id){currentAnalysis={id:null,name:'',data:{}};savedSnapshot=null}const list=el('loadList');if(list)list.innerHTML=cachedAnalyses.length?buildLoadRows(cachedAnalyses):'<div style="color:var(--text-muted);padding:20px;text-align:center">No saved analyses.</div>'}
 
-// PDF
+// PDF — 2-page landscape layout
 function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'letter'});const name=el('analysisName').value||'Buy Rent & Hold Analysis';const aDate=el('analysisDate').value||'';
   // Entity header
   const entId=el('entitySelect').value;const ent=userEntities.find(e=>e.id===entId);
@@ -352,26 +354,36 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
   function pf(n){if(n==null)return'\u2014';const v=Math.round(Math.abs(n)).toLocaleString('en-US');return n<-0.5?'($'+v+')':'$'+v}
   const sc=k=>results.cfa.reduce((a,c)=>a+(c[k]||0),0);const st=k=>results.tia.reduce((a,t)=>a+(t[k]||0),0);const sd=k=>results.dep.reduce((a,d)=>a+(d[k]||0),0);
   const lastC=results.cfa[results.cfa.length-1],lastD=results.dep[results.dep.length-1];
-  doc.setFontSize(11);doc.text('Cash Flow Analysis',14,headerY);
+  // PAGE 1: Cash Flow Analysis + Tax Impact Analysis
+  doc.setFontSize(10);doc.setFont(undefined,'bold');doc.text('Cash Flow Analysis',6,headerY);doc.setFont(undefined,'normal');
   const cfaBody=results.cfa.map(c=>[c.calendarYear,pf(c.rentalIncome),pf(c.otherIncome),pf(c.grossIncome),pf(c.vacancyAllowance),pf(c.grossOperatingIncome),pf(c.expenses),pf(c.noi),fmtPct(c.capRate),pf(c.principal),pf(c.interest),pf(c.capitalImprovements),pf(c.cfbt),fmtPct(c.coc),pf(c.taxSavings),pf(c.cfat),pf(c.cumCfat)]);
   cfaBody.push(['Total',pf(sc('rentalIncome')),pf(sc('otherIncome')),pf(sc('grossIncome')),pf(sc('vacancyAllowance')),pf(sc('grossOperatingIncome')),pf(sc('expenses')),pf(sc('noi')),'',pf(sc('principal')),pf(sc('interest')),pf(sc('capitalImprovements')),pf(sc('cfbt')),'',pf(sc('taxSavings')),pf(sc('cfat')),pf(lastC.cumCfat)]);
   doc.autoTable({startY:headerY+2,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Yr','Rental','Other','Gross','Vacancy','GOI','Exp','NOI','Cap%','Prin','Int','CI','CFBT','CoC','Tax','CFAT','Cum']],body:cfaBody});
-  doc.addPage();doc.setFontSize(11);doc.text('Tax Impact Analysis',14,14);
+  let tiaY=doc.lastAutoTable.finalY+6;
+  doc.setFontSize(10);doc.setFont(undefined,'bold');doc.text('Tax Impact Analysis',6,tiaY);doc.setFont(undefined,'normal');
   const tiaBody=results.tia.map((t,i)=>[results.cfa[i].calendarYear,pf(t.noi),pf(t.interestExpense),pf(t.realPropertyDep),pf(t.ciDep),pf(t.taxableIncome),fmtPct(t.marginalRate),pf(t.taxSavings)]);
   tiaBody.push(['Total',pf(st('noi')),pf(st('interestExpense')),pf(st('realPropertyDep')),pf(st('ciDep')),pf(st('taxableIncome')),'',pf(st('taxSavings'))]);
-  doc.autoTable({startY:18,margin:{left:14,right:14},styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[74,122,219]},head:[['Year','NOI','Interest','Real Dep.','CI Dep.','Taxable','Rate','Tax Sav.']],body:tiaBody});
-  doc.addPage();doc.setFontSize(11);doc.text('Depreciation Schedule',14,14);
+  doc.autoTable({startY:tiaY+2,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Year','NOI','Interest','Real Dep.','CI Dep.','Taxable','Rate','Tax Sav.']],body:tiaBody});
+  // PAGE 2: Depreciation Schedule + Glossary / How It Works columns
+  doc.addPage();
+  doc.setFontSize(10);doc.setFont(undefined,'bold');doc.text('Depreciation Schedule',6,12);doc.setFont(undefined,'normal');
   const depBody=results.dep.map((d,i)=>[results.cfa[i].calendarYear,pf(d.purchasePrice),pf(d.amountDepreciable),pf(d.landValue),pf(d.realPropertyDep),pf(d.capitalImprovements),pf(d.ciDep),pf(d.totalDep),pf(d.taxSavings),pf(d.cumDep),pf(d.cumTaxSavings)]);
   depBody.push(['Total','','','',pf(sd('realPropertyDep')),pf(sd('capitalImprovements')),pf(sd('ciDep')),pf(sd('totalDep')),pf(sd('taxSavings')),pf(lastD.cumDep),pf(lastD.cumTaxSavings)]);
-  doc.autoTable({startY:18,margin:{left:14,right:14},styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[74,122,219]},head:[['Year','Purchase','Depr.','Land','Real Dep.','CI','CI Dep.','Total','Tax Sav.','Cum Dep.','Cum Tax']],body:depBody});
-  // Glossary page
-  doc.addPage('portrait');doc.setFontSize(14);doc.text('Glossary',14,18);doc.setFontSize(9);let gy=26;
-  const glossary=[['GOI','Gross Operating Income — Gross income minus vacancy allowance.'],['NOI','Net Operating Income — GOI minus operating expenses.'],['Cap Rate','Capitalization Rate — NOI divided by purchase price.'],['CFBT','Cash Flow Before Taxes — NOI minus debt service minus capital improvements.'],['CoC','Cash-on-Cash Return — CFBT divided by initial cash investment.'],['CFAT','Cash Flow After Taxes — CFBT plus or minus tax impact.'],['CI','Capital Improvements — Major property upgrades, depreciable over time.'],['Cum','Cumulative — Running total across all years.'],['Real Dep','Real Property Depreciation — Annual depreciation on the building.'],['CI Dep','Capital Improvements Depreciation — Cumulative depreciation on CI.']];
-  glossary.forEach(([term,def])=>{doc.setFont(undefined,'bold');doc.text(term,14,gy);doc.setFont(undefined,'normal');const lines=doc.splitTextToSize(def,240);doc.text(lines,40,gy);gy+=lines.length*4+3;if(gy>170){doc.addPage('portrait');gy=18}});
-  // How It Works page
-  doc.addPage('portrait');doc.setFontSize(14);doc.text('How This Analysis Works',14,18);doc.setFontSize(9);
-  const howText=['The Buy Rent & Hold analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:','','Cash Flow Analysis starts with rental and other income, subtracts vacancy and operating expenses to arrive at Net Operating Income (NOI). From NOI, debt service and capital improvements are subtracted to produce Cash Flow Before Taxes. Tax savings or costs from the Tax Impact schedule are then applied for Cash Flow After Taxes.','','Tax Impact Analysis takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.','','Depreciation Schedule tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base. Depreciation creates tax-deductible paper losses.','','Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Year 1 uses both regular and first-year vacancy; years 2-10 use regular vacancy only. Debt service comes from linked loans aligned to the analysis date.'];
-  let hy=26;howText.forEach(line=>{if(!line){hy+=3;return}const lines=doc.splitTextToSize(line,250);doc.text(lines,14,hy);hy+=lines.length*4+2;if(hy>180){doc.addPage('portrait');hy=18}});
+  doc.autoTable({startY:14,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Year','Purchase','Depr.','Land','Real Dep.','CI','CI Dep.','Total','Tax Sav.','Cum Dep.','Cum Tax']],body:depBody});
+  // Two-column reference section below depreciation table
+  const refY=doc.lastAutoTable.finalY+6;const pw=279.4,colW=128,colGap=5,lm=6;
+  doc.setDrawColor(180);doc.setLineWidth(0.3);
+  doc.rect(lm,refY,colW,195-refY);doc.rect(lm+colW+colGap,refY,colW,195-refY);
+  // Left column: Glossary
+  doc.setFontSize(9);doc.setFont(undefined,'bold');doc.text('Glossary',lm+3,refY+5);doc.setFont(undefined,'normal');doc.setFontSize(7);
+  const glossary=[['GOI','Gross Operating Income \u2014 Gross income minus vacancy allowance.'],['NOI','Net Operating Income \u2014 GOI minus operating expenses.'],['Cap Rate','Capitalization Rate \u2014 NOI divided by purchase price.'],['CFBT','Cash Flow Before Taxes \u2014 NOI minus debt service minus capital improvements.'],['CoC','Cash-on-Cash Return \u2014 CFBT divided by initial cash investment.'],['CFAT','Cash Flow After Taxes \u2014 CFBT plus or minus tax impact.'],['CI','Capital Improvements \u2014 Major property upgrades, depreciable over time.'],['Cum','Cumulative \u2014 Running total across all years.'],['Real Dep','Real Property Depreciation \u2014 Annual depreciation on the building.'],['CI Dep','Capital Improvements Depreciation \u2014 Cumulative depreciation on CI.']];
+  let gy=refY+10;
+  glossary.forEach(([term,def])=>{doc.setFont(undefined,'bold');doc.text(term,lm+3,gy);doc.setFont(undefined,'normal');const lines=doc.splitTextToSize(def,colW-24);doc.text(lines,lm+24,gy);gy+=lines.length*3.2+2});
+  // Right column: How It Works
+  const rx=lm+colW+colGap;
+  doc.setFontSize(9);doc.setFont(undefined,'bold');doc.text('How This Analysis Works',rx+3,refY+5);doc.setFont(undefined,'normal');doc.setFontSize(7);
+  const howText=['The Buy Rent & Hold analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:','','Cash Flow Analysis starts with rental and other income, subtracts vacancy and operating expenses to arrive at Net Operating Income (NOI). From NOI, debt service and capital improvements are subtracted to produce Cash Flow Before Taxes. Tax savings or costs from the Tax Impact schedule are then applied for Cash Flow After Taxes.','','Tax Impact Analysis takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.','','Depreciation Schedule tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base. Depreciation creates tax-deductible paper losses.','','Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Year 1 uses both regular and first-year vacancy; years 2\u201310 use regular vacancy only. Debt service comes from linked loans aligned to the analysis date.'];
+  let hy=refY+10;howText.forEach(line=>{if(!line){hy+=2;return}const lines=doc.splitTextToSize(line,colW-6);doc.text(lines,rx+3,hy);hy+=lines.length*3.2+1.5});
   const b64=doc.output('datauristring').split(',')[1];const fn=name.replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'_')+'.pdf';const form=document.createElement('form');form.method='POST';form.action=API+'/pdf/'+encodeURIComponent(fn);form.target='_blank';const inp=document.createElement('input');inp.type='hidden';inp.name='pdf';inp.value=b64;form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form)}
 
 // Init
