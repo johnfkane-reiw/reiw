@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW Buy Rent & Hold v1.0</title>
+  <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --border: #d4d7de;
+  --border-focus: #4a7adb;
+  --text: #1d2028;
+  --text-muted: #5f6672;
+  --accent: #4a7adb;
+  --accent-hover: #3a66c4;
+  --green: #2d8a5e;
+  --green-bg: #e8f5ee;
+  --red: #c44040;
+  --red-bg: #fceaea;
+  --radius: 6px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* ─── Layout ─── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo { font-size: 18px; font-weight: 700; }
+.logo span { color: var(--accent); }
+.module-tag { font-size: 11px; font-weight: 600; background: var(--green-bg); color: var(--green); padding: 3px 8px; border-radius: 10px; }
+.vpill { font-size: 11px; color: var(--text-muted); }
+
+.nav-links { display: flex; gap: 8px; }
+.nav-link { font-size: 13px; color: var(--text-muted); text-decoration: none; padding: 6px 12px; border-radius: var(--radius); }
+.nav-link:hover { background: var(--bg); color: var(--text); }
+
+.main { max-width: 1100px; margin: 0 auto; padding: 20px; }
+
+/* ─── Sections ─── */
+.section { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; }
+.section-header { padding: 10px 16px; font-weight: 600; font-size: 13px; border-bottom: 1px solid var(--border); background: #fafbfc; border-radius: var(--radius) var(--radius) 0 0; }
+.section-body { padding: 16px; }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-group label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+.form-group input, .form-group select {
+  padding: 7px 10px; font-size: 14px; border: 1px solid var(--border);
+  border-radius: var(--radius); font-family: inherit; background: #fff;
+}
+.form-group input:focus, .form-group select:focus { outline: none; border-color: var(--border-focus); }
+.form-row-2 { grid-template-columns: 1fr 1fr; }
+.form-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* ─── Action Bar ─── */
+.action-bar { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+.btn { padding: 8px 18px; font-size: 13px; font-weight: 600; border: none; border-radius: var(--radius); cursor: pointer; font-family: inherit; }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: var(--accent-hover); }
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* ─── Status ─── */
+.status-bar { padding: 8px 16px; font-size: 13px; border-radius: var(--radius); margin-bottom: 16px; display: none; }
+.status-bar.ok { display: block; background: var(--green-bg); color: var(--green); }
+.status-bar.error { display: block; background: var(--red-bg); color: var(--red); }
+
+/* ─── Save/Load bar ─── */
+.save-bar { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+.save-bar input { flex: 1; padding: 7px 10px; font-size: 14px; border: 1px solid var(--border); border-radius: var(--radius); font-family: inherit; }
+
+/* ─── Schedule Table ─── */
+.schedule-wrap { overflow-x: auto; margin-top: 8px; }
+.schedule { width: 100%; border-collapse: collapse; font-size: 12px; }
+.schedule th { background: #f0f1f4; padding: 6px 8px; text-align: right; font-weight: 600; white-space: nowrap; border: 1px solid var(--border); position: sticky; top: 0; }
+.schedule th:first-child { text-align: center; }
+.schedule td { padding: 5px 8px; text-align: right; border: 1px solid #e8e9ec; white-space: nowrap; }
+.schedule td:first-child { text-align: center; font-weight: 600; background: #fafbfc; }
+.schedule tr:hover td { background: #f8f9fb; }
+.schedule .negative { color: var(--red); }
+.schedule .pct { color: var(--accent); }
+.schedule .subtotal { font-weight: 600; background: #f5f6f8; }
+
+/* ─── Tabs ─── */
+.tab-bar { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 0; }
+.tab { padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; color: var(--text-muted); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ─── Modal ─── */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal { background: #fff; border-radius: 10px; padding: 24px; width: 90%; max-width: 440px; max-height: 80vh; overflow-y: auto; }
+.modal h3 { margin-bottom: 12px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+.load-list { max-height: 300px; overflow-y: auto; }
+.load-row { padding: 10px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 6px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.load-row:hover { border-color: var(--accent); background: #f8f9ff; }
+.load-row .loan-name { font-weight: 600; font-size: 14px; }
+.load-row .loan-meta { font-size: 12px; color: var(--text-muted); }
+.delete-btn { background: none; border: none; color: var(--red); font-size: 18px; cursor: pointer; padding: 0 4px; }
+
+.version { position: fixed; bottom: 8px; right: 12px; font-size: 11px; color: #ccc; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">REIW<span>.</span></div>
+    <span class="module-tag">BRH</span>
+    <span class="vpill">Buy Rent & Hold</span>
+  </div>
+  <div class="nav-links">
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Save/Load Bar -->
+  <div class="save-bar">
+    <input type="text" id="analysisName" placeholder="Analysis name">
+    <button class="btn btn-accent btn-sm" onclick="saveAnalysis()">Save</button>
+    <button class="btn btn-sm" onclick="showLoadModal()">Load</button>
+    <button class="btn btn-sm" onclick="doNew()">New</button>
+  </div>
+
+  <div id="statusBar" class="status-bar"></div>
+  <div id="undoArea"></div>
+
+  <!-- Property Info -->
+  <div class="section">
+    <div class="section-header">Property Information</div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Purchase Price</label><input type="text" id="purchasePrice" placeholder="0"></div>
+        <div class="form-group"><label>Down Payment</label><input type="text" id="downPayment" placeholder="0"></div>
+        <div class="form-group"><label>Closing Costs</label><input type="text" id="closingCosts" placeholder="0"></div>
+        <div class="form-group"><label>Market Value</label><input type="text" id="marketValue" placeholder="0"></div>
+        <div class="form-group"><label>Amount Depreciable</label><input type="text" id="amountDepreciable" placeholder="0"></div>
+        <div class="form-group"><label>Analysis Date</label><input type="date" id="analysisDate"></div>
+        <div class="form-group">
+          <label>Property Type</label>
+          <select id="propertyType"><option value="residential">Residential</option><option value="commercial">Commercial</option></select>
+        </div>
+        <div class="form-group">
+          <label>Depreciation Years</label>
+          <input type="text" id="depYears" placeholder="27.5">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Income -->
+  <div class="section">
+    <div class="section-header">Income</div>
+    <div class="section-body">
+      <div class="form-grid form-row-3">
+        <div class="form-group"><label>Monthly Rental Income</label><input type="text" id="rentalIncome" placeholder="0"></div>
+        <div class="form-group"><label>Monthly Other Income</label><input type="text" id="otherIncome" placeholder="0"></div>
+        <div class="form-group"><label>Annual Rental Increase %</label><input type="text" id="rentalIncrease" placeholder="3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Operating Expenses -->
+  <div class="section">
+    <div class="section-header">Operating Expenses</div>
+    <div class="section-body">
+      <div class="form-grid form-row-2">
+        <div class="form-group"><label>Monthly Operating Expenses</label><input type="text" id="monthlyExpenses" placeholder="0"></div>
+        <div class="form-group"><label>Annual Expense Increase %</label><input type="text" id="expenseIncrease" placeholder="3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Financing & Tax -->
+  <div class="section">
+    <div class="section-header">Financing & Tax Assumptions</div>
+    <div class="section-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Vacancy %</label><input type="text" id="vacancy" placeholder="5"></div>
+        <div class="form-group"><label>First Year Vacancy %</label><input type="text" id="firstYearVacancy" placeholder="0"></div>
+        <div class="form-group"><label>Marginal Tax Rate %</label><input type="text" id="marginalRate" placeholder="25"></div>
+        <div class="form-group">
+          <label>Sales Price Based On</label>
+          <select id="salesPriceMethod"><option value="purchasePrice">Purchase Price</option><option value="marketValue">Market Value</option></select>
+        </div>
+        <div class="form-group">
+          <label>Cash-on-Cash Based On</label>
+          <select id="cocMethod"><option value="downPayment">Down Payment Only</option><option value="totalCash">Total Initial Cash</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Capital Improvements -->
+  <div class="section">
+    <div class="section-header">Capital Improvements</div>
+    <div class="section-body">
+      <div class="form-grid form-row-3">
+        <div class="form-group"><label>First Year CI</label><input type="text" id="firstYearCI" placeholder="0"></div>
+        <div class="form-group"><label>Annual Ongoing CI</label><input type="text" id="ongoingCI" placeholder="0"></div>
+        <div class="form-group"><label>Annual CI Increase %</label><input type="text" id="ciIncrease" placeholder="0"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Debt Service (linked loans) -->
+  <div class="section">
+    <div class="section-header">Debt Service (Linked Loans)</div>
+    <div class="section-body">
+      <p style="color: var(--text-muted); font-size: 13px;">Debt service will be pulled from your saved loans once loan linking is implemented. For now, enter annual totals manually.</p>
+      <div class="form-grid form-row-2" style="margin-top: 12px;">
+        <div class="form-group"><label>Annual Principal Payments</label><input type="text" id="annualPrincipal" placeholder="0"></div>
+        <div class="form-group"><label>Annual Interest Payments</label><input type="text" id="annualInterest" placeholder="0"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <button class="btn btn-accent" onclick="calculate()">Calculate</button>
+  </div>
+
+  <!-- Output Schedules -->
+  <div id="outputArea" style="display:none;">
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="showTab('cfa')">Cash Flow</div>
+      <div class="tab" onclick="showTab('tia')">Tax Impact</div>
+      <div class="tab" onclick="showTab('dep')">Depreciation</div>
+    </div>
+
+    <div id="tab-cfa" class="section" style="border-top:none; border-radius: 0 0 var(--radius) var(--radius);">
+      <div class="section-body"><div class="schedule-wrap"><table class="schedule" id="cfaTable"></table></div></div>
+    </div>
+
+    <div id="tab-tia" class="section" style="display:none; border-top:none; border-radius: 0 0 var(--radius) var(--radius);">
+      <div class="section-body"><div class="schedule-wrap"><table class="schedule" id="tiaTable"></table></div></div>
+    </div>
+
+    <div id="tab-dep" class="section" style="display:none; border-top:none; border-radius: 0 0 var(--radius) var(--radius);">
+      <div class="section-body"><div class="schedule-wrap"><table class="schedule" id="depTable"></table></div></div>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="modalRoot"></div>
+<div class="version">brh v1.0</div>
+
+<script>
+const API = 'https://reiw-worker.reiw.app';
+const MODULE_TYPE = 'brh';
+let currentAnalysis = { id: null, name: '' };
+let cachedAnalyses = [];
+let results = null;
+
+// ─── Auth Check ───
+(async function checkAuth() {
+  try {
+    const res = await fetch(API + '/auth/me', { credentials: 'include' });
+    if (!res.ok) { window.location.href = '/login.html'; return; }
+  } catch { window.location.href = '/login.html'; }
+})();
+
+// ─── Helpers ───
+function el(id) { return document.getElementById(id); }
+function parseNum(s) { if (!s || !s.trim()) return 0; return parseFloat(s.replace(/[,$\s]/g, '')) || 0; }
+function fmt(n) { if (n === null || n === undefined) return '—'; return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+function fmtD(n) { return '$' + fmt(Math.abs(n)); }
+function fmtPct(n) { if (n === 'Infinite') return '∞'; return (n * 100).toFixed(2) + '%'; }
+function showStatus(type, msg) { el('statusBar').className = 'status-bar ' + type; el('statusBar').textContent = msg; }
+function closeModal() { el('modalRoot').innerHTML = ''; }
+
+// ─── Read Inputs ───
+function readInputs() {
+  return {
+    purchasePrice: parseNum(el('purchasePrice').value),
+    downPayment: parseNum(el('downPayment').value),
+    closingCosts: parseNum(el('closingCosts').value),
+    marketValue: parseNum(el('marketValue').value),
+    amountDepreciable: parseNum(el('amountDepreciable').value),
+    analysisDate: el('analysisDate').value,
+    propertyType: el('propertyType').value,
+    depYears: parseNum(el('depYears').value) || (el('propertyType').value === 'commercial' ? 39 : 27.5),
+    rentalIncome: parseNum(el('rentalIncome').value),
+    otherIncome: parseNum(el('otherIncome').value),
+    rentalIncrease: parseNum(el('rentalIncrease').value) / 100,
+    monthlyExpenses: parseNum(el('monthlyExpenses').value),
+    expenseIncrease: parseNum(el('expenseIncrease').value) / 100,
+    vacancy: parseNum(el('vacancy').value) / 100,
+    firstYearVacancy: parseNum(el('firstYearVacancy').value) / 100,
+    marginalRate: parseNum(el('marginalRate').value) / 100,
+    salesPriceMethod: el('salesPriceMethod').value,
+    cocMethod: el('cocMethod').value,
+    firstYearCI: parseNum(el('firstYearCI').value),
+    ongoingCI: parseNum(el('ongoingCI').value),
+    ciIncrease: parseNum(el('ciIncrease').value) / 100,
+    annualPrincipal: parseNum(el('annualPrincipal').value),
+    annualInterest: parseNum(el('annualInterest').value),
+  };
+}
+
+// ─── Calculate ───
+function calculate() {
+  const inp = readInputs();
+  const pp = inp.purchasePrice;
+  const landValue = pp - inp.amountDepreciable;
+  const annualRental = inp.rentalIncome * 12;
+  const annualOther = inp.otherIncome * 12;
+  const annualExpenses = inp.monthlyExpenses * 12;
+  const depYears = inp.depYears || 1;
+
+  // Cash-on-cash denominator
+  const initialCash = inp.cocMethod === 'totalCash'
+    ? inp.downPayment + inp.closingCosts + inp.firstYearCI
+    : inp.downPayment;
+
+  const cfa = []; // Cash Flow Analysis
+  const tia = []; // Tax Impact Analysis
+  const dep = []; // Depreciation Schedule
+
+  for (let yr = 1; yr <= 10; yr++) {
+    const c = {};
+    const t = {};
+    const d = {};
+
+    // ─── CFA ───
+    if (yr === 1) {
+      c.rentalIncome = annualRental;
+      c.otherIncome = annualOther;
+      c.expenses = -annualExpenses;
+      c.vacancyRate = inp.vacancy + inp.firstYearVacancy;
+      c.capitalImprovements = -(inp.ongoingCI + inp.firstYearCI);
+      c.principal = -inp.annualPrincipal;
+      c.interest = -inp.annualInterest;
+    } else {
+      const prev = cfa[yr - 2];
+      c.rentalIncome = prev.rentalIncome * (1 + inp.rentalIncrease);
+      c.otherIncome = prev.otherIncome * (1 + inp.rentalIncrease);
+      c.expenses = prev.expenses * (1 + inp.expenseIncrease);
+      c.vacancyRate = inp.vacancy;
+      if (yr === 2) {
+        c.capitalImprovements = -inp.ongoingCI * (1 + inp.ciIncrease);
+      } else {
+        c.capitalImprovements = prev.capitalImprovements * (1 + inp.ciIncrease);
+      }
+      c.principal = -inp.annualPrincipal; // simplified — linked loans will provide year-by-year
+      c.interest = -inp.annualInterest;
+    }
+
+    c.grossIncome = c.rentalIncome + c.otherIncome;
+    c.vacancyAllowance = -c.grossIncome * c.vacancyRate;
+    c.grossOperatingIncome = c.grossIncome + c.vacancyAllowance;
+    c.noi = c.grossOperatingIncome + c.expenses;
+    c.capRate = pp > 0 ? c.noi / pp : 0;
+    c.cfbt = c.noi + c.principal + c.interest + c.capitalImprovements;
+    c.coc = initialCash > 0 ? c.cfbt / initialCash : 'Infinite';
+
+    // ─── TIA ───
+    t.noi = c.noi;
+    t.interestExpense = c.interest;
+    t.realPropertyDep = depYears > 0 ? -inp.amountDepreciable / depYears : 0;
+
+    if (yr === 1) {
+      t.ciDep = depYears > 0 ? c.capitalImprovements / depYears : 0;
+    } else {
+      const prevT = tia[yr - 2];
+      if (yr === 2) {
+        const firstYearCIDep = -inp.firstYearCI / depYears;
+        t.ciDep = (prevT.ciDep - firstYearCIDep) * (1 + inp.ciIncrease);
+      } else {
+        t.ciDep = prevT.ciDep * (1 + inp.ciIncrease);
+      }
+    }
+
+    t.taxableIncome = t.noi + t.interestExpense + t.realPropertyDep + t.ciDep;
+    t.marginalRate = inp.marginalRate;
+    t.taxSavings = inp.marginalRate * -t.taxableIncome;
+
+    // Back to CFA
+    c.taxSavings = t.taxSavings;
+    c.cfat = c.cfbt + c.taxSavings;
+    c.cumCfat = yr === 1 ? c.cfat : cfa[yr - 2].cumCfat + c.cfat;
+
+    // ─── Depreciation ───
+    d.purchasePrice = pp;
+    d.amountDepreciable = inp.amountDepreciable;
+    d.landValue = landValue;
+    d.realPropertyDep = t.realPropertyDep;
+    d.capitalImprovements = -c.capitalImprovements;
+    d.ciDep = t.ciDep;
+    d.totalDep = d.realPropertyDep + d.ciDep;
+    d.taxSavings = -d.totalDep * inp.marginalRate;
+    d.cumDep = yr === 1 ? d.totalDep : dep[yr - 2].cumDep + d.totalDep;
+    d.cumTaxSavings = yr === 1 ? d.taxSavings : dep[yr - 2].cumTaxSavings + d.taxSavings;
+
+    cfa.push(c);
+    tia.push(t);
+    dep.push(d);
+  }
+
+  results = { cfa, tia, dep };
+  renderCFA(cfa);
+  renderTIA(tia);
+  renderDep(dep);
+  el('outputArea').style.display = '';
+  showStatus('ok', '10-year analysis complete');
+}
+
+// ─── Render CFA ───
+function renderCFA(cfa) {
+  const hdr = '<tr><th>Year</th><th>Rental<br>Income</th><th>Other<br>Income</th><th>Gross<br>Income</th><th>Vacancy</th><th>Gross Opr<br>Income</th><th>Operating<br>Expenses</th><th>NOI</th><th>Cap<br>Rate</th><th>Principal</th><th>Interest</th><th>Capital<br>Impr.</th><th>CFBT</th><th>Cash on<br>Cash</th><th>Tax<br>Savings</th><th>CFAT</th><th>Cum.<br>CFAT</th></tr>';
+  let rows = '';
+  cfa.forEach((c, i) => {
+    rows += `<tr>
+      <td>${i+1}</td>
+      <td>${fmtD(c.rentalIncome)}</td>
+      <td>${fmtD(c.otherIncome)}</td>
+      <td>${fmtD(c.grossIncome)}</td>
+      <td class="negative">(${fmtD(c.vacancyAllowance)})</td>
+      <td>${fmtD(c.grossOperatingIncome)}</td>
+      <td class="negative">(${fmtD(c.expenses)})</td>
+      <td class="subtotal">${fmtD(c.noi)}</td>
+      <td class="pct">${fmtPct(c.capRate)}</td>
+      <td class="negative">(${fmtD(c.principal)})</td>
+      <td class="negative">(${fmtD(c.interest)})</td>
+      <td class="negative">(${fmtD(c.capitalImprovements)})</td>
+      <td class="subtotal">${c.cfbt >= 0 ? fmtD(c.cfbt) : '<span class="negative">(' + fmtD(c.cfbt) + ')</span>'}</td>
+      <td class="pct">${fmtPct(c.coc)}</td>
+      <td>${c.taxSavings >= 0 ? fmtD(c.taxSavings) : '<span class="negative">(' + fmtD(c.taxSavings) + ')</span>'}</td>
+      <td class="subtotal">${c.cfat >= 0 ? fmtD(c.cfat) : '<span class="negative">(' + fmtD(c.cfat) + ')</span>'}</td>
+      <td>${c.cumCfat >= 0 ? fmtD(c.cumCfat) : '<span class="negative">(' + fmtD(c.cumCfat) + ')</span>'}</td>
+    </tr>`;
+  });
+  el('cfaTable').innerHTML = hdr + rows;
+}
+
+// ─── Render TIA ───
+function renderTIA(tia) {
+  const hdr = '<tr><th>Year</th><th>NOI</th><th>Interest<br>Expense</th><th>Real Property<br>Depreciation</th><th>CI<br>Depreciation</th><th>Taxable<br>Income</th><th>Marginal<br>Rate</th><th>Tax<br>Savings</th></tr>';
+  let rows = '';
+  tia.forEach((t, i) => {
+    rows += `<tr>
+      <td>${i+1}</td>
+      <td>${fmtD(t.noi)}</td>
+      <td class="negative">(${fmtD(t.interestExpense)})</td>
+      <td class="negative">(${fmtD(t.realPropertyDep)})</td>
+      <td class="negative">(${fmtD(t.ciDep)})</td>
+      <td>${t.taxableIncome >= 0 ? fmtD(t.taxableIncome) : '<span class="negative">(' + fmtD(t.taxableIncome) + ')</span>'}</td>
+      <td class="pct">${fmtPct(t.marginalRate)}</td>
+      <td>${t.taxSavings >= 0 ? fmtD(t.taxSavings) : '<span class="negative">(' + fmtD(t.taxSavings) + ')</span>'}</td>
+    </tr>`;
+  });
+  el('tiaTable').innerHTML = hdr + rows;
+}
+
+// ─── Render Depreciation ───
+function renderDep(dep) {
+  const hdr = '<tr><th>Year</th><th>Purchase<br>Price</th><th>Amount<br>Depreciable</th><th>Land<br>Value</th><th>Real Property<br>Dep.</th><th>Capital<br>Impr.</th><th>CI<br>Dep.</th><th>Total<br>Dep.</th><th>Tax<br>Savings</th><th>Cum.<br>Dep.</th><th>Cum. Tax<br>Savings</th></tr>';
+  let rows = '';
+  dep.forEach((d, i) => {
+    rows += `<tr>
+      <td>${i+1}</td>
+      <td>${fmtD(d.purchasePrice)}</td>
+      <td>${fmtD(d.amountDepreciable)}</td>
+      <td>${fmtD(d.landValue)}</td>
+      <td class="negative">(${fmtD(d.realPropertyDep)})</td>
+      <td>${fmtD(d.capitalImprovements)}</td>
+      <td class="negative">(${fmtD(d.ciDep)})</td>
+      <td class="negative">(${fmtD(d.totalDep)})</td>
+      <td>${fmtD(d.taxSavings)}</td>
+      <td class="negative">(${fmtD(d.cumDep)})</td>
+      <td>${fmtD(d.cumTaxSavings)}</td>
+    </tr>`;
+  });
+  el('depTable').innerHTML = hdr + rows;
+}
+
+// ─── Tabs ───
+function showTab(name) {
+  ['cfa', 'tia', 'dep'].forEach(t => {
+    el('tab-' + t).style.display = t === name ? '' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+// ─── Save/Load (uses analyses table) ───
+async function refreshAnalyses() {
+  try {
+    const res = await fetch(API + '/api/analyses?type=' + MODULE_TYPE, { credentials: 'include' });
+    if (res.ok) { const data = await res.json(); cachedAnalyses = data.analyses || []; }
+  } catch (err) { console.error('Failed to load analyses:', err); }
+}
+
+async function saveAnalysis() {
+  const name = el('analysisName').value.trim();
+  if (!name) { el('analysisName').focus(); return; }
+
+  const inputs = readInputs();
+  const payload = { name, type: MODULE_TYPE, data: { inputs, results } };
+
+  try {
+    let res;
+    if (currentAnalysis.id) {
+      res = await fetch(API + '/api/analyses/' + currentAnalysis.id, {
+        method: 'PUT', headers: {'Content-Type':'application/json'}, credentials: 'include',
+        body: JSON.stringify(payload)
+      });
+    } else {
+      res = await fetch(API + '/api/analyses', {
+        method: 'POST', headers: {'Content-Type':'application/json'}, credentials: 'include',
+        body: JSON.stringify(payload)
+      });
+    }
+    if (!res.ok) { showStatus('error', 'Save failed'); return; }
+    const result = await res.json();
+    currentAnalysis.id = result.id || currentAnalysis.id;
+    currentAnalysis.name = name;
+    await refreshAnalyses();
+    showStatus('ok', 'Saved "' + name + '"');
+  } catch { showStatus('error', 'Could not save.'); }
+}
+
+async function showLoadModal() {
+  await refreshAnalyses();
+  const list = cachedAnalyses;
+  let body;
+  if (list.length === 0) {
+    body = '<div style="color:var(--text-muted);padding:20px;text-align:center;">No saved analyses yet.</div>';
+  } else {
+    body = '<div class="load-list">' + list.map(a => {
+      const d = a.data?.inputs || {};
+      const meta = [d.purchasePrice ? '$' + fmt(d.purchasePrice) : '', d.rentalIncome ? '$' + fmt(d.rentalIncome) + '/mo' : ''].filter(Boolean).join(' · ');
+      return '<div class="load-row" onclick="doLoad(\'' + a.id + '\')"><div><div class="loan-name">' + a.name + '</div><div class="loan-meta">' + meta + '</div></div><button class="delete-btn" onclick="doDelete(\'' + a.id + '\', event)">×</button></div>';
+    }).join('') + '</div>';
+  }
+  el('modalRoot').innerHTML = '<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Load Analysis</h3>' + body + '<div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button></div></div></div>';
+}
+
+async function doLoad(id) {
+  closeModal();
+  const a = cachedAnalyses.find(x => x.id === id);
+  if (!a || !a.data?.inputs) return;
+  currentAnalysis = { id: a.id, name: a.name };
+  el('analysisName').value = a.name;
+  const inp = a.data.inputs;
+  el('purchasePrice').value = inp.purchasePrice || '';
+  el('downPayment').value = inp.downPayment || '';
+  el('closingCosts').value = inp.closingCosts || '';
+  el('marketValue').value = inp.marketValue || '';
+  el('amountDepreciable').value = inp.amountDepreciable || '';
+  el('analysisDate').value = inp.analysisDate || '';
+  el('propertyType').value = inp.propertyType || 'residential';
+  el('depYears').value = inp.depYears || '';
+  el('rentalIncome').value = inp.rentalIncome || '';
+  el('otherIncome').value = inp.otherIncome || '';
+  el('rentalIncrease').value = inp.rentalIncrease ? (inp.rentalIncrease * 100) : '';
+  el('monthlyExpenses').value = inp.monthlyExpenses || '';
+  el('expenseIncrease').value = inp.expenseIncrease ? (inp.expenseIncrease * 100) : '';
+  el('vacancy').value = inp.vacancy ? (inp.vacancy * 100) : '';
+  el('firstYearVacancy').value = inp.firstYearVacancy ? (inp.firstYearVacancy * 100) : '';
+  el('marginalRate').value = inp.marginalRate ? (inp.marginalRate * 100) : '';
+  el('salesPriceMethod').value = inp.salesPriceMethod || 'purchasePrice';
+  el('cocMethod').value = inp.cocMethod || 'downPayment';
+  el('firstYearCI').value = inp.firstYearCI || '';
+  el('ongoingCI').value = inp.ongoingCI || '';
+  el('ciIncrease').value = inp.ciIncrease ? (inp.ciIncrease * 100) : '';
+  el('annualPrincipal').value = inp.annualPrincipal || '';
+  el('annualInterest').value = inp.annualInterest || '';
+  calculate();
+  showStatus('ok', 'Loaded "' + a.name + '"');
+}
+
+async function doDelete(id, e) {
+  e.stopPropagation();
+  try {
+    await fetch(API + '/api/analyses/' + id, { method: 'DELETE', credentials: 'include' });
+    await refreshAnalyses();
+    if (currentAnalysis.id === id) currentAnalysis = { id: null, name: '' };
+    showLoadModal();
+  } catch { console.error('Delete failed'); }
+}
+
+function doNew() {
+  currentAnalysis = { id: null, name: '' };
+  el('analysisName').value = '';
+  document.querySelectorAll('.form-group input, .form-group select').forEach(i => {
+    if (i.type === 'date') i.value = '';
+    else if (i.tagName === 'SELECT') i.selectedIndex = 0;
+    else i.value = '';
+  });
+  el('outputArea').style.display = 'none';
+  el('statusBar').className = 'status-bar';
+  results = null;
+}
+
+// Init
+el('analysisDate').value = new Date().toISOString().split('T')[0];
+el('depYears').value = '27.5';
+</script>
+
+</body>
+</html>
