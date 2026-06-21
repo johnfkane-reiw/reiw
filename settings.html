@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Settings v1.1</title>
+  <title>REIW Settings v1.2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f5f6f8;--surface:#fff;--border:#d4d7de;--border-focus:#4a7adb;--text:#1d2028;--text-muted:#5f6672;--accent:#4a7adb;--accent-hover:#3a66c4;--green:#2d8a5e;--green-bg:#e8f5ee;--red:#c44040;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+:root{--bg:#faf9f7;--surface:#fff;--border:#e4e7ec;--border-focus:#1a2744;--text:#374151;--text-muted:#6b7280;--accent:#1a2744;--accent-hover:#0f1a32;--navy:#1a2744;--gold:#c4973b;--green:#2d8a5e;--green-bg:#e8f5ee;--red:#c44040;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
+body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.header{background:var(--navy);border-bottom:none;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:12px}
-.logo{font-size:18px;font-weight:700}.logo span{color:var(--accent)}
-.nav-link{font-size:13px;color:var(--text-muted);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
-.nav-link:hover{background:var(--bg)}
+.logo{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:900;color:#fff}
+.nav-link{font-size:13px;color:rgba(255,255,255,0.75);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
+.nav-link:hover{background:rgba(255,255,255,0.1);color:#fff}
 .main{max-width:800px;margin:0 auto;padding:20px}
 .page-title{font-size:20px;font-weight:600;margin-bottom:4px}
 .page-desc{font-size:14px;color:var(--text-muted);margin-bottom:24px}
@@ -53,7 +55,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span style="font-size:14px;font-weight:600;">Settings</span></div><div><a href="/dashboard" class="nav-link">Dashboard</a></div></div>
+<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.55)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);">Settings</span></div><div><a href="/dashboard" class="nav-link">Dashboard</a></div></div>
 <div class="main">
   <div class="page-title">Settings</div>
   <div class="page-desc">Set defaults for new analyses and manage investor entities.</div>
@@ -113,7 +115,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">settings v1.1</div>
+<div class="version">settings v1.2</div>
 
 <script>
 const API='https://reiw-worker.reiw.app';
