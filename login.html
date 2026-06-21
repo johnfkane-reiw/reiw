@@ -4,24 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>REIW — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --blue: #2563eb;
-      --blue-hover: #1d4ed8;
-      --bg: #f1f3f5;
+      --navy: #1a2744;
+      --navy-hover: #0f1a32;
+      --gold: #c4973b;
+      --blue: #1a2744;
+      --blue-hover: #0f1a32;
+      --bg: #faf9f7;
       --card: #ffffff;
-      --text: #1a1a2e;
-      --muted: #64748b;
-      --border: #d1d5db;
-      --error: #dc2626;
-      --error-bg: #fef2f2;
+      --text: #374151;
+      --muted: #6b7280;
+      --border: #e4e7ec;
+      --error: #c44040;
+      --error-bg: #fceaea;
       --radius: 8px;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100dvh;
@@ -40,15 +45,28 @@
       padding: 40px 32px;
     }
 
-    .logo {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--text);
-      margin-bottom: 4px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
     }
 
-    .logo span { color: var(--blue); }
+    .logo {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0;
+      color: var(--navy);
+    }
+
+    .version {
+      position: fixed;
+      bottom: 8px;
+      right: 12px;
+      font-size: 11px;
+      color: #c9ccd1;
+    }
 
     .subtitle {
       font-size: 14px;
@@ -284,7 +302,10 @@
 <body>
 
 <div class="login-card">
-  <div class="logo">REIW<span>.</span></div>
+  <div class="brand">
+    <svg width="34" height="22" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="#1a2744" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg>
+    <div class="logo">REIW</div>
+  </div>
   <div class="subtitle">Real Estate Investment Workshop</div>
 
   <!-- Screen 1: Email -->
@@ -592,7 +613,7 @@ function renderTenantPicker() {
     card.className = 'tenant-card';
     card.onclick = () => pickTenant(t.tenant_id);
 
-    const color = t.primary_color || '#2563eb';
+    const color = t.primary_color || '#1a2744';
     const initial = (t.tenant_name || '?')[0].toUpperCase();
 
     card.innerHTML = `
@@ -631,5 +652,6 @@ document.getElementById('email-input').addEventListener('keydown', (e) => {
 });
 </script>
 
+  <div class="version">login v1.1</div>
 </body>
 </html>
