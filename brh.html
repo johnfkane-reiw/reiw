@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Buy Rent & Hold v2.3</title>
+  <title>REIW Buy Rent & Hold v3.0</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
@@ -15,17 +15,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .logo{font-size:18px;font-weight:700}.logo span{color:var(--accent)}
 .module-tag{font-size:11px;font-weight:600;background:var(--green-bg);color:var(--green);padding:3px 8px;border-radius:10px}
 .vpill{font-size:11px;color:var(--text-muted)}
+.nav-links{display:flex;gap:4px}
 .nav-link{font-size:13px;color:var(--text-muted);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
-.nav-link:hover{background:var(--bg)}
+.nav-link:hover{background:var(--bg);color:var(--text)}
 .main{max-width:1100px;margin:0 auto;padding:20px}
 .section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
 .section-header{padding:10px 16px;font-weight:600;font-size:13px;border-bottom:1px solid var(--border);background:#fafbfc;border-radius:var(--radius) var(--radius) 0 0}
 .section-body{padding:16px}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .form-group{display:flex;flex-direction:column;gap:4px}
-.form-group label{font-size:12px;font-weight:500;color:var(--text-muted)}
+.form-group label{font-size:12px;font-weight:500;color:var(--text-muted);display:flex;align-items:center;gap:4px}
 .form-group input,.form-group select{padding:7px 10px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;background:#fff}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--border-focus)}
+.tip{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--border);color:#fff;font-size:9px;text-align:center;line-height:14px;cursor:help;flex-shrink:0}
 .loan-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
 .loan-bar input{flex:1;padding:8px 12px;font-size:15px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit}
 .loan-bar.modified input{border-color:var(--orange);background:var(--orange-bg)}
@@ -65,62 +67,171 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .load-row .loan-name{font-weight:600;font-size:14px}
 .load-row .loan-meta{font-size:12px;color:var(--text-muted)}
 .delete-btn{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:0 4px}
+.equity-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-top:16px;display:none}
+.equity-box h4{font-size:14px;margin-bottom:8px}
+.equity-val{font-size:24px;font-weight:700;color:var(--accent)}
+.equity-note{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5}
+/* Guide Drawer */
+.guide-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:200;display:none}
+.guide-overlay.open{display:block}
+.guide-drawer{position:fixed;top:0;right:-460px;width:450px;max-width:90vw;height:100vh;background:#fff;box-shadow:-4px 0 20px rgba(0,0,0,0.15);z-index:201;transition:right 0.25s ease;overflow-y:auto;padding:24px}
+.guide-drawer.open{right:0}
+.guide-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted)}
+.guide-drawer h2{font-size:18px;margin-bottom:16px;padding-right:30px}
+.guide-drawer h3{font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--accent)}
+.guide-drawer p,.guide-drawer li{font-size:13px;line-height:1.6;color:var(--text-muted)}
+.guide-drawer ul{padding-left:18px;margin-bottom:12px}
+.guide-drawer dt{font-weight:600;font-size:13px;margin-top:8px}
+.guide-drawer dd{font-size:13px;color:var(--text-muted);margin-left:0;margin-bottom:4px}
+.entity-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:13px}
+.entity-bar select{padding:6px 10px;font-size:13px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;background:#fff}
 .version{position:fixed;bottom:8px;right:12px;font-size:11px;color:#ccc}
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v2.3</span></div><div><a href="/dashboard" class="nav-link">Dashboard</a></div></div>
+<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.0</span></div>
+  <div class="nav-links"><a href="#" class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
+</div>
 <div class="main">
   <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Analysis name"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
+  <div class="entity-bar"><label style="color:var(--text-muted)">Entity for PDF:</label><select id="entitySelect" onchange="markDirty()"><option value="">— None —</option></select><a href="/settings" style="font-size:12px;color:var(--accent)">Manage entities</a></div>
   <div id="statusBar" class="status-bar"></div><div id="undoArea"></div>
   <div class="section"><div class="section-header">Property Information</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>Purchase Price</label><input type="text" id="purchasePrice" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Down Payment</label><input type="text" id="downPayment" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Closing Costs</label><input type="text" id="closingCosts" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Market Value</label><input type="text" id="marketValue" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Amount Depreciable</label><input type="text" id="amountDepreciable" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Analysis Date (Closing)</label><input type="date" id="analysisDate" onchange="onAnalysisDateChange()"></div>
-    <div class="form-group"><label>Property Type</label><select id="propertyType" onchange="el('depYears').value=this.value==='commercial'?'39':'27.5';markDirty();autoRecalc()"><option value="residential">Residential</option><option value="commercial">Commercial</option></select></div>
-    <div class="form-group"><label>Depreciation Years</label><input type="text" id="depYears" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Purchase Price <span class="tip" title="The agreed price for the property at closing.">?</span></label><input type="text" id="purchasePrice" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Down Payment <span class="tip" title="Cash paid at closing toward the purchase price, excluding closing costs.">?</span></label><input type="text" id="downPayment" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Closing Costs <span class="tip" title="Fees paid at closing: title insurance, attorney, recording, etc.">?</span></label><input type="text" id="closingCosts" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Market Value <span class="tip" title="Current estimated market value. Used to calculate ending equity (not appreciation).">?</span></label><input type="text" id="marketValue" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Amount Depreciable <span class="tip" title="The portion of purchase price allocated to the building (not land). Used for depreciation calculations.">?</span></label><input type="text" id="amountDepreciable" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Analysis Date (Closing) <span class="tip" title="Expected closing date. All 10 years of the analysis start from this date.">?</span></label><input type="date" id="analysisDate" onchange="onAnalysisDateChange()"></div>
+    <div class="form-group"><label>Property Type <span class="tip" title="Determines the default depreciation period: 27.5 years residential, 39 years commercial.">?</span></label><select id="propertyType" onchange="onPropertyTypeChange();markDirty();autoRecalc()"><option value="residential">Residential</option><option value="commercial">Commercial</option></select></div>
+    <div class="form-group"><label>Depreciation Years <span class="tip" title="Number of years for straight-line depreciation. Can be overridden from the default.">?</span></label><input type="text" id="depYears" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Income</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>Monthly Rental Income</label><input type="text" id="rentalIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Monthly Other Income</label><input type="text" id="otherIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual Rental Increase %</label><input type="text" id="rentalIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Monthly Rental Income <span class="tip" title="Gross monthly rent collected from all units.">?</span></label><input type="text" id="rentalIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Monthly Other Income <span class="tip" title="Laundry, parking, storage, pet fees, or other non-rent income per month.">?</span></label><input type="text" id="otherIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual Rental Increase % <span class="tip" title="Expected annual percentage increase in rental and other income.">?</span></label><input type="text" id="rentalIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Operating Expenses</div><div class="section-body"><div class="form-grid" style="grid-template-columns:1fr 1fr">
-    <div class="form-group"><label>Monthly Operating Expenses</label><input type="text" id="monthlyExpenses" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual Expense Increase %</label><input type="text" id="expenseIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Monthly Operating Expenses <span class="tip" title="Total monthly expenses: taxes, insurance, maintenance, management, utilities, etc.">?</span></label><input type="text" id="monthlyExpenses" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual Expense Increase % <span class="tip" title="Expected annual percentage increase in operating expenses.">?</span></label><input type="text" id="expenseIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Financing &amp; Tax Assumptions</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>Vacancy %</label><input type="text" id="vacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>First Year Vacancy %</label><input type="text" id="firstYearVacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Marginal Tax Rate %</label><input type="text" id="marginalRate" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Cash-on-Cash Based On</label><select id="cocMethod" onchange="markDirty();autoRecalc()"><option value="downPayment">Down Payment Only</option><option value="totalCash">Total Initial Cash</option></select></div>
+    <div class="form-group"><label>Vacancy % <span class="tip" title="Expected percentage of time the property is vacant in a typical year.">?</span></label><input type="text" id="vacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>First Year Vacancy % <span class="tip" title="Additional vacancy expected in the first year (renovation, finding tenants). Added to regular vacancy for year 1 only.">?</span></label><input type="text" id="firstYearVacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Marginal Tax Rate % <span class="tip" title="Your highest income tax bracket. Used to calculate tax impact of rental income and depreciation deductions.">?</span></label><input type="text" id="marginalRate" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Cash-on-Cash Based On <span class="tip" title="Denominator for cash-on-cash return: just the down payment, or total initial cash outlay including closing costs and first year CI.">?</span></label><select id="cocMethod" onchange="markDirty();autoRecalc()"><option value="downPayment">Down Payment Only</option><option value="totalCash">Total Initial Cash</option></select></div>
   </div></div></div>
   <div class="section"><div class="section-header">Capital Improvements</div><div class="section-body"><div class="form-grid">
-    <div class="form-group"><label>First Year CI</label><input type="text" id="firstYearCI" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual Ongoing CI</label><input type="text" id="ongoingCI" oninput="markDirty()" onblur="autoRecalc()"></div>
-    <div class="form-group"><label>Annual CI Increase %</label><input type="text" id="ciIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>First Year CI <span class="tip" title="One-time capital improvements in the first year (rehab, major repairs). Depreciable.">?</span></label><input type="text" id="firstYearCI" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual Ongoing CI <span class="tip" title="Recurring annual capital improvements (appliance replacement, upgrades). Grows by CI Increase %.">?</span></label><input type="text" id="ongoingCI" oninput="markDirty()" onblur="autoRecalc()"></div>
+    <div class="form-group"><label>Annual CI Increase % <span class="tip" title="Expected annual increase in capital improvement costs.">?</span></label><input type="text" id="ciIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
   <div class="section"><div class="section-header">Debt Service</div><div class="section-body">
     <div id="linkedLoansArea"><p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p></div>
     <div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-sm" onclick="showLoanPicker()">Attach Loan</button><a href="/cfw" class="btn btn-sm" style="text-decoration:none;display:inline-block">Create New Loan</a></div>
   </div></div>
-  <div style="margin-bottom:16px;display:flex;gap:10px"><button class="btn" id="btnPdf" onclick="createPDF()" style="display:none">Create PDF</button></div>
+  <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center"><button class="btn" id="btnPdf" onclick="createPDF()" style="display:none">Create PDF</button><a href="#" onclick="openGuide('glossary');return false" style="font-size:12px;color:var(--accent)">Glossary</a><a href="#" onclick="openGuide('howitworks');return false" style="font-size:12px;color:var(--accent)">How is this calculated?</a></div>
   <div id="outputArea" style="display:none">
     <div class="tab-bar"><div class="tab active" onclick="showTab('cfa',this)">Cash Flow</div><div class="tab" onclick="showTab('tia',this)">Tax Impact</div><div class="tab" onclick="showTab('dep',this)">Depreciation</div></div>
     <div id="tab-cfa" class="section" style="border-top:none;border-radius:0 0 var(--radius) var(--radius)"><div class="section-body"><div class="schedule-wrap"><table class="schedule" id="cfaTable"></table></div></div></div>
     <div id="tab-tia" class="section" style="display:none;border-top:none"><div class="section-body"><div class="schedule-wrap"><table class="schedule" id="tiaTable"></table></div></div></div>
     <div id="tab-dep" class="section" style="display:none;border-top:none"><div class="section-body"><div class="schedule-wrap"><table class="schedule" id="depTable"></table></div></div></div>
   </div>
+  <div class="equity-box" id="equityBox"><h4>Estimated Ending Equity (Year 10)</h4><div class="equity-val" id="equityVal"></div><div class="equity-note">Based on the entered Market Value at the time of this analysis, minus remaining loan balance after 10 years. This does not account for appreciation, market changes, or selling costs. For a complete market valuation, run a full Property Analysis.</div></div>
 </div>
+
+<!-- Guide Drawer -->
+<div class="guide-overlay" id="guideOverlay" onclick="closeGuide()"></div>
+<div class="guide-drawer" id="guideDrawer">
+  <button class="guide-close" onclick="closeGuide()">&times;</button>
+  <h2>Buy Rent &amp; Hold Guide</h2>
+  <p>This module analyzes a property's suitability as a rental investment over a 10-year holding period. It produces three schedules: Cash Flow Analysis, Tax Impact Analysis, and a Depreciation Schedule.</p>
+
+  <h3 id="guide-fields">Field Guide</h3>
+  <dl>
+    <dt>Purchase Price</dt><dd>The agreed price for the property at closing.</dd>
+    <dt>Down Payment</dt><dd>Cash paid toward the purchase price, excluding closing costs.</dd>
+    <dt>Closing Costs</dt><dd>Fees at closing: title insurance, attorney, recording fees, etc.</dd>
+    <dt>Market Value</dt><dd>Current estimated market value. Used only for the ending equity estimate.</dd>
+    <dt>Amount Depreciable</dt><dd>The building value (purchase price minus land). This is the amount that can be depreciated over the depreciation period.</dd>
+    <dt>Analysis Date</dt><dd>Expected closing date. All schedule years start from this date.</dd>
+    <dt>Depreciation Years</dt><dd>Straight-line depreciation period. 27.5 years for residential, 39 for commercial.</dd>
+    <dt>Vacancy %</dt><dd>Expected annual vacancy rate applied to gross income.</dd>
+    <dt>First Year Vacancy %</dt><dd>Additional vacancy in year 1 only (renovation time, finding initial tenants). Added to regular vacancy.</dd>
+    <dt>Marginal Tax Rate</dt><dd>Your highest income tax bracket. Determines tax savings from deductions.</dd>
+    <dt>Cash-on-Cash Return</dt><dd>Annual cash flow before taxes divided by your initial cash investment. Measures the cash return on the money you put in.</dd>
+    <dt>Capital Improvements</dt><dd>Major property upgrades that add value or extend useful life. Depreciable over the depreciation period, unlike operating expenses which are expensed immediately.</dd>
+  </dl>
+
+  <h3 id="guide-glossary">Glossary</h3>
+  <dl>
+    <dt>GOI</dt><dd>Gross Operating Income — Gross income minus vacancy allowance.</dd>
+    <dt>NOI</dt><dd>Net Operating Income — GOI minus operating expenses. The property's income before debt service and taxes.</dd>
+    <dt>Cap Rate</dt><dd>Capitalization Rate — NOI divided by purchase price. Measures return independent of financing.</dd>
+    <dt>CFBT</dt><dd>Cash Flow Before Taxes — NOI minus debt service (principal + interest) minus capital improvements.</dd>
+    <dt>CoC</dt><dd>Cash-on-Cash Return — CFBT divided by your initial cash investment.</dd>
+    <dt>CFAT</dt><dd>Cash Flow After Taxes — CFBT plus or minus tax impact (savings or cost).</dd>
+    <dt>CI</dt><dd>Capital Improvements — Major upgrades to the property, depreciable over time.</dd>
+    <dt>Cum</dt><dd>Cumulative — Running total across all years.</dd>
+    <dt>Real Dep</dt><dd>Real Property Depreciation — Annual depreciation on the building (not land).</dd>
+    <dt>CI Dep</dt><dd>Capital Improvements Depreciation — Cumulative depreciation on all capital improvements to date.</dd>
+  </dl>
+
+  <h3 id="guide-howitworks">How It Works</h3>
+  <p>The analysis runs three parallel 10-year schedules that connect to each other:</p>
+  <ul>
+    <li><strong>Cash Flow Analysis</strong> starts with your rental and other income, subtracts vacancy (higher in year 1), then subtracts operating expenses to arrive at Net Operating Income (NOI). From NOI, it subtracts debt service payments and capital improvements to produce Cash Flow Before Taxes. The tax savings or cost from Schedule 2 is then applied to give Cash Flow After Taxes.</li>
+    <li><strong>Tax Impact Analysis</strong> takes NOI and subtracts interest payments and depreciation (both real property and capital improvements) to calculate taxable income or loss. A loss generates tax savings at your marginal rate; positive taxable income creates a tax cost. This feeds back into the Cash Flow schedule.</li>
+    <li><strong>Depreciation Schedule</strong> tracks straight-line depreciation on both the building and accumulated capital improvements. Each year's new CI adds to the depreciable base. The tax savings from depreciation can make a property cash-flow positive after taxes even when it shows a small loss before taxes.</li>
+  </ul>
+  <p>Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Capital improvements grow by the CI Increase %. Year 1 uses both the regular vacancy rate and the first-year vacancy rate; years 2–10 use only the regular rate.</p>
+  <p>Debt service (principal and interest) comes from linked loans. The loan schedule is aligned to the analysis date — if the loan started before the analysis, the schedule offsets to the correct period.</p>
+</div>
+
 <div id="modalRoot"></div>
-<div class="version">brh v2.3</div>
+<div class="version">brh v3.0</div>
+
 <script>
 const API='https://reiw-worker.reiw.app',MODULE_TYPE='brh';
 let currentAnalysis={id:null,name:'',data:{}},savedSnapshot=null,lastLoadedId=null,cachedAnalyses=[],linkedLoans=[],results=null,yearlyDebt=[];
-(async function(){try{const r=await fetch(API+'/auth/me',{credentials:'include'});if(!r.ok)throw 0}catch{window.location.href='/login.html'}})();
+let userSettings={},userEntities=[];
+
+// Auth + load settings/entities
+(async function(){
+  try{const r=await fetch(API+'/auth/me',{credentials:'include'});if(!r.ok)throw 0}catch{window.location.href='/login.html';return}
+  try{const r=await fetch(API+'/api/settings',{credentials:'include'});if(r.ok)userSettings=await r.json()}catch{}
+  try{const r=await fetch(API+'/api/entities',{credentials:'include'});if(r.ok){const d=await r.json();userEntities=d.entities||[];populateEntityDropdown()}}catch{}
+  applyDefaults();
+  refreshAnalyses();
+})();
+
+function applyDefaults(){
+  const s=userSettings;
+  el('vacancy').value=s.vacancy_pct||5;
+  el('expenseIncrease').value=s.expense_increase_pct||3;
+  el('rentalIncrease').value=s.rental_increase_pct||3;
+  el('ciIncrease').value=s.ci_increase_pct||3;
+  el('cocMethod').value=s.coc_method||'downPayment';
+  el('depYears').value=s.residential_dep_years||27.5;
+  // Select default entity
+  const def=userEntities.find(e=>e.is_default);
+  if(def){el('entitySelect').value=def.id;el('marginalRate').value=def.marginal_rate||25}
+  else{el('marginalRate').value=25}
+}
+
+function populateEntityDropdown(){
+  const sel=el('entitySelect');
+  sel.innerHTML='<option value="">— None —</option>';
+  userEntities.forEach(e=>{const o=document.createElement('option');o.value=e.id;o.textContent=e.name+(e.is_default?' (default)':'');sel.appendChild(o)});
+  const def=userEntities.find(e=>e.is_default);
+  if(def)sel.value=def.id;
+}
+
+function onPropertyTypeChange(){
+  const s=userSettings;
+  el('depYears').value=el('propertyType').value==='commercial'?(s.commercial_dep_years||39):(s.residential_dep_years||27.5);
+}
+
 function el(id){return document.getElementById(id)}
 function parseNum(s){if(!s||typeof s==='number')return s||0;return parseFloat(String(s).replace(/[,$\s]/g,''))||0}
 function fmt(n){if(n==null)return'—';return Math.round(n).toLocaleString('en-US')}
@@ -131,7 +242,12 @@ function clearStatus(){el('statusBar').className='status-bar'}
 function closeModal(){el('modalRoot').innerHTML=''}
 function markDirty(){if(!savedSnapshot)return;if(JSON.stringify(readInputs())!==savedSnapshot){el('loanBar').classList.add('modified');el('modifiedTag').style.display=''}else{el('loanBar').classList.remove('modified');el('modifiedTag').style.display='none'}}
 function autoRecalc(){calculate()}
-function onAnalysisDateChange(){if(linkedLoans.length>0){const hasConflict=linkedLoans.some(l=>l.base.startDate&&l.base.startDate>el('analysisDate').value);if(hasConflict&&!confirm('Changing the analysis date may affect how linked loan schedules align. The loan start date will not change, but the offset into the schedule will shift. Continue?')){return}}markDirty();autoRecalc()}
+function onAnalysisDateChange(){if(linkedLoans.length>0){const c=linkedLoans.some(l=>l.base.startDate&&l.base.startDate>el('analysisDate').value);if(c&&!confirm('Changing the analysis date may affect how linked loan schedules align. Continue?'))return}markDirty();autoRecalc()}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+// Guide drawer
+function openGuide(section){el('guideOverlay').classList.add('open');el('guideDrawer').classList.add('open');if(section){const t=document.getElementById('guide-'+section);if(t)setTimeout(()=>t.scrollIntoView({behavior:'smooth'}),300)}}
+function closeGuide(){el('guideOverlay').classList.remove('open');el('guideDrawer').classList.remove('open')}
 
 // Loan engine
 function computePeriodicRate(ar,cp,ppy){if(ar===0)return 0;return Math.pow(1+(ar/100)/cp,cp/ppy)-1}
@@ -144,22 +260,22 @@ function generateSchedule(def){const b=def.base,ppy=b.paymentsPerYear||12,cp=b.c
 function computeYearlyDebt(analysisDateStr){
   if(!linkedLoans.length){yearlyDebt=[];return}
   const aDate=analysisDateStr?new Date(analysisDateStr+'T00:00:00'):new Date();
-  const yrs=[];for(let i=0;i<10;i++)yrs.push({principal:0,interest:0});
+  const yrs=[];for(let i=0;i<10;i++)yrs.push({principal:0,interest:0,endBalance:0});
   for(const loan of linkedLoans){
     const sched=generateSchedule(loan);const ppy=loan.base.paymentsPerYear||12;
     const ls=loan.base.startDate?new Date(loan.base.startDate+'T00:00:00'):aDate;
     const md=(aDate.getFullYear()-ls.getFullYear())*12+(aDate.getMonth()-ls.getMonth());
     const offset=Math.max(0,Math.round(md*ppy/12));
-    for(const row of sched){const ap=row.period-offset;if(ap<1)continue;const yr=Math.floor((ap-1)/ppy);if(yr>=10)break;yrs[yr].principal+=row.principal;yrs[yr].interest+=row.interest}
+    for(const row of sched){const ap=row.period-offset;if(ap<1)continue;const yr=Math.floor((ap-1)/ppy);if(yr>=10)break;yrs[yr].principal+=row.principal;yrs[yr].interest+=row.interest;yrs[yr].endBalance=row.endBalance}
   }
   yearlyDebt=yrs;
 }
 
-function readInputs(){return{purchasePrice:parseNum(el('purchasePrice').value),downPayment:parseNum(el('downPayment').value),closingCosts:parseNum(el('closingCosts').value),marketValue:parseNum(el('marketValue').value),amountDepreciable:parseNum(el('amountDepreciable').value),analysisDate:el('analysisDate').value,propertyType:el('propertyType').value,depYears:parseNum(el('depYears').value)||(el('propertyType').value==='commercial'?39:27.5),rentalIncome:parseNum(el('rentalIncome').value),otherIncome:parseNum(el('otherIncome').value),rentalIncrease:parseNum(el('rentalIncrease').value)/100,monthlyExpenses:parseNum(el('monthlyExpenses').value),expenseIncrease:parseNum(el('expenseIncrease').value)/100,vacancy:parseNum(el('vacancy').value)/100,firstYearVacancy:parseNum(el('firstYearVacancy').value)/100,marginalRate:parseNum(el('marginalRate').value)/100,cocMethod:el('cocMethod').value,firstYearCI:parseNum(el('firstYearCI').value),ongoingCI:parseNum(el('ongoingCI').value),ciIncrease:parseNum(el('ciIncrease').value)/100,linkedLoanIds:linkedLoans.map(l=>l.id)}}
+function readInputs(){return{purchasePrice:parseNum(el('purchasePrice').value),downPayment:parseNum(el('downPayment').value),closingCosts:parseNum(el('closingCosts').value),marketValue:parseNum(el('marketValue').value),amountDepreciable:parseNum(el('amountDepreciable').value),analysisDate:el('analysisDate').value,propertyType:el('propertyType').value,depYears:parseNum(el('depYears').value)||(el('propertyType').value==='commercial'?39:27.5),rentalIncome:parseNum(el('rentalIncome').value),otherIncome:parseNum(el('otherIncome').value),rentalIncrease:parseNum(el('rentalIncrease').value)/100,monthlyExpenses:parseNum(el('monthlyExpenses').value),expenseIncrease:parseNum(el('expenseIncrease').value)/100,vacancy:parseNum(el('vacancy').value)/100,firstYearVacancy:parseNum(el('firstYearVacancy').value)/100,marginalRate:parseNum(el('marginalRate').value)/100,cocMethod:el('cocMethod').value,firstYearCI:parseNum(el('firstYearCI').value),ongoingCI:parseNum(el('ongoingCI').value),ciIncrease:parseNum(el('ciIncrease').value)/100,linkedLoanIds:linkedLoans.map(l=>l.id),entityId:el('entitySelect').value}}
 
-function populateUI(inp){el('purchasePrice').value=inp.purchasePrice||'';el('downPayment').value=inp.downPayment||'';el('closingCosts').value=inp.closingCosts||'';el('marketValue').value=inp.marketValue||'';el('amountDepreciable').value=inp.amountDepreciable||'';el('analysisDate').value=inp.analysisDate||'';el('propertyType').value=inp.propertyType||'residential';el('depYears').value=inp.depYears||'';el('rentalIncome').value=inp.rentalIncome||'';el('otherIncome').value=inp.otherIncome||'';el('rentalIncrease').value=inp.rentalIncrease?(inp.rentalIncrease*100):'';el('monthlyExpenses').value=inp.monthlyExpenses||'';el('expenseIncrease').value=inp.expenseIncrease?(inp.expenseIncrease*100):'';el('vacancy').value=inp.vacancy?(inp.vacancy*100):'';el('firstYearVacancy').value=inp.firstYearVacancy?(inp.firstYearVacancy*100):'';el('marginalRate').value=inp.marginalRate?(inp.marginalRate*100):'';el('cocMethod').value=inp.cocMethod||'downPayment';el('firstYearCI').value=inp.firstYearCI||'';el('ongoingCI').value=inp.ongoingCI||'';el('ciIncrease').value=inp.ciIncrease?(inp.ciIncrease*100):''}
+function populateUI(inp){el('purchasePrice').value=inp.purchasePrice||'';el('downPayment').value=inp.downPayment||'';el('closingCosts').value=inp.closingCosts||'';el('marketValue').value=inp.marketValue||'';el('amountDepreciable').value=inp.amountDepreciable||'';el('analysisDate').value=inp.analysisDate||'';el('propertyType').value=inp.propertyType||'residential';el('depYears').value=inp.depYears||'';el('rentalIncome').value=inp.rentalIncome||'';el('otherIncome').value=inp.otherIncome||'';el('rentalIncrease').value=inp.rentalIncrease?(inp.rentalIncrease*100):'';el('monthlyExpenses').value=inp.monthlyExpenses||'';el('expenseIncrease').value=inp.expenseIncrease?(inp.expenseIncrease*100):'';el('vacancy').value=inp.vacancy?(inp.vacancy*100):'';el('firstYearVacancy').value=inp.firstYearVacancy?(inp.firstYearVacancy*100):'';el('marginalRate').value=inp.marginalRate?(inp.marginalRate*100):'';el('cocMethod').value=inp.cocMethod||'downPayment';el('firstYearCI').value=inp.firstYearCI||'';el('ongoingCI').value=inp.ongoingCI||'';el('ciIncrease').value=inp.ciIncrease?(inp.ciIncrease*100):'';if(inp.entityId)el('entitySelect').value=inp.entityId}
 
-function clearUI(){document.querySelectorAll('.form-group input').forEach(i=>i.value='');document.querySelectorAll('.form-group select').forEach(s=>s.selectedIndex=0);el('analysisDate').value=new Date().toISOString().split('T')[0];el('depYears').value='27.5';el('outputArea').style.display='none';el('btnPdf').style.display='none';el('loanBar').classList.remove('modified');el('modifiedTag').style.display='none';linkedLoans=[];yearlyDebt=[];results=null;renderLinkedLoans()}
+function clearUI(){document.querySelectorAll('.form-group input').forEach(i=>i.value='');document.querySelectorAll('.form-group select').forEach(s=>s.selectedIndex=0);el('outputArea').style.display='none';el('btnPdf').style.display='none';el('equityBox').style.display='none';el('loanBar').classList.remove('modified');el('modifiedTag').style.display='none';linkedLoans=[];yearlyDebt=[];results=null;renderLinkedLoans();applyDefaults()}
 
 function calculate(){
   const inp=readInputs(),pp=inp.purchasePrice,depYears=inp.depYears||1;
@@ -167,13 +283,10 @@ function calculate(){
   const initCash=inp.cocMethod==='totalCash'?inp.downPayment+inp.closingCosts+inp.firstYearCI:inp.downPayment;
   const startYear=inp.analysisDate?new Date(inp.analysisDate+'T00:00:00').getFullYear():new Date().getFullYear();
   computeYearlyDebt(inp.analysisDate);
-  // Precompute CI amounts per year for depreciation
-  const ciAmounts=[];
-  for(let y=1;y<=10;y++){if(y===1)ciAmounts.push(inp.ongoingCI+inp.firstYearCI);else if(y===2)ciAmounts.push(inp.ongoingCI*(1+inp.ciIncrease));else ciAmounts.push(ciAmounts[y-2]*(1+inp.ciIncrease))}
-
+  const ciAmounts=[];for(let y=1;y<=10;y++){if(y===1)ciAmounts.push(inp.ongoingCI+inp.firstYearCI);else if(y===2)ciAmounts.push(inp.ongoingCI*(1+inp.ciIncrease));else ciAmounts.push(ciAmounts[y-2]*(1+inp.ciIncrease))}
   const cfa=[],tia=[],dep=[];let cumCfat=0,cumDep=0,cumTS=0;
   for(let yr=1;yr<=10;yr++){
-    const c={},t={},d={},debt=yearlyDebt[yr-1]||{principal:0,interest:0};
+    const c={},t={},d={},debt=yearlyDebt[yr-1]||{principal:0,interest:0,endBalance:0};
     c.calendarYear=startYear+yr-1;
     if(yr===1){c.rentalIncome=aRent;c.otherIncome=aOther;c.expenses=-aExp;c.vacancyRate=inp.vacancy+inp.firstYearVacancy;c.capitalImprovements=-(inp.ongoingCI+inp.firstYearCI)}
     else{const p=cfa[yr-2];c.rentalIncome=p.rentalIncome*(1+inp.rentalIncrease);c.otherIncome=p.otherIncome*(1+inp.rentalIncrease);c.expenses=p.expenses*(1+inp.expenseIncrease);c.vacancyRate=inp.vacancy;c.capitalImprovements=yr===2?-inp.ongoingCI*(1+inp.ciIncrease):cfa[yr-2].capitalImprovements*(1+inp.ciIncrease)}
@@ -183,7 +296,6 @@ function calculate(){
     c.capRate=pp>0?c.noi/pp:0;c.cfbt=c.noi+c.principal+c.interest+c.capitalImprovements;
     c.coc=initCash>0?c.cfbt/initCash:'Infinite';
     t.noi=c.noi;t.interestExpense=c.interest;t.realPropertyDep=depYears>0?-inp.amountDepreciable/depYears:0;
-    // Each year's CI depreciates straight-line from when purchased
     t.ciDep=depYears>0?-ciAmounts.slice(0,yr).reduce((s,ci)=>s+ci/depYears,0):0;
     t.taxableIncome=t.noi+t.interestExpense+t.realPropertyDep+t.ciDep;t.marginalRate=inp.marginalRate;
     t.taxSavings=inp.marginalRate*-t.taxableIncome;
@@ -198,6 +310,10 @@ function calculate(){
   const hasContent=cfa.some(c=>c.rentalIncome||c.otherIncome||c.expenses||c.principal||c.interest||c.capitalImprovements);
   el('outputArea').style.display=hasContent?'':'none';
   el('btnPdf').style.display=hasContent?'':'none';
+  // Ending equity
+  const mv=inp.marketValue;const remainBal=yearlyDebt.length>=10?yearlyDebt[9].endBalance:0;
+  if(mv>0&&hasContent){el('equityBox').style.display='';el('equityVal').textContent='$'+fmt(mv-remainBal)}
+  else{el('equityBox').style.display='none'}
   if(hasContent)showStatus('ok','10-year analysis complete');else clearStatus();
 }
 
@@ -207,19 +323,19 @@ function renderTIA(tia){let h='<tr><th>Year</th><th>NOI</th><th>Interest</th><th
 function renderDep(dep){let h='<tr><th>Year</th><th>Purchase</th><th>Depreciable</th><th>Land</th><th>Real Dep</th><th>Cap Impr.</th><th>CI Dep</th><th>Total Dep</th><th>Tax Sav.</th><th>Cum Dep</th><th>Cum Tax</th></tr>';let r='';dep.forEach((d,i)=>{r+='<tr><td>'+results.cfa[i].calendarYear+'</td>'+vc(d.purchasePrice)+vc(d.amountDepreciable)+vc(d.landValue)+vc(d.realPropertyDep)+vc(d.capitalImprovements)+vc(d.ciDep)+vc(d.totalDep)+vc(d.taxSavings)+vc(d.cumDep)+vc(d.cumTaxSavings)+'</tr>'});const s=k=>dep.reduce((a,d)=>a+(d[k]||0),0);const last=dep[dep.length-1];r+='<tr class="subtotal"><td>Total</td><td></td><td></td><td></td>'+vc(s('realPropertyDep'),'subtotal')+vc(s('capitalImprovements'),'subtotal')+vc(s('ciDep'),'subtotal')+vc(s('totalDep'),'subtotal')+vc(s('taxSavings'),'subtotal')+vc(last.cumDep,'subtotal')+vc(last.cumTaxSavings,'subtotal')+'</tr>';el('depTable').innerHTML=h+r}
 function showTab(name,tabEl){['cfa','tia','dep'].forEach(t=>el('tab-'+t).style.display=t===name?'':'none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));tabEl.classList.add('active')}
 
-// Linked loans UI
-function renderLinkedLoans(){const a=el('linkedLoansArea');if(!linkedLoans.length){a.innerHTML='<p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p>';return}a.innerHTML=linkedLoans.map((l,i)=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');return'<div class="linked-loan-row"><div class="loan-info"><div class="loan-name">'+l.name+'</div><div class="loan-meta">'+m+'</div></div><button class="remove-loan" onclick="removeLoan('+i+')" title="Remove">×</button></div>'}).join('')}
+// Linked loans
+function renderLinkedLoans(){const a=el('linkedLoansArea');if(!linkedLoans.length){a.innerHTML='<p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p>';return}a.innerHTML=linkedLoans.map((l,i)=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');return'<div class="linked-loan-row"><div class="loan-info"><div class="loan-name">'+esc(l.name)+'</div><div class="loan-meta">'+m+'</div></div><button class="remove-loan" onclick="removeLoan('+i+')" title="Remove">×</button></div>'}).join('')}
 function removeLoan(i){linkedLoans.splice(i,1);renderLinkedLoans();markDirty();autoRecalc()}
-async function showLoanPicker(){let loans=[];try{const r=await fetch(API+'/api/loans',{credentials:'include'});if(r.ok){const d=await r.json();loans=d.loans}}catch{}const ex=new Set(linkedLoans.map(l=>l.id));const av=loans.filter(l=>!ex.has(l.id));let body;if(!av.length)body='<div style="color:var(--text-muted);padding:20px;text-align:center">No available loans. <a href="/cfw">Create one.</a></div>';else body='<div class="load-list">'+av.map(l=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');return'<div class="load-row" onclick="attachLoan(\''+l.id+'\')"><div><div class="loan-name">'+l.name+'</div><div class="loan-meta">'+m+'</div></div></div>'}).join('')+'</div>';el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Attach a Loan</h3>'+body+'<div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button></div></div></div>'}
+async function showLoanPicker(){let loans=[];try{const r=await fetch(API+'/api/loans',{credentials:'include'});if(r.ok){const d=await r.json();loans=d.loans}}catch{}const ex=new Set(linkedLoans.map(l=>l.id));const av=loans.filter(l=>!ex.has(l.id));let body;if(!av.length)body='<div style="color:var(--text-muted);padding:20px;text-align:center">No available loans. <a href="/cfw">Create one.</a></div>';else body='<div class="load-list">'+av.map(l=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');return'<div class="load-row" onclick="attachLoan(\''+l.id+'\')"><div><div class="loan-name">'+esc(l.name)+'</div><div class="loan-meta">'+m+'</div></div></div>'}).join('')+'</div>';el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Attach a Loan</h3>'+body+'<div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button></div></div></div>'}
 async function attachLoan(id){closeModal();try{const r=await fetch(API+'/api/loans/'+id,{credentials:'include'});if(!r.ok)return;const loan=await r.json();const ad=el('analysisDate').value;if(loan.base.startDate&&ad&&loan.base.startDate>ad){if(!confirm('This loan starts after your analysis date. Attaching it will change the analysis date to '+loan.base.startDate+'. Continue?'))return;el('analysisDate').value=loan.base.startDate}linkedLoans.push(loan);renderLinkedLoans();markDirty();autoRecalc()}catch(e){console.error('Attach failed:',e)}}
 
-// Save/Load (matches CFW pattern)
+// Save/Load
 async function refreshAnalyses(){try{const r=await fetch(API+'/api/analyses?type='+MODULE_TYPE,{credentials:'include'});if(r.ok){const d=await r.json();cachedAnalyses=d.analyses||[]}}catch{}}
-function clickSave(){const name=el('analysisName').value.trim();if(!name){el('analysisName').focus();return}if(currentAnalysis.id){el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Save Analysis</h3><p>"'+name+'" already exists. Overwrite it, or save as a new analysis?</p><div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button><button class="btn btn-sm" onclick="doSave(true)">Save as New</button><button class="btn btn-accent btn-sm" onclick="doSave(false)">Overwrite</button></div></div></div>'}else{const ex=cachedAnalyses.find(a=>a.name.toLowerCase()===name.toLowerCase());if(ex){currentAnalysis.id=ex.id;el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Save Analysis</h3><p>"'+name+'" already exists. Overwrite it, or save as a new analysis?</p><div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button><button class="btn btn-sm" onclick="doSave(true)">Save as New</button><button class="btn btn-accent btn-sm" onclick="doSave(false)">Overwrite</button></div></div></div>'}else doSave(false)}}
-async function doSave(asNew){const name=el('analysisName').value.trim();if(!name)return;const inputs=readInputs();const payload={name,type:MODULE_TYPE,data:{inputs,linkedLoans:linkedLoans.map(l=>({id:l.id,name:l.name,base:l.base,adjustments:l.adjustments})),results}};try{let res;if(currentAnalysis.id&&!asNew){res=await fetch(API+'/api/analyses/'+currentAnalysis.id,{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)})}else{res=await fetch(API+'/api/analyses',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)})}if(!res.ok){showStatus('error','Save failed');return}const result=await res.json();if(!currentAnalysis.id||asNew)currentAnalysis.id=result.id;currentAnalysis.name=name;await refreshAnalyses()}catch{showStatus('error','Could not save.');return}closeModal();const jid=currentAnalysis.id,jname=name;lastLoadedId=jid;currentAnalysis={id:null,name:'',data:{}};savedSnapshot=null;linkedLoans=[];results=null;clearUI();el('analysisName').value='';showStatus('ok','Saved "'+jname+'"');el('undoArea').innerHTML='<span class="undo-link" onclick="undoLoad(\''+jid+'\')">Load "'+jname+'"</span>'}
-function clickNew(){const hid=currentAnalysis.id,hn=currentAnalysis.name;currentAnalysis={id:null,name:'',data:{}};savedSnapshot=null;clearUI();el('analysisName').value='';clearStatus();if(hid)el('undoArea').innerHTML='<span class="undo-link" onclick="undoLoad(\''+hid+'\')">Load "'+hn+'"</span>'}
+function clickSave(){const name=el('analysisName').value.trim();if(!name){el('analysisName').focus();return}if(currentAnalysis.id){el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Save Analysis</h3><p>"'+esc(name)+'" already exists. Overwrite it, or save as a new analysis?</p><div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button><button class="btn btn-sm" onclick="doSave(true)">Save as New</button><button class="btn btn-accent btn-sm" onclick="doSave(false)">Overwrite</button></div></div></div>'}else{const ex=cachedAnalyses.find(a=>a.name.toLowerCase()===name.toLowerCase());if(ex){currentAnalysis.id=ex.id;el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Save Analysis</h3><p>"'+esc(name)+'" already exists. Overwrite it, or save as a new analysis?</p><div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button><button class="btn btn-sm" onclick="doSave(true)">Save as New</button><button class="btn btn-accent btn-sm" onclick="doSave(false)">Overwrite</button></div></div></div>'}else doSave(false)}}
+async function doSave(asNew){const name=el('analysisName').value.trim();if(!name)return;const inputs=readInputs();const payload={name,type:MODULE_TYPE,data:{inputs,linkedLoans:linkedLoans.map(l=>({id:l.id,name:l.name,base:l.base,adjustments:l.adjustments})),results}};try{let res;if(currentAnalysis.id&&!asNew){res=await fetch(API+'/api/analyses/'+currentAnalysis.id,{method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)})}else{res=await fetch(API+'/api/analyses',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)})}if(!res.ok){showStatus('error','Save failed');return}const result=await res.json();if(!currentAnalysis.id||asNew)currentAnalysis.id=result.id;currentAnalysis.name=name;await refreshAnalyses()}catch{showStatus('error','Could not save.');return}closeModal();const jid=currentAnalysis.id,jname=name;lastLoadedId=jid;currentAnalysis={id:null,name:'',data:{}};savedSnapshot=null;linkedLoans=[];results=null;clearUI();el('analysisName').value='';showStatus('ok','Saved "'+jname+'"');el('undoArea').innerHTML='<span class="undo-link" onclick="undoLoad(\''+jid+'\')">Load "'+esc(jname)+'"</span>'}
+function clickNew(){const hid=currentAnalysis.id,hn=currentAnalysis.name;currentAnalysis={id:null,name:'',data:{}};savedSnapshot=null;clearUI();el('analysisName').value='';clearStatus();if(hid)el('undoArea').innerHTML='<span class="undo-link" onclick="undoLoad(\''+hid+'\')">Load "'+esc(hn)+'"</span>'}
 async function showLoadModal(){await refreshAnalyses();const list=cachedAnalyses;let body;if(!list.length)body='<div style="color:var(--text-muted);padding:20px;text-align:center">No saved analyses.</div>';else body='<input class="load-search" placeholder="Search..." oninput="filterLoadList()"><div class="load-list" id="loadList">'+buildLoadRows(list)+'</div>';el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Load Analysis</h3>'+body+'<div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button></div></div></div>'}
-function buildLoadRows(list){return list.map(a=>{const d=a.data?.inputs||{};const m=[d.purchasePrice?'$'+fmt(d.purchasePrice):'',d.rentalIncome?'$'+fmt(d.rentalIncome)+'/mo':''].filter(Boolean).join(' · ');return'<div class="load-row" onclick="doLoad(\''+a.id+'\')" data-name="'+a.name.toLowerCase()+'"><div><div class="loan-name">'+a.name+'</div><div class="loan-meta">'+m+'</div></div><button class="delete-btn" onclick="doDeleteFromModal(\''+a.id+'\',event)">×</button></div>'}).join('')}
+function buildLoadRows(list){return list.map(a=>{const d=a.data?.inputs||{};const m=[d.purchasePrice?'$'+fmt(d.purchasePrice):'',d.rentalIncome?'$'+fmt(d.rentalIncome)+'/mo':''].filter(Boolean).join(' · ');return'<div class="load-row" onclick="doLoad(\''+a.id+'\')" data-name="'+a.name.toLowerCase()+'"><div><div class="loan-name">'+esc(a.name)+'</div><div class="loan-meta">'+m+'</div></div><button class="delete-btn" onclick="doDeleteFromModal(\''+a.id+'\',event)">×</button></div>'}).join('')}
 function filterLoadList(){const q=(document.querySelector('.load-search')?.value||'').toLowerCase();document.querySelectorAll('.load-row').forEach(r=>r.style.display=r.getAttribute('data-name').includes(q)?'':'none')}
 async function doLoad(id){closeModal();const a=cachedAnalyses.find(x=>x.id===id);if(!a||!a.data?.inputs)return;currentAnalysis={id:a.id,name:a.name,data:a.data};el('analysisName').value=a.name;populateUI(a.data.inputs);linkedLoans=a.data.linkedLoans||[];renderLinkedLoans();savedSnapshot=JSON.stringify(readInputs());el('loanBar').classList.remove('modified');el('modifiedTag').style.display='none';lastLoadedId=id;calculate();showStatus('ok','Loaded "'+a.name+'"');el('undoArea').innerHTML=''}
 function undoLoad(id){doLoad(id)}
@@ -227,14 +343,19 @@ async function doDeleteFromModal(id,e){e.stopPropagation();try{await fetch(API+'
 
 // PDF
 function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'letter'});const name=el('analysisName').value||'Buy Rent & Hold Analysis';const aDate=el('analysisDate').value||'';
+  // Entity header
+  const entId=el('entitySelect').value;const ent=userEntities.find(e=>e.id===entId);
+  let headerY=14;
+  if(ent){doc.setFontSize(10);doc.text(ent.name,14,headerY);headerY+=4;if(ent.address){doc.setFontSize(8);doc.setTextColor(100);doc.text(ent.address,14,headerY);headerY+=3.5}if(ent.city){doc.text(ent.city,14,headerY);headerY+=3.5}const contact=[ent.phone,ent.cell,ent.email].filter(Boolean).join(' | ');if(contact){doc.text(contact,14,headerY);headerY+=3.5}doc.setTextColor(0);headerY+=2}
+  doc.setFontSize(14);doc.text(name,14,headerY);headerY+=5;
+  doc.setFontSize(9);doc.setTextColor(100);doc.text('Analysis Date: '+aDate+'  |  REIW Buy Rent & Hold',14,headerY);doc.setTextColor(0);headerY+=6;
   function pf(n){if(n==null)return'\u2014';const v=Math.round(Math.abs(n)).toLocaleString('en-US');return n<-0.5?'($'+v+')':'$'+v}
   const sc=k=>results.cfa.reduce((a,c)=>a+(c[k]||0),0);const st=k=>results.tia.reduce((a,t)=>a+(t[k]||0),0);const sd=k=>results.dep.reduce((a,d)=>a+(d[k]||0),0);
   const lastC=results.cfa[results.cfa.length-1],lastD=results.dep[results.dep.length-1];
-  doc.setFontSize(14);doc.text(name,14,14);doc.setFontSize(9);doc.setTextColor(100);doc.text('Analysis Date: '+aDate+'  |  REIW Buy Rent & Hold',14,20);doc.setTextColor(0);
-  doc.setFontSize(11);doc.text('Cash Flow Analysis',14,28);
+  doc.setFontSize(11);doc.text('Cash Flow Analysis',14,headerY);
   const cfaBody=results.cfa.map(c=>[c.calendarYear,pf(c.rentalIncome),pf(c.otherIncome),pf(c.grossIncome),pf(c.vacancyAllowance),pf(c.grossOperatingIncome),pf(c.expenses),pf(c.noi),fmtPct(c.capRate),pf(c.principal),pf(c.interest),pf(c.capitalImprovements),pf(c.cfbt),fmtPct(c.coc),pf(c.taxSavings),pf(c.cfat),pf(c.cumCfat)]);
   cfaBody.push(['Total',pf(sc('rentalIncome')),pf(sc('otherIncome')),pf(sc('grossIncome')),pf(sc('vacancyAllowance')),pf(sc('grossOperatingIncome')),pf(sc('expenses')),pf(sc('noi')),'',pf(sc('principal')),pf(sc('interest')),pf(sc('capitalImprovements')),pf(sc('cfbt')),'',pf(sc('taxSavings')),pf(sc('cfat')),pf(lastC.cumCfat)]);
-  doc.autoTable({startY:30,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Yr','Rental','Other','Gross','Vacancy','GOI','Exp','NOI','Cap%','Prin','Int','CI','CFBT','CoC','Tax','CFAT','Cum']],body:cfaBody});
+  doc.autoTable({startY:headerY+2,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Yr','Rental','Other','Gross','Vacancy','GOI','Exp','NOI','Cap%','Prin','Int','CI','CFBT','CoC','Tax','CFAT','Cum']],body:cfaBody});
   doc.addPage();doc.setFontSize(11);doc.text('Tax Impact Analysis',14,14);
   const tiaBody=results.tia.map((t,i)=>[results.cfa[i].calendarYear,pf(t.noi),pf(t.interestExpense),pf(t.realPropertyDep),pf(t.ciDep),pf(t.taxableIncome),fmtPct(t.marginalRate),pf(t.taxSavings)]);
   tiaBody.push(['Total',pf(st('noi')),pf(st('interestExpense')),pf(st('realPropertyDep')),pf(st('ciDep')),pf(st('taxableIncome')),'',pf(st('taxSavings'))]);
@@ -243,10 +364,18 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
   const depBody=results.dep.map((d,i)=>[results.cfa[i].calendarYear,pf(d.purchasePrice),pf(d.amountDepreciable),pf(d.landValue),pf(d.realPropertyDep),pf(d.capitalImprovements),pf(d.ciDep),pf(d.totalDep),pf(d.taxSavings),pf(d.cumDep),pf(d.cumTaxSavings)]);
   depBody.push(['Total','','','',pf(sd('realPropertyDep')),pf(sd('capitalImprovements')),pf(sd('ciDep')),pf(sd('totalDep')),pf(sd('taxSavings')),pf(lastD.cumDep),pf(lastD.cumTaxSavings)]);
   doc.autoTable({startY:18,margin:{left:14,right:14},styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[74,122,219]},head:[['Year','Purchase','Depr.','Land','Real Dep.','CI','CI Dep.','Total','Tax Sav.','Cum Dep.','Cum Tax']],body:depBody});
+  // Glossary page
+  doc.addPage('portrait');doc.setFontSize(14);doc.text('Glossary',14,18);doc.setFontSize(9);let gy=26;
+  const glossary=[['GOI','Gross Operating Income — Gross income minus vacancy allowance.'],['NOI','Net Operating Income — GOI minus operating expenses.'],['Cap Rate','Capitalization Rate — NOI divided by purchase price.'],['CFBT','Cash Flow Before Taxes — NOI minus debt service minus capital improvements.'],['CoC','Cash-on-Cash Return — CFBT divided by initial cash investment.'],['CFAT','Cash Flow After Taxes — CFBT plus or minus tax impact.'],['CI','Capital Improvements — Major property upgrades, depreciable over time.'],['Cum','Cumulative — Running total across all years.'],['Real Dep','Real Property Depreciation — Annual depreciation on the building.'],['CI Dep','Capital Improvements Depreciation — Cumulative depreciation on CI.']];
+  glossary.forEach(([term,def])=>{doc.setFont(undefined,'bold');doc.text(term,14,gy);doc.setFont(undefined,'normal');const lines=doc.splitTextToSize(def,240);doc.text(lines,40,gy);gy+=lines.length*4+3;if(gy>170){doc.addPage('portrait');gy=18}});
+  // How It Works page
+  doc.addPage('portrait');doc.setFontSize(14);doc.text('How This Analysis Works',14,18);doc.setFontSize(9);
+  const howText=['The Buy Rent & Hold analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:','','Cash Flow Analysis starts with rental and other income, subtracts vacancy and operating expenses to arrive at Net Operating Income (NOI). From NOI, debt service and capital improvements are subtracted to produce Cash Flow Before Taxes. Tax savings or costs from the Tax Impact schedule are then applied for Cash Flow After Taxes.','','Tax Impact Analysis takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.','','Depreciation Schedule tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base. Depreciation creates tax-deductible paper losses.','','Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Year 1 uses both regular and first-year vacancy; years 2-10 use regular vacancy only. Debt service comes from linked loans aligned to the analysis date.'];
+  let hy=26;howText.forEach(line=>{if(!line){hy+=3;return}const lines=doc.splitTextToSize(line,250);doc.text(lines,14,hy);hy+=lines.length*4+2;if(hy>180){doc.addPage('portrait');hy=18}});
   const b64=doc.output('datauristring').split(',')[1];const fn=name.replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'_')+'.pdf';const form=document.createElement('form');form.method='POST';form.action=API+'/pdf/'+encodeURIComponent(fn);form.target='_blank';const inp=document.createElement('input');inp.type='hidden';inp.name='pdf';inp.value=b64;form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form)}
 
 // Init
-el('analysisDate').value=new Date().toISOString().split('T')[0];el('depYears').value='27.5';refreshAnalyses();
+el('analysisDate').value=new Date().toISOString().split('T')[0];
 </script>
 </body>
 </html>
