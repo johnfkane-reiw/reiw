@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW — Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#1a2744;--navy-hover:#0f1a32;--blue:#2554c7;--gold:#c4973b;--bg:#faf9f7;--section:#f0f4f8;--surface:#fff;--text:#374151;--muted:#6b7280;--card-border:#e4ecf4;--radius:12px}
+    body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;line-height:1.5}
+    a{text-decoration:none;color:inherit}
+    .nav{display:flex;align-items:center;justify-content:space-between;height:66px;padding:0 60px;background:var(--surface);border-bottom:1px solid #ece9e3}
+    .brand{display:flex;align-items:center;gap:13px}
+    .brand .word{font-family:'Playfair Display',Georgia,serif;font-size:22px;font-weight:900;color:var(--navy);letter-spacing:-.015em}
+    .nav-right{display:flex;align-items:center;gap:36px}
+    .nav-link{font-size:14px;font-weight:500;color:var(--text)}
+    .nav-link:hover{color:var(--navy)}
+    .nav-link.active{color:var(--navy);font-weight:600}
+    .nav-div{width:1px;height:18px;background:#e4e4e8}
+    .nav-signin{font-size:14px;font-weight:500;color:var(--muted)}
+    .nav-signin:hover{color:var(--navy)}
+    .btn-primary-nav{background:var(--navy);color:#fff;border-radius:8px;padding:10px 22px;font-size:14px;font-weight:600}
+    .btn-primary-nav:hover{background:var(--navy-hover)}
+    .head{text-align:center;background:var(--bg);padding:80px 24px 8px}
+    .eyebrow{font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+    .head h1{font-family:'Playfair Display',Georgia,serif;font-size:46px;font-weight:900;color:var(--navy);letter-spacing:-.02em;margin-bottom:14px}
+    .head p{font-size:16px;color:var(--muted);max-width:500px;margin:0 auto;line-height:1.65}
+    .soon-note{font-size:13px;color:var(--muted);text-align:center;margin:20px auto 0;padding:8px 16px;background:#fff;border:1px solid #e8e4dc;border-radius:999px;display:inline-block}
+    .modules{background:var(--bg);padding:40px 60px 96px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1120px;margin:0 auto}
+    .card{background:var(--surface);border:1px solid var(--card-border);border-radius:var(--radius);padding:30px;position:relative}
+    .badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.09em;padding:3px 9px;border-radius:4px;margin-bottom:13px}
+    .card-name{font-size:17px;font-weight:600;color:var(--navy);margin-bottom:9px}
+    .card-desc{font-size:13px;color:var(--muted);line-height:1.65}
+    .status{position:absolute;top:24px;right:24px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 9px;border-radius:999px}
+    .status-live{background:#e8f5ee;color:#2d8a5e}
+    .status-soon{background:#f0f4f8;color:var(--muted)}
+    .b-cfw{background:#eef2ff;color:#2554c7}.b-brh{background:#f0fdfa;color:#0d9488}.b-bfs{background:#fffbeb;color:#d97706}.b-lo{background:#f5f3ff;color:#7c3aed}.b-paw{background:#eef2ff;color:#2554c7}.b-fsw{background:#f0fdf4;color:#16a34a}.b-ocw{background:#fff1f2;color:#be185d}.b-fl{background:#fefce8;color:#c4973b}
+    .footer{background:var(--navy);padding:30px 60px;display:flex;align-items:center;justify-content:space-between}
+    .footer .word{font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:-.01em}
+    .footer .copy{font-size:13px;color:rgba(255,255,255,.32)}
+    .version{position:fixed;bottom:8px;right:12px;font-size:11px;color:#c9ccd1}
+    @media (max-width:980px){.nav{padding:0 28px}.grid{grid-template-columns:1fr 1fr}}
+    @media (max-width:600px){.nav{padding:0 18px;height:60px}.nav-link,.nav-div{display:none}.nav-right{gap:16px}.head h1{font-size:34px}.modules{padding:32px 18px 64px}.grid{grid-template-columns:1fr}.footer{padding:24px 18px;flex-direction:column;gap:14px;text-align:center}}
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <a href="/" class="brand"><svg width="34" height="22" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="#1a2744" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4.5" fill="#c4973b"/></svg><span class="word">REIW</span></a>
+  <div class="nav-right">
+    <a href="/tools.html" class="nav-link active">Tools</a>
+    <a href="/pricing.html" class="nav-link">Pricing</a>
+    <a href="/dashboard.html" class="nav-link">Dashboard</a>
+    <span class="nav-div"></span>
+    <a href="/login.html" class="nav-signin">Sign in</a>
+    <a href="/login.html" class="btn-primary-nav">Get started free</a>
+  </div>
+</nav>
+<section class="head">
+  <div class="eyebrow">The Complete Toolkit</div>
+  <h1>Eight tools, one platform</h1>
+  <p>Everything from loan modeling to financial statements to deal evaluation.</p>
+  <div class="soon-note">Detailed pages for each tool are coming soon.</div>
+</section>
+<section class="modules">
+  <div class="grid">
+    <div class="card"><span class="status status-live">Live</span><span class="badge b-cfw">CFW</span><div class="card-name">Creative Financier</div><div class="card-desc">Model any loan structure with fine-tuned adjustments and full amortization schedules.</div></div>
+    <div class="card"><span class="status status-live">Live</span><span class="badge b-brh">BRH</span><div class="card-name">Buy Rent &amp; Hold</div><div class="card-desc">Analyze rental properties with 10-year cash flow projections.</div></div>
+    <div class="card"><span class="status status-soon">Coming soon</span><span class="badge b-bfs">BFS</span><div class="card-name">Buy Fix &amp; Sell</div><div class="card-desc">Evaluate flips with repair costs, holding costs, and profit analysis.</div></div>
+    <div class="card"><span class="status status-soon">Coming soon</span><span class="badge b-lo">LO</span><div class="card-name">Lease Option</div><div class="card-desc">Standard and sandwich lease option deal evaluator.</div></div>
+    <div class="card"><span class="status status-soon">Coming soon</span><span class="badge b-paw">PAW</span><div class="card-name">Property Analysis</div><div class="card-desc">Central hub for property-level investment analysis.</div></div>
+    <div class="card"><span class="status status-soon">Coming soon</span><span class="badge b-fsw">FSW</span><div class="card-name">Financial Statement</div><div class="card-desc">Build personal financial statements with schedules A through G.</div></div>
+    <div class="card"><span class="status status-soon">Coming soon</span><span class="badge b-ocw">OCW</span><div class="card-name">Offers &amp; Contracts</div><div class="card-desc">Generate offers and contract documents.</div></div>
+    <div class="card"><span class="status status-soon">Coming soon</span><span class="badge b-fl">FL</span><div class="card-name">Farmer Logic</div><div class="card-desc">Structured deal evaluation framework.</div></div>
+  </div>
+</section>
+<footer class="footer">
+  <a href="/" class="brand"><svg width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.35)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><span class="word">REIW</span></a>
+  <span class="copy">© 2026 Real Estate Investors Workshop</span>
+</footer>
+<div class="version">tools v0.1</div>
+</body>
+</html>
