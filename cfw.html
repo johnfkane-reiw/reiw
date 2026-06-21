@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.9</title>
+<title>REIW Creative Loan Modeler v0.10</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -129,7 +129,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 .adj-row .remove-btn:hover { color: var(--red); }
 .adj-labels { display: grid; grid-template-columns: 80px 6px 80px 1fr 1fr 1fr 32px; gap: 8px; padding: 0 10px 4px; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
 
-.btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 13px; padding: 8px 16px; border-radius: var(--radius); cursor: pointer; transition: background 0.15s, border-color 0.15s; box-shadow: var(--shadow-sm); }
+.btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: var(--radius); cursor: pointer; transition: background 0.15s, border-color 0.15s; box-shadow: var(--shadow-sm); }
 .btn:hover { background: var(--surface-hover); border-color: var(--accent); }
 .btn-accent { background: var(--accent); border-color: var(--accent); color: white; font-weight: 500; }
 .btn-accent:hover { background: var(--accent-hover); }
@@ -186,7 +186,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 </style>
 </head>
 <body>
-<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.9</span></div>
+<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.10</span></div>
   <div class="nav-links"><a class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="app">
@@ -291,7 +291,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
           <option value="calendar">Calendar Year</option>
           <option value="loan">Loan Year</option>
         </select>
-        <button class="btn btn-sm" onclick="exportPDF()">Create PDF</button>
+        <button class="btn" onclick="exportPDF()">Create PDF</button>
       </div>
     </div>
     <div id="scheduleContainer"></div>
