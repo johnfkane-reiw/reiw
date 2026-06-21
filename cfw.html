@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.7</title>
+<title>REIW Creative Loan Modeler v0.8</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -156,7 +156,7 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
 <div class="app">
   <header>
     <h1>Creative Loan Modeler</h1>
-    <span class="vpill">v0.7</span>
+    <span class="vpill">v0.8</span>
   </header>
 
   <!-- ─── Compact Loan Bar ─────────────────────────────── -->
@@ -1074,8 +1074,29 @@ function removeAdjustment(btn) {
 function onBalloonToggle(){el('balloonField').style.display=el('balloon').checked?'':'none';onStructuralChange();}
 
 // ─── Save ────────────────────────────────────────────────
-const STORAGE_KEY = 'reiw_loans';
-function getSavedLoans(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{return[];}}
+const API = 'https://reiw-worker.reiw.app';
+let cachedLoans = [];
+
+// Auth check on load
+(async function checkAuth() {
+  try {
+    const res = await fetch(API + '/auth/me', { credentials: 'include' });
+    if (!res.ok) { window.location.href = '/login.html'; return; }
+    await refreshLoans();
+  } catch { window.location.href = '/login.html'; }
+})();
+
+async function refreshLoans() {
+  try {
+    const res = await fetch(API + '/api/loans', { credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      cachedLoans = data.loans;
+    }
+  } catch (err) { console.error('Failed to load loans:', err); }
+}
+
+function getSavedLoans() { return cachedLoans; }
 
 function saveLoan() {
   readInputs();
@@ -1089,15 +1110,29 @@ function saveLoan() {
   doSave(false);
 }
 
-function doSave(asNew) {
+async function doSave(asNew) {
   const name=el('loanName').value.trim(); if(!name)return; currentLoan.name=name;
-  if(asNew||!currentLoan.id) currentLoan.id='loan_'+Date.now();
-  const loans=getSavedLoans(); const idx=loans.findIndex(l=>l.id===currentLoan.id);
-  const copy=JSON.parse(JSON.stringify(currentLoan));
-  if(idx>=0)loans[idx]=copy;else loans.push(copy);
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(loans));
+
+  try {
+    let res;
+    if (currentLoan.id && !asNew) {
+      res = await fetch(API + '/api/loans/' + currentLoan.id, {
+        method: 'PUT', headers: {'Content-Type':'application/json'}, credentials: 'include',
+        body: JSON.stringify({ name, base: currentLoan.base, adjustments: currentLoan.adjustments })
+      });
+    } else {
+      res = await fetch(API + '/api/loans', {
+        method: 'POST', headers: {'Content-Type':'application/json'}, credentials: 'include',
+        body: JSON.stringify({ name, base: currentLoan.base, adjustments: currentLoan.adjustments })
+      });
+    }
+    if (!res.ok) { const err = await res.json(); showStatus('error', err.error||'Save failed'); return; }
+    const result = await res.json();
+    if (!currentLoan.id || asNew) currentLoan.id = result.id;
+    await refreshLoans();
+  } catch (err) { showStatus('error', 'Could not save. Check your connection.'); return; }
+
   closeModal();
-  // Clear to blank slate, with undo link to reload what was just saved
   const justSavedId = currentLoan.id;
   const justSavedName = currentLoan.name;
   lastLoadedId = justSavedId;
@@ -1127,8 +1162,9 @@ function doSaveAsNew() {
 }
 
 // ─── Load Modal ──────────────────────────────────────────
-function showLoadModal() {
-  const loans = getSavedLoans();
+async function showLoadModal() {
+  await refreshLoans();
+  const loans = cachedLoans;
   let body;
   if (loans.length === 0) {
     body = '<div class="load-empty">No saved loans yet.</div>';
@@ -1160,16 +1196,17 @@ function doLoad(id) {
   loadLoan(id);
 }
 
-function doDeleteFromModal(id, e) {
+async function doDeleteFromModal(id, e) {
   e.stopPropagation();
-  const loans = getSavedLoans().filter(l => l.id !== id);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(loans));
+  try {
+    await fetch(API + '/api/loans/' + id, { method: 'DELETE', credentials: 'include' });
+    await refreshLoans();
+  } catch (err) { console.error('Delete failed:', err); }
   if (currentLoan.id === id) { currentLoan.id = null; savedSnapshot = null; }
-  // Refresh list
   const list = el('loadList');
   if (list) {
-    if (loans.length === 0) list.innerHTML = '<div class="load-empty">No saved loans.</div>';
-    else list.innerHTML = buildLoadRows(loans);
+    if (cachedLoans.length === 0) list.innerHTML = '<div class="load-empty">No saved loans.</div>';
+    else list.innerHTML = buildLoadRows(cachedLoans);
   }
 }
 
