@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.10</title>
+<title>REIW Creative Loan Modeler v0.11</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -186,7 +186,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 </style>
 </head>
 <body>
-<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.10</span></div>
+<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.11</span></div>
   <div class="nav-links"><a class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="app">
@@ -201,7 +201,6 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
       <button class="btn btn-sm" onclick="showLoadModal()">Load</button>
     </div>
     <div id="undoArea"></div>
-    <div class="help-links"><a onclick="openGuide('guide-fields')">Field Guide</a><a onclick="openGuide('guide-glossary')">Glossary</a><a onclick="openGuide('guide-howitworks')">How is this calculated?</a></div>
   </div>
 
   <!-- ─── Base Loan ────────────────────────────────────── -->
@@ -280,6 +279,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 
   <!-- ─── Schedule ─────────────────────────────────────── -->
   <div class="section" id="scheduleSection" style="display:none;">
+    <div class="help-links" style="margin-bottom:8px"><a onclick="openGuide('guide-glossary')">Glossary</a><a onclick="openGuide('guide-howitworks')">How is this calculated?</a></div>
     <div class="section-header">
       <span class="section-title">Amortization Schedule</span>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
