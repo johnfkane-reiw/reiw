@@ -3,21 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.8</title>
+<title>REIW Creative Loan Modeler v0.9</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #f5f6f8;
+  --bg: #faf9f7;
   --surface: #ffffff;
-  --surface-hover: #f0f1f4;
-  --border: #d4d7de;
-  --border-focus: #4a7adb;
-  --text: #1d2028;
-  --text-muted: #5f6672;
+  --surface-hover: #f0f4f8;
+  --border: #e4e7ec;
+  --border-focus: #1a2744;
+  --text: #374151;
+  --text-muted: #6b7280;
   --text-dim: #9aa0ab;
-  --accent: #4a7adb;
-  --accent-hover: #3a66c4;
+  --accent: #1a2744;
+  --accent-hover: #0f1a32;
+  --gold: #c4973b;
   --green: #2d8a5e;
   --green-bg: #e8f5ee;
   --red: #c44040;
@@ -27,7 +29,8 @@
   --orange: #c47a2a;
   --orange-bg: #fef3e6;
   --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
-  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --serif: 'Playfair Display', Georgia, serif;
   --radius: 6px;
   --radius-lg: 10px;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
@@ -37,9 +40,38 @@
 body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
 .app { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
 
-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
-header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
-header .vpill { font-size: 11px; color: var(--text-muted); background: var(--surface); padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border); }
+/* ─── Branded Header Bar ──────────────────────────────── */
+.site-header { background: var(--accent); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+.site-header .header-left { display: flex; align-items: center; gap: 12px; }
+.site-header .logo-mark { flex-shrink: 0; }
+.site-header .logo { font-family: var(--serif); font-size: 20px; font-weight: 900; color: #fff; }
+.site-header .module-tag { font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+.site-header .vpill { font-size: 11px; color: rgba(255,255,255,0.5); background: none; border: none; padding: 0; }
+.site-header .nav-links { display: flex; gap: 4px; }
+.site-header .nav-link { font-size: 13px; color: rgba(255,255,255,0.7); text-decoration: none; padding: 6px 12px; border-radius: var(--radius); cursor: pointer; }
+.site-header .nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* ─── Field Tooltips ──────────────────────────────────── */
+.tip { position: relative; display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: #ccc; color: #fff; font-size: 9px; text-align: center; line-height: 14px; cursor: help; flex-shrink: 0; font-family: var(--sans); }
+.tip:hover::after { content: attr(data-tip); position: absolute; bottom: 150%; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 11px; white-space: normal; width: 220px; z-index: 50; font-weight: 400; line-height: 1.4; text-transform: none; letter-spacing: normal; text-align: left; }
+.tip:hover::before { content: ''; position: absolute; bottom: 140%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #333; z-index: 50; }
+.field label .lbl { display: flex; align-items: center; gap: 5px; }
+
+/* ─── Guide Drawer ────────────────────────────────────── */
+.guide-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 200; display: none; }
+.guide-overlay.open { display: block; }
+.guide-drawer { position: fixed; top: 0; right: -460px; width: 450px; max-width: 90vw; height: 100vh; background: #fff; box-shadow: -4px 0 20px rgba(0,0,0,0.15); z-index: 201; transition: right 0.25s ease; overflow-y: auto; padding: 24px; }
+.guide-drawer.open { right: 0; }
+.guide-close { position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
+.guide-drawer h2 { font-family: var(--serif); font-size: 18px; font-weight: 700; margin-bottom: 16px; padding-right: 30px; color: var(--accent); }
+.guide-drawer h3 { font-size: 14px; font-weight: 600; margin: 20px 0 8px; color: var(--accent); border-bottom: 2px solid var(--gold); padding-bottom: 4px; display: inline-block; }
+.guide-drawer p, .guide-drawer li { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+.guide-drawer ul { padding-left: 18px; margin-bottom: 12px; }
+.guide-drawer dt { font-weight: 600; font-size: 13px; margin-top: 8px; color: var(--text); }
+.guide-drawer dd { font-size: 13px; color: var(--text-muted); margin-left: 0; margin-bottom: 4px; }
+.help-links { display: flex; gap: 16px; margin-top: 8px; }
+.help-links a { font-size: 12px; color: var(--accent); cursor: pointer; }
+.help-links a:hover { text-decoration: underline; }
 
 .section { margin-bottom: 28px; }
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
@@ -107,16 +139,17 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
 
 .schedule-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); background: var(--surface); }
 .schedule-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--mono); }
-.schedule-table th { background: var(--bg); color: var(--text-muted); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1; }
+.schedule-table th { background: var(--accent); color: #fff; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--accent); position: sticky; top: 0; z-index: 1; }
 .schedule-table th:first-child, .schedule-table td:first-child { text-align: center; }
 .schedule-table th:nth-child(2), .schedule-table td:nth-child(2) { text-align: left; }
 .schedule-table td { padding: 7px 12px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
 .schedule-table tbody tr:hover { background: var(--surface-hover); }
 .schedule-table .neg-am { color: var(--red); }
 .schedule-table .balloon-row { background: var(--yellow-bg); }
-.schedule-table .final-row td { border-bottom: 2px solid var(--accent); }
+.schedule-table .final-row td { border-bottom: 2px solid var(--gold); }
 .schedule-table .year-break td { border-top: 2px solid var(--border); }
-.schedule-table .year-summary td { background: var(--surface-hover); font-weight: 600; font-family: var(--sans); border-top: 1px solid var(--text-dim); border-bottom: 2px solid var(--text-dim); }
+.schedule-table .year-summary td { background: var(--accent); color: #fff; font-weight: 600; font-family: var(--sans); border-top: 1px solid var(--accent); border-bottom: 1px solid var(--accent); }
+.schedule-table .year-summary .neg-am { color: #fca5a5; }
 .schedule-scroll { max-height: 500px; overflow-y: auto; }
 
 .view-toggle { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
@@ -153,11 +186,10 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
 </style>
 </head>
 <body>
+<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.9</span></div>
+  <div class="nav-links"><a class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
+</div>
 <div class="app">
-  <header>
-    <h1>Creative Loan Modeler</h1>
-    <span class="vpill">v0.8</span>
-  </header>
 
   <!-- ─── Compact Loan Bar ─────────────────────────────── -->
   <div class="section">
@@ -169,6 +201,7 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
       <button class="btn btn-sm" onclick="showLoadModal()">Load</button>
     </div>
     <div id="undoArea"></div>
+    <div class="help-links"><a onclick="openGuide('guide-fields')">Field Guide</a><a onclick="openGuide('guide-glossary')">Glossary</a><a onclick="openGuide('guide-howitworks')">How is this calculated?</a></div>
   </div>
 
   <!-- ─── Base Loan ────────────────────────────────────── -->
@@ -176,23 +209,23 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
     <div class="section-header"><span class="section-title">Base Loan</span></div>
     <div class="input-grid">
       <div class="field" id="f-principal">
-        <label>Principal ($) <button class="calc-btn" onclick="calcField('principal')">Calc</button></label>
+        <label><span class="lbl">Principal ($) <span class="tip" data-tip="The loan amount borrowed. Enter any three of Principal, Rate, Term, and Payment, then click Calc on the fourth to solve for it.">?</span></span><button class="calc-btn" onclick="calcField('principal')">Calc</button></label>
         <input type="text" id="principal" placeholder="250,000" oninput="onFieldInput()">
       </div>
       <div class="field" id="f-annualRate">
-        <label>Annual Rate (%) <button class="calc-btn" onclick="calcField('annualRate')">Calc</button></label>
+        <label><span class="lbl">Annual Rate (%) <span class="tip" data-tip="The nominal annual interest rate, before compounding. Click Calc to solve for it from the other three values.">?</span></span><button class="calc-btn" onclick="calcField('annualRate')">Calc</button></label>
         <input type="text" id="annualRate" placeholder="6.5" oninput="onFieldInput()">
       </div>
       <div class="field" id="f-termYears">
-        <label>Term (years) <button class="calc-btn" onclick="calcField('termYears')">Calc</button></label>
+        <label><span class="lbl">Term (years) <span class="tip" data-tip="The length of the loan in years. Click Calc to solve for it from the other three values.">?</span></span><button class="calc-btn" onclick="calcField('termYears')">Calc</button></label>
         <input type="text" id="termYears" placeholder="30" oninput="onFieldInput()">
       </div>
       <div class="field" id="f-payment">
-        <label>Payment ($) <button class="calc-btn" onclick="calcField('payment')">Calc</button></label>
+        <label><span class="lbl">Payment ($) <span class="tip" data-tip="The payment amount per period. Leave blank and click Calc to solve, or enter a custom payment to model a specific budget.">?</span></span><button class="calc-btn" onclick="calcField('payment')">Calc</button></label>
         <input type="text" id="payment" placeholder="Leave blank or click Calc" oninput="onFieldInput()">
       </div>
       <div class="field">
-        <label>Payments / Year</label>
+        <label><span class="lbl">Payments / Year <span class="tip" data-tip="How often payments are made: monthly is 12, biweekly 26, weekly 52, quarterly 4.">?</span></span></label>
         <select id="ppy" onchange="onStructuralChange()">
           <option value="12" selected>Monthly (12)</option>
           <option value="26">Biweekly (26)</option>
@@ -203,7 +236,7 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
         </select>
       </div>
       <div class="field">
-        <label>Compounding / Year</label>
+        <label><span class="lbl">Compounding / Year <span class="tip" data-tip="How often interest compounds. 'Same as payments' matches the payment frequency; Canadian mortgages compound semi-annually.">?</span></span></label>
         <select id="cp" onchange="onStructuralChange()">
           <option value="same" selected>Same as payments</option>
           <option value="2">Semi-Annual (Canadian)</option>
@@ -214,13 +247,13 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
         </select>
       </div>
       <div class="field">
-        <label>Start Date</label>
+        <label><span class="lbl">Start Date <span class="tip" data-tip="The date of the first payment period. Drives the calendar-year grouping in the schedule.">?</span></span></label>
         <input type="date" id="startDate" onchange="onStructuralChange()">
       </div>
     </div>
     <div class="toggles">
-      <label class="toggle"><input type="checkbox" id="interestOnly" onchange="onStructuralChange()"> Interest Only</label>
-      <label class="toggle"><input type="checkbox" id="balloon" onchange="onBalloonToggle()"> Balloon</label>
+      <label class="toggle"><input type="checkbox" id="interestOnly" onchange="onStructuralChange()"> Interest Only <span class="tip" data-tip="Payments cover interest only; the principal balance does not amortize down over the term.">?</span></label>
+      <label class="toggle"><input type="checkbox" id="balloon" onchange="onBalloonToggle()"> Balloon <span class="tip" data-tip="The remaining balance comes due in full on the balloon date, before the loan would normally amortize to zero.">?</span></label>
       <div class="field" id="balloonField" style="display:none; margin-left: 8px;">
         <input type="date" id="balloonDate" onchange="onStructuralChange()" style="padding:6px 8px; font-size:13px;">
       </div>
@@ -263,6 +296,48 @@ header .vpill { font-size: 11px; color: var(--text-muted); background: var(--sur
     </div>
     <div id="scheduleContainer"></div>
   </div>
+</div>
+
+<!-- Guide Drawer -->
+<div class="guide-overlay" id="guideOverlay" onclick="closeGuide()"></div>
+<div class="guide-drawer" id="guideDrawer">
+  <button class="guide-close" onclick="closeGuide()">&times;</button>
+  <h2>Creative Loan Modeler Guide</h2>
+  <p>This module models any loan and generates a full amortization schedule. Enter the loan terms, solve for whatever value you're missing, then fine-tune individual periods to model creative financing structures.</p>
+
+  <h3 id="guide-fields">Field Guide</h3>
+  <dl>
+    <dt>Principal</dt><dd>The loan amount borrowed.</dd>
+    <dt>Annual Rate</dt><dd>The nominal annual interest rate, before compounding is applied.</dd>
+    <dt>Term</dt><dd>The length of the loan in years. With monthly payments, a 30-year term is 360 periods.</dd>
+    <dt>Payment</dt><dd>The amount paid each period. Leave it blank and solve, or enter a custom payment to see how the loan behaves.</dd>
+    <dt>Payments / Year</dt><dd>Payment frequency: monthly (12), biweekly (26), weekly (52), quarterly (4), semi-annual (2), or annual (1).</dd>
+    <dt>Compounding / Year</dt><dd>How often interest compounds. "Same as payments" is typical for US loans; Canadian mortgages compound semi-annually regardless of payment frequency.</dd>
+    <dt>Start Date</dt><dd>The first payment date. The schedule groups periods into calendar years from this date.</dd>
+    <dt>Interest Only</dt><dd>Each payment covers only interest, so the balance stays flat until a balloon or refinance.</dd>
+    <dt>Balloon</dt><dd>The remaining balance is due in full on the balloon date, ending the schedule early.</dd>
+  </dl>
+
+  <h3 id="guide-glossary">Glossary</h3>
+  <dl>
+    <dt>Amortization</dt><dd>The process of paying off a loan through scheduled payments, where each payment splits between interest and principal.</dd>
+    <dt>Principal</dt><dd>The outstanding loan balance. The principal portion of each payment reduces it.</dd>
+    <dt>Periodic Rate</dt><dd>The annual rate converted to the payment period, accounting for the compounding frequency.</dd>
+    <dt>Interest Only (IO)</dt><dd>A payment structure where the balance never amortizes — payments equal the period's interest.</dd>
+    <dt>Balloon Payment</dt><dd>A large lump sum due at a set date, covering the entire remaining balance.</dd>
+    <dt>Extra Principal</dt><dd>An additional amount applied directly to the balance in a given period, shortening the loan.</dd>
+    <dt>Adjustment</dt><dd>A Fine Tuner override that changes the rate, payment, or extra principal for a range of periods.</dd>
+  </dl>
+
+  <h3 id="guide-howitworks">How It Works</h3>
+  <p>The modeler is built around a four-way solver. Principal, Annual Rate, Term, and Payment are linked — given any three, it solves for the fourth.</p>
+  <ul>
+    <li>Enter three of the four values, then click <strong>Calc</strong> on the field you want to solve. The solved field is highlighted in green.</li>
+    <li>To model a known budget, enter a custom <strong>Payment</strong> and solve for Term to see how long the loan runs.</li>
+    <li>The <strong>Fine Tuner</strong> lets you override the rate, payment, or extra principal for any range of periods — useful for step-rate notes, seller carrybacks, and creative structures where terms change partway through.</li>
+    <li>The <strong>Amortization Schedule</strong> shows every period (or a yearly roll-up), with the interest/principal split, running balance, and any balloon or interest-only periods flagged.</li>
+  </ul>
+  <p>Compounding is handled separately from payment frequency, so loans like Canadian semi-annual mortgages calculate correctly. Negative amortization (when a payment is smaller than the period's interest) is flagged in red.</p>
 </div>
 
 <div id="modalRoot"></div>
@@ -779,6 +854,17 @@ function readInputs() {
 
 function parseNum(s) { if(!s||s.trim()==='')return null; const n=parseFloat(s.replace(/[,$\s]/g,'')); return isNaN(n)?null:n; }
 function el(id) { return document.getElementById(id); }
+
+// ─── Guide Drawer ────────────────────────────────────────
+function openGuide(section) {
+  el('guideOverlay').classList.add('open');
+  el('guideDrawer').classList.add('open');
+  if (section) { const t = el(section); if (t) setTimeout(() => t.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300); }
+}
+function closeGuide() {
+  el('guideOverlay').classList.remove('open');
+  el('guideDrawer').classList.remove('open');
+}
 
 function readAdjustments() {
   const rows=document.querySelectorAll('.adj-row'), adjs=[];
