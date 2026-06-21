@@ -3,24 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Buy Rent & Hold v3.3</title>
+  <title>REIW Buy Rent & Hold v3.4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f5f6f8;--surface:#fff;--border:#d4d7de;--border-focus:#4a7adb;--text:#1d2028;--text-muted:#5f6672;--accent:#4a7adb;--accent-hover:#3a66c4;--green:#2d8a5e;--green-bg:#e8f5ee;--red:#c44040;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-.header{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+:root{--bg:#faf9f7;--surface:#fff;--border:#e4e7ec;--border-focus:#1a2744;--text:#374151;--text-muted:#6b7280;--accent:#1a2744;--accent-hover:#0f1a32;--gold:#c4973b;--green:#2d8a5e;--green-bg:#e8f5ee;--red:#c44040;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
+body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.header{background:var(--accent);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:12px}
-.logo{font-size:18px;font-weight:700}.logo span{color:var(--accent)}
-.module-tag{font-size:11px;font-weight:600;background:var(--green-bg);color:var(--green);padding:3px 8px;border-radius:10px}
-.vpill{font-size:11px;color:var(--text-muted)}
+.logo{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:900;color:#fff}
+.logo-mark{flex-shrink:0}
+.module-tag{font-size:10px;font-weight:700;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);padding:3px 8px;border-radius:4px;letter-spacing:0.05em}
+.vpill{font-size:11px;color:rgba(255,255,255,0.5)}
 .nav-links{display:flex;gap:4px}
-.nav-link{font-size:13px;color:var(--text-muted);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
-.nav-link:hover{background:var(--bg);color:var(--text)}
+.nav-link{font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
+.nav-link:hover{background:rgba(255,255,255,0.1);color:#fff}
 .main{max-width:1100px;margin:0 auto;padding:20px}
 .section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
-.section-header{padding:10px 16px;font-weight:600;font-size:13px;border-bottom:1px solid var(--border);background:#fafbfc;border-radius:var(--radius) var(--radius) 0 0}
+.section-header{padding:10px 16px;font-weight:700;font-size:12.5px;color:#1a2744;border-bottom:1px solid var(--border);background:#faf9f7;border-radius:var(--radius) var(--radius) 0 0}
 .section-body{padding:16px}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .form-group{display:flex;flex-direction:column;gap:4px}
@@ -34,8 +36,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .loan-bar input{flex:1;padding:8px 12px;font-size:15px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit}
 .loan-bar.modified input{border-color:var(--orange);background:var(--orange-bg)}
 .modified-tag{font-size:12px;font-weight:600;color:var(--orange)}
-.btn{padding:8px 18px;font-size:13px;font-weight:600;border:none;border-radius:var(--radius);cursor:pointer;font-family:inherit}
-.btn-accent{background:var(--accent);color:#fff}.btn-accent:hover{background:var(--accent-hover)}
+.btn{padding:8px 18px;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-family:inherit;background:var(--surface);color:var(--text)}
+.btn:hover{background:#f0f4f8}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
 .btn-sm{padding:6px 14px;font-size:12px}
 .status-bar{padding:8px 16px;font-size:13px;border-radius:var(--radius);margin-bottom:8px;display:none}
 .status-bar.ok{display:block;background:var(--green-bg);color:var(--green)}
@@ -44,15 +47,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .undo-link{color:var(--accent);cursor:pointer;font-size:13px}.undo-link:hover{text-decoration:underline}
 .schedule-wrap{overflow-x:auto}
 .schedule{width:100%;border-collapse:collapse;font-size:12px}
-.schedule th{background:#f0f1f4;padding:6px 8px;text-align:right;font-weight:600;white-space:nowrap;border:1px solid var(--border);position:sticky;top:0}
+.schedule th{background:#1a2744;color:#fff;padding:6px 8px;text-align:right;font-weight:600;white-space:nowrap;border:none;position:sticky;top:0;font-size:11px;letter-spacing:0.02em}
 .schedule th:first-child{text-align:center}
 .schedule td{padding:5px 8px;text-align:right;border:1px solid #e8e9ec;white-space:nowrap}
 .schedule td:first-child{text-align:center;font-weight:600;background:#fafbfc}
 .schedule tr:hover td{background:#f8f9fb}
-.negative{color:var(--red)}.pct{color:var(--accent)}.subtotal{font-weight:600;background:#f5f6f8}
+.negative{color:var(--red)}.pct{color:var(--accent)}.subtotal{font-weight:700;background:#1a2744;color:#fff}
+.subtotal .negative{color:#fca5a5}
 .tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border)}
 .tab{padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--text-muted)}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.active{color:var(--accent);border-bottom-color:var(--gold)}
 .linked-loan-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);background:#fafbfc;margin-bottom:6px}
 .linked-loan-row .loan-info{flex:1}
 .linked-loan-row .loan-name{font-weight:600;font-size:14px}
@@ -71,7 +75,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .delete-btn{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:0 4px}
 .equity-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-top:16px;display:none}
 .equity-box h4{font-size:14px;margin-bottom:8px}
-.equity-val{font-size:24px;font-weight:700;color:var(--accent)}
+.equity-val{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:var(--accent)}
 .equity-note{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5}
 /* Guide Drawer */
 .guide-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:200;display:none}
@@ -79,8 +83,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .guide-drawer{position:fixed;top:0;right:-460px;width:450px;max-width:90vw;height:100vh;background:#fff;box-shadow:-4px 0 20px rgba(0,0,0,0.15);z-index:201;transition:right 0.25s ease;overflow-y:auto;padding:24px}
 .guide-drawer.open{right:0}
 .guide-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted)}
-.guide-drawer h2{font-size:18px;margin-bottom:16px;padding-right:30px}
-.guide-drawer h3{font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--accent)}
+.guide-drawer h2{font-family:'Playfair Display',Georgia,serif;font-size:18px;font-weight:700;margin-bottom:16px;padding-right:30px;color:var(--accent)}
+.guide-drawer h3{font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--accent);border-bottom:2px solid var(--gold);padding-bottom:4px;display:inline-block}
 .guide-drawer p,.guide-drawer li{font-size:13px;line-height:1.6;color:var(--text-muted)}
 .guide-drawer ul{padding-left:18px;margin-bottom:12px}
 .guide-drawer dt{font-weight:600;font-size:13px;margin-top:8px}
@@ -91,7 +95,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.3</span></div>
+<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.4</span></div>
   <div class="nav-links"><a href="#" class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="main">
@@ -191,7 +195,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">brh v3.3</div>
+<div class="version">brh v3.4</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -407,19 +411,19 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
   const tblBase={margin:{left:LM,right:RM},headStyles:{fillColor:NAVY,textColor:255,font:'PJS',fontStyle:'bold',fontSize:7,cellPadding:{top:1.7,right:1.7,bottom:1.7,left:1.7}},alternateRowStyles:{fillColor:ODDROW},styles:{font:'PJS',fontStyle:'normal',textColor:DTXT,lineColor:ROWBD,lineWidth:0.15,cellPadding:{top:1.3,right:1.5,bottom:1.3,left:1.5}}};
 
   // === PAGE 1 ===
-  drawBar();let y=14;
+  drawBar();let y=16;
   // Entity contact line (compact single line)
   if(ent){
     doc.setFont('PJS','normal');doc.setFontSize(8);doc.setTextColor(...MUTED);
     const parts=[ent.name,ent.address,ent.city,[ent.phone,ent.cell,ent.email].filter(Boolean).join(' | ')].filter(Boolean).join('  \u00B7  ');
-    doc.text(parts,LM,y);y+=5;doc.setTextColor(...DTXT);
+    doc.text(parts,LM,y);y+=7;doc.setTextColor(...DTXT);
   }
   // Property name (Playfair Display)
-  doc.setFont('PD','normal');doc.setFontSize(18);doc.setTextColor(...NAVY);doc.text(name,LM,y);y+=3;
+  doc.setFont('PD','normal');doc.setFontSize(18);doc.setTextColor(...NAVY);doc.text(name,LM,y);y+=5;
   // Gold rule
-  doc.setFillColor(...GOLD);doc.rect(LM,y,12,0.6,'F');y+=3;
+  doc.setFillColor(...GOLD);doc.rect(LM,y,12,0.6,'F');y+=5;
   // Analysis date
-  doc.setFont('PJS','normal');doc.setFontSize(8);doc.setTextColor(...MUTED);doc.text('Analysis Date: '+aDate,LM,y);y+=2;
+  doc.setFont('PJS','normal');doc.setFontSize(8);doc.setTextColor(...MUTED);doc.text('Analysis Date: '+aDate,LM,y);y+=3;
   // Property border
   doc.setDrawColor(...PROPBD);doc.setLineWidth(0.2);doc.line(LM,y,PW-RM,y);
   doc.setTextColor(...DTXT);y+=5;
@@ -438,10 +442,10 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
   drawFooter(1);
 
   // === PAGE 2 ===
-  doc.addPage();drawBar();y=14;
+  doc.addPage();drawBar();y=16;
   // Property title (smaller, no contact line)
-  doc.setFont('PD','normal');doc.setFontSize(16);doc.setTextColor(...NAVY);doc.text(name,LM,y);y+=3;
-  doc.setFillColor(...GOLD);doc.rect(LM,y,12,0.6,'F');y+=2;
+  doc.setFont('PD','normal');doc.setFontSize(16);doc.setTextColor(...NAVY);doc.text(name,LM,y);y+=5;
+  doc.setFillColor(...GOLD);doc.rect(LM,y,12,0.6,'F');y+=3;
   doc.setDrawColor(...PROPBD);doc.setLineWidth(0.2);doc.line(LM,y,PW-RM,y);
   doc.setTextColor(...DTXT);y+=5;
 
