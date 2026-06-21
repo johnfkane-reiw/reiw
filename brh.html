@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Buy Rent & Hold v2.1</title>
+  <title>REIW Buy Rent & Hold v2.3</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
@@ -69,7 +69,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v2.1</span></div><div><a href="/dashboard" class="nav-link">Dashboard</a></div></div>
+<div class="header"><div class="header-left"><div class="logo">REIW<span>.</span></div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v2.3</span></div><div><a href="/dashboard" class="nav-link">Dashboard</a></div></div>
 <div class="main">
   <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Analysis name"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
   <div id="statusBar" class="status-bar"></div><div id="undoArea"></div>
@@ -107,7 +107,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
     <div id="linkedLoansArea"><p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p></div>
     <div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-sm" onclick="showLoanPicker()">Attach Loan</button><a href="/cfw" class="btn btn-sm" style="text-decoration:none;display:inline-block">Create New Loan</a></div>
   </div></div>
-  <div style="margin-bottom:16px;display:flex;gap:10px"><button class="btn btn-accent" onclick="calculate()">Calculate</button><button class="btn" id="btnPdf" onclick="createPDF()" style="display:none">Create PDF</button></div>
+  <div style="margin-bottom:16px;display:flex;gap:10px"><button class="btn" id="btnPdf" onclick="createPDF()" style="display:none">Create PDF</button></div>
   <div id="outputArea" style="display:none">
     <div class="tab-bar"><div class="tab active" onclick="showTab('cfa',this)">Cash Flow</div><div class="tab" onclick="showTab('tia',this)">Tax Impact</div><div class="tab" onclick="showTab('dep',this)">Depreciation</div></div>
     <div id="tab-cfa" class="section" style="border-top:none;border-radius:0 0 var(--radius) var(--radius)"><div class="section-body"><div class="schedule-wrap"><table class="schedule" id="cfaTable"></table></div></div></div>
@@ -116,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
   </div>
 </div>
 <div id="modalRoot"></div>
-<div class="version">brh v2.1</div>
+<div class="version">brh v2.3</div>
 <script>
 const API='https://reiw-worker.reiw.app',MODULE_TYPE='brh';
 let currentAnalysis={id:null,name:'',data:{}},savedSnapshot=null,lastLoadedId=null,cachedAnalyses=[],linkedLoans=[],results=null,yearlyDebt=[];
@@ -130,7 +130,7 @@ function showStatus(t,m){el('statusBar').className='status-bar '+t;el('statusBar
 function clearStatus(){el('statusBar').className='status-bar'}
 function closeModal(){el('modalRoot').innerHTML=''}
 function markDirty(){if(!savedSnapshot)return;if(JSON.stringify(readInputs())!==savedSnapshot){el('loanBar').classList.add('modified');el('modifiedTag').style.display=''}else{el('loanBar').classList.remove('modified');el('modifiedTag').style.display='none'}}
-function autoRecalc(){if(el('outputArea').style.display!=='none')calculate()}
+function autoRecalc(){calculate()}
 function onAnalysisDateChange(){if(linkedLoans.length>0){const hasConflict=linkedLoans.some(l=>l.base.startDate&&l.base.startDate>el('analysisDate').value);if(hasConflict&&!confirm('Changing the analysis date may affect how linked loan schedules align. The loan start date will not change, but the offset into the schedule will shift. Continue?')){return}}markDirty();autoRecalc()}
 
 // Loan engine
@@ -167,6 +167,10 @@ function calculate(){
   const initCash=inp.cocMethod==='totalCash'?inp.downPayment+inp.closingCosts+inp.firstYearCI:inp.downPayment;
   const startYear=inp.analysisDate?new Date(inp.analysisDate+'T00:00:00').getFullYear():new Date().getFullYear();
   computeYearlyDebt(inp.analysisDate);
+  // Precompute CI amounts per year for depreciation
+  const ciAmounts=[];
+  for(let y=1;y<=10;y++){if(y===1)ciAmounts.push(inp.ongoingCI+inp.firstYearCI);else if(y===2)ciAmounts.push(inp.ongoingCI*(1+inp.ciIncrease));else ciAmounts.push(ciAmounts[y-2]*(1+inp.ciIncrease))}
+
   const cfa=[],tia=[],dep=[];let cumCfat=0,cumDep=0,cumTS=0;
   for(let yr=1;yr<=10;yr++){
     const c={},t={},d={},debt=yearlyDebt[yr-1]||{principal:0,interest:0};
@@ -179,18 +183,22 @@ function calculate(){
     c.capRate=pp>0?c.noi/pp:0;c.cfbt=c.noi+c.principal+c.interest+c.capitalImprovements;
     c.coc=initCash>0?c.cfbt/initCash:'Infinite';
     t.noi=c.noi;t.interestExpense=c.interest;t.realPropertyDep=depYears>0?-inp.amountDepreciable/depYears:0;
-    t.ciDep=yr===1?(depYears>0?c.capitalImprovements/depYears:0):tia[yr-2].ciDep*(1+inp.ciIncrease);
+    // Each year's CI depreciates straight-line from when purchased
+    t.ciDep=depYears>0?-ciAmounts.slice(0,yr).reduce((s,ci)=>s+ci/depYears,0):0;
     t.taxableIncome=t.noi+t.interestExpense+t.realPropertyDep+t.ciDep;t.marginalRate=inp.marginalRate;
     t.taxSavings=inp.marginalRate*-t.taxableIncome;
     c.taxSavings=t.taxSavings;c.cfat=c.cfbt+c.taxSavings;cumCfat+=c.cfat;c.cumCfat=cumCfat;
     d.purchasePrice=pp;d.amountDepreciable=inp.amountDepreciable;d.landValue=pp-inp.amountDepreciable;
-    d.realPropertyDep=t.realPropertyDep;d.capitalImprovements=-c.capitalImprovements;d.ciDep=t.ciDep;
+    d.realPropertyDep=t.realPropertyDep;d.capitalImprovements=ciAmounts[yr-1];d.ciDep=t.ciDep;
     d.totalDep=d.realPropertyDep+d.ciDep;d.taxSavings=-d.totalDep*inp.marginalRate;
     cumDep+=d.totalDep;d.cumDep=cumDep;cumTS+=d.taxSavings;d.cumTaxSavings=cumTS;
     cfa.push(c);tia.push(t);dep.push(d);
   }
   results={cfa,tia,dep};renderCFA(cfa);renderTIA(tia);renderDep(dep);
-  el('outputArea').style.display='';el('btnPdf').style.display='';showStatus('ok','10-year analysis complete');
+  const hasContent=cfa.some(c=>c.rentalIncome||c.otherIncome||c.expenses||c.principal||c.interest||c.capitalImprovements);
+  el('outputArea').style.display=hasContent?'':'none';
+  el('btnPdf').style.display=hasContent?'':'none';
+  if(hasContent)showStatus('ok','10-year analysis complete');else clearStatus();
 }
 
 function vc(n,cls){if(n==null)return'<td>—</td>';const neg=n<0;const s=neg?'('+fmtD(n)+')':fmtD(n);return'<td class="'+(cls||'')+'">'+(neg?'<span class="negative">'+s+'</span>':s)+'</td>'}
@@ -201,9 +209,9 @@ function showTab(name,tabEl){['cfa','tia','dep'].forEach(t=>el('tab-'+t).style.d
 
 // Linked loans UI
 function renderLinkedLoans(){const a=el('linkedLoansArea');if(!linkedLoans.length){a.innerHTML='<p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p>';return}a.innerHTML=linkedLoans.map((l,i)=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');return'<div class="linked-loan-row"><div class="loan-info"><div class="loan-name">'+l.name+'</div><div class="loan-meta">'+m+'</div></div><button class="remove-loan" onclick="removeLoan('+i+')" title="Remove">×</button></div>'}).join('')}
-function removeLoan(i){linkedLoans.splice(i,1);renderLinkedLoans();markDirty()}
+function removeLoan(i){linkedLoans.splice(i,1);renderLinkedLoans();markDirty();autoRecalc()}
 async function showLoanPicker(){let loans=[];try{const r=await fetch(API+'/api/loans',{credentials:'include'});if(r.ok){const d=await r.json();loans=d.loans}}catch{}const ex=new Set(linkedLoans.map(l=>l.id));const av=loans.filter(l=>!ex.has(l.id));let body;if(!av.length)body='<div style="color:var(--text-muted);padding:20px;text-align:center">No available loans. <a href="/cfw">Create one.</a></div>';else body='<div class="load-list">'+av.map(l=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');return'<div class="load-row" onclick="attachLoan(\''+l.id+'\')"><div><div class="loan-name">'+l.name+'</div><div class="loan-meta">'+m+'</div></div></div>'}).join('')+'</div>';el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Attach a Loan</h3>'+body+'<div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button></div></div></div>'}
-async function attachLoan(id){closeModal();try{const r=await fetch(API+'/api/loans/'+id,{credentials:'include'});if(!r.ok)return;const loan=await r.json();const ad=el('analysisDate').value;if(loan.base.startDate&&ad&&loan.base.startDate>ad){if(!confirm('This loan starts after your analysis date. Attaching it will change the analysis date to '+loan.base.startDate+'. Continue?'))return;el('analysisDate').value=loan.base.startDate}linkedLoans.push(loan);renderLinkedLoans();markDirty()}catch(e){console.error('Attach failed:',e)}}
+async function attachLoan(id){closeModal();try{const r=await fetch(API+'/api/loans/'+id,{credentials:'include'});if(!r.ok)return;const loan=await r.json();const ad=el('analysisDate').value;if(loan.base.startDate&&ad&&loan.base.startDate>ad){if(!confirm('This loan starts after your analysis date. Attaching it will change the analysis date to '+loan.base.startDate+'. Continue?'))return;el('analysisDate').value=loan.base.startDate}linkedLoans.push(loan);renderLinkedLoans();markDirty();autoRecalc()}catch(e){console.error('Attach failed:',e)}}
 
 // Save/Load (matches CFW pattern)
 async function refreshAnalyses(){try{const r=await fetch(API+'/api/analyses?type='+MODULE_TYPE,{credentials:'include'});if(r.ok){const d=await r.json();cachedAnalyses=d.analyses||[]}}catch{}}
@@ -218,7 +226,24 @@ function undoLoad(id){doLoad(id)}
 async function doDeleteFromModal(id,e){e.stopPropagation();try{await fetch(API+'/api/analyses/'+id,{method:'DELETE',credentials:'include'});await refreshAnalyses()}catch{}if(currentAnalysis.id===id){currentAnalysis={id:null,name:'',data:{}};savedSnapshot=null}const list=el('loadList');if(list)list.innerHTML=cachedAnalyses.length?buildLoadRows(cachedAnalyses):'<div style="color:var(--text-muted);padding:20px;text-align:center">No saved analyses.</div>'}
 
 // PDF
-function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'letter'});const name=el('analysisName').value||'Buy Rent & Hold Analysis';const aDate=el('analysisDate').value||'';doc.setFontSize(16);doc.text(name,14,14);doc.setFontSize(10);doc.setTextColor(100);doc.text('Analysis Date: '+aDate+'  |  REIW Buy Rent & Hold',14,20);doc.setTextColor(0);doc.setFontSize(12);doc.text('Cash Flow Analysis',14,28);doc.autoTable({startY:30,margin:{left:8,right:8},styles:{fontSize:7,cellPadding:1.5},headStyles:{fillColor:[74,122,219]},head:[['Year','Rental','Other','Gross','Vacancy','GOI','Exp.','NOI','Cap Rate','Prin.','Int.','CI','CFBT','CoC','Tax','CFAT','Cum']],body:results.cfa.map(c=>[c.calendarYear,fmtD(c.rentalIncome),fmtD(c.otherIncome),fmtD(c.grossIncome),fmtD(c.vacancyAllowance),fmtD(c.grossOperatingIncome),fmtD(c.expenses),fmtD(c.noi),fmtPct(c.capRate),fmtD(c.principal),fmtD(c.interest),fmtD(c.capitalImprovements),fmtD(c.cfbt),fmtPct(c.coc),fmtD(c.taxSavings),fmtD(c.cfat),fmtD(c.cumCfat)]).concat([[(function(){const s=k=>results.cfa.reduce((a,c)=>a+(c[k]||0),0);const last=results.cfa[results.cfa.length-1];return['Total',fmtD(s('rentalIncome')),fmtD(s('otherIncome')),fmtD(s('grossIncome')),fmtD(s('vacancyAllowance')),fmtD(s('grossOperatingIncome')),fmtD(s('expenses')),fmtD(s('noi')),'',fmtD(s('principal')),fmtD(s('interest')),fmtD(s('capitalImprovements')),fmtD(s('cfbt')),'',fmtD(s('taxSavings')),fmtD(s('cfat')),fmtD(last.cumCfat)]})()]])});doc.addPage();doc.setFontSize(12);doc.text('Tax Impact Analysis',14,14);doc.autoTable({startY:18,margin:{left:14,right:14},styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[74,122,219]},head:[['Year','NOI','Interest','Real Dep.','CI Dep.','Taxable','Rate','Tax Sav.']],body:results.tia.map((t,i)=>[results.cfa[i].calendarYear,fmtD(t.noi),fmtD(t.interestExpense),fmtD(t.realPropertyDep),fmtD(t.ciDep),fmtD(t.taxableIncome),fmtPct(t.marginalRate),fmtD(t.taxSavings)]).concat([[(function(){const s=k=>results.tia.reduce((a,t)=>a+(t[k]||0),0);return['Total',fmtD(s('noi')),fmtD(s('interestExpense')),fmtD(s('realPropertyDep')),fmtD(s('ciDep')),fmtD(s('taxableIncome')),'',fmtD(s('taxSavings'))]})()]])});doc.addPage();doc.setFontSize(12);doc.text('Depreciation Schedule',14,14);doc.autoTable({startY:18,margin:{left:14,right:14},styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[74,122,219]},head:[['Year','Purchase','Depr.','Land','Real Dep.','CI','CI Dep.','Total','Tax Sav.','Cum Dep.','Cum Tax']],body:results.dep.map((d,i)=>[results.cfa[i].calendarYear,fmtD(d.purchasePrice),fmtD(d.amountDepreciable),fmtD(d.landValue),fmtD(d.realPropertyDep),fmtD(d.capitalImprovements),fmtD(d.ciDep),fmtD(d.totalDep),fmtD(d.taxSavings),fmtD(d.cumDep),fmtD(d.cumTaxSavings)]).concat([[(function(){const s=k=>results.dep.reduce((a,d)=>a+(d[k]||0),0);const last=results.dep[results.dep.length-1];return['Total','','','',fmtD(s('realPropertyDep')),fmtD(s('capitalImprovements')),fmtD(s('ciDep')),fmtD(s('totalDep')),fmtD(s('taxSavings')),fmtD(last.cumDep),fmtD(last.cumTaxSavings)]})()]])});const b64=doc.output('datauristring').split(',')[1];const fn=name.replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'_')+'.pdf';const form=document.createElement('form');form.method='POST';form.action=API+'/pdf/'+encodeURIComponent(fn);form.target='_blank';const inp=document.createElement('input');inp.type='hidden';inp.name='pdf';inp.value=b64;form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form)}
+function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'letter'});const name=el('analysisName').value||'Buy Rent & Hold Analysis';const aDate=el('analysisDate').value||'';
+  function pf(n){if(n==null)return'\u2014';const v=Math.round(Math.abs(n)).toLocaleString('en-US');return n<-0.5?'($'+v+')':'$'+v}
+  const sc=k=>results.cfa.reduce((a,c)=>a+(c[k]||0),0);const st=k=>results.tia.reduce((a,t)=>a+(t[k]||0),0);const sd=k=>results.dep.reduce((a,d)=>a+(d[k]||0),0);
+  const lastC=results.cfa[results.cfa.length-1],lastD=results.dep[results.dep.length-1];
+  doc.setFontSize(14);doc.text(name,14,14);doc.setFontSize(9);doc.setTextColor(100);doc.text('Analysis Date: '+aDate+'  |  REIW Buy Rent & Hold',14,20);doc.setTextColor(0);
+  doc.setFontSize(11);doc.text('Cash Flow Analysis',14,28);
+  const cfaBody=results.cfa.map(c=>[c.calendarYear,pf(c.rentalIncome),pf(c.otherIncome),pf(c.grossIncome),pf(c.vacancyAllowance),pf(c.grossOperatingIncome),pf(c.expenses),pf(c.noi),fmtPct(c.capRate),pf(c.principal),pf(c.interest),pf(c.capitalImprovements),pf(c.cfbt),fmtPct(c.coc),pf(c.taxSavings),pf(c.cfat),pf(c.cumCfat)]);
+  cfaBody.push(['Total',pf(sc('rentalIncome')),pf(sc('otherIncome')),pf(sc('grossIncome')),pf(sc('vacancyAllowance')),pf(sc('grossOperatingIncome')),pf(sc('expenses')),pf(sc('noi')),'',pf(sc('principal')),pf(sc('interest')),pf(sc('capitalImprovements')),pf(sc('cfbt')),'',pf(sc('taxSavings')),pf(sc('cfat')),pf(lastC.cumCfat)]);
+  doc.autoTable({startY:30,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Yr','Rental','Other','Gross','Vacancy','GOI','Exp','NOI','Cap%','Prin','Int','CI','CFBT','CoC','Tax','CFAT','Cum']],body:cfaBody});
+  doc.addPage();doc.setFontSize(11);doc.text('Tax Impact Analysis',14,14);
+  const tiaBody=results.tia.map((t,i)=>[results.cfa[i].calendarYear,pf(t.noi),pf(t.interestExpense),pf(t.realPropertyDep),pf(t.ciDep),pf(t.taxableIncome),fmtPct(t.marginalRate),pf(t.taxSavings)]);
+  tiaBody.push(['Total',pf(st('noi')),pf(st('interestExpense')),pf(st('realPropertyDep')),pf(st('ciDep')),pf(st('taxableIncome')),'',pf(st('taxSavings'))]);
+  doc.autoTable({startY:18,margin:{left:14,right:14},styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[74,122,219]},head:[['Year','NOI','Interest','Real Dep.','CI Dep.','Taxable','Rate','Tax Sav.']],body:tiaBody});
+  doc.addPage();doc.setFontSize(11);doc.text('Depreciation Schedule',14,14);
+  const depBody=results.dep.map((d,i)=>[results.cfa[i].calendarYear,pf(d.purchasePrice),pf(d.amountDepreciable),pf(d.landValue),pf(d.realPropertyDep),pf(d.capitalImprovements),pf(d.ciDep),pf(d.totalDep),pf(d.taxSavings),pf(d.cumDep),pf(d.cumTaxSavings)]);
+  depBody.push(['Total','','','',pf(sd('realPropertyDep')),pf(sd('capitalImprovements')),pf(sd('ciDep')),pf(sd('totalDep')),pf(sd('taxSavings')),pf(lastD.cumDep),pf(lastD.cumTaxSavings)]);
+  doc.autoTable({startY:18,margin:{left:14,right:14},styles:{fontSize:8,cellPadding:2},headStyles:{fillColor:[74,122,219]},head:[['Year','Purchase','Depr.','Land','Real Dep.','CI','CI Dep.','Total','Tax Sav.','Cum Dep.','Cum Tax']],body:depBody});
+  const b64=doc.output('datauristring').split(',')[1];const fn=name.replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'_')+'.pdf';const form=document.createElement('form');form.method='POST';form.action=API+'/pdf/'+encodeURIComponent(fn);form.target='_blank';const inp=document.createElement('input');inp.type='hidden';inp.name='pdf';inp.value=b64;form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form)}
 
 // Init
 el('analysisDate').value=new Date().toISOString().split('T')[0];el('depYears').value='27.5';refreshAnalyses();
