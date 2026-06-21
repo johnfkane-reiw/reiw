@@ -343,47 +343,56 @@ async function doLoad(id){closeModal();const a=cachedAnalyses.find(x=>x.id===id)
 function undoLoad(id){doLoad(id)}
 async function doDeleteFromModal(id,e){e.stopPropagation();try{await fetch(API+'/api/analyses/'+id,{method:'DELETE',credentials:'include'});await refreshAnalyses()}catch{}if(currentAnalysis.id===id){currentAnalysis={id:null,name:'',data:{}};savedSnapshot=null}const list=el('loadList');if(list)list.innerHTML=cachedAnalyses.length?buildLoadRows(cachedAnalyses):'<div style="color:var(--text-muted);padding:20px;text-align:center">No saved analyses.</div>'}
 
-// PDF — 2-page landscape layout
-function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'letter'});const name=el('analysisName').value||'Buy Rent & Hold Analysis';const aDate=el('analysisDate').value||'';
-  // Entity header
+// PDF — 2-page designed layout
+function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'letter'});
+  const PW=279.4,PH=215.9,LM=10,RM=10,TW=PW-LM-RM;
+  const BLUE=[74,122,219],DARK=[29,32,40],MUTED=[120,125,135],LTROW=[247,248,251],TOTROW=[230,233,240];
+  const name=el('analysisName').value||'Buy Rent & Hold Analysis';const aDate=el('analysisDate').value||'';
   const entId=el('entitySelect').value;const ent=userEntities.find(e=>e.id===entId);
-  let headerY=14;
-  if(ent){doc.setFontSize(10);doc.text(ent.name,14,headerY);headerY+=4;if(ent.address){doc.setFontSize(8);doc.setTextColor(100);doc.text(ent.address,14,headerY);headerY+=3.5}if(ent.city){doc.text(ent.city,14,headerY);headerY+=3.5}const contact=[ent.phone,ent.cell,ent.email].filter(Boolean).join(' | ');if(contact){doc.text(contact,14,headerY);headerY+=3.5}doc.setTextColor(0);headerY+=2}
-  doc.setFontSize(14);doc.text(name,14,headerY);headerY+=5;
-  doc.setFontSize(9);doc.setTextColor(100);doc.text('Analysis Date: '+aDate+'  |  REIW Buy Rent & Hold',14,headerY);doc.setTextColor(0);headerY+=6;
   function pf(n){if(n==null)return'\u2014';const v=Math.round(Math.abs(n)).toLocaleString('en-US');return n<-0.5?'($'+v+')':'$'+v}
   const sc=k=>results.cfa.reduce((a,c)=>a+(c[k]||0),0);const st=k=>results.tia.reduce((a,t)=>a+(t[k]||0),0);const sd=k=>results.dep.reduce((a,d)=>a+(d[k]||0),0);
   const lastC=results.cfa[results.cfa.length-1],lastD=results.dep[results.dep.length-1];
-  // PAGE 1: Cash Flow Analysis + Tax Impact Analysis
-  doc.setFontSize(10);doc.setFont(undefined,'bold');doc.text('Cash Flow Analysis',6,headerY);doc.setFont(undefined,'normal');
+  function drawBar(){doc.setFillColor(...BLUE);doc.rect(0,0,PW,8,'F');doc.setFontSize(9);doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.text('REIW',LM,5.5);doc.setFont(undefined,'normal');if(ent)doc.text(ent.name,PW-RM,5.5,{align:'right'});doc.setTextColor(...DARK)}
+  function drawFooter(pg){doc.setDrawColor(200,202,208);doc.setLineWidth(0.2);doc.line(LM,207,PW-RM,207);doc.setFontSize(7.5);doc.setTextColor(...MUTED);doc.text('REIW Buy Rent & Hold',LM,211);if(aDate)doc.text('Analysis Date: '+aDate,PW/2,211,{align:'center'});doc.text('Page '+pg+' of 2',PW-RM,211,{align:'right'});doc.setTextColor(...DARK)}
+  function sectionHead(label,y){doc.setFontSize(10);doc.setFont(undefined,'bold');doc.setTextColor(...DARK);doc.text(label,LM,y);doc.setFont(undefined,'normal');doc.setDrawColor(...BLUE);doc.setLineWidth(0.6);doc.line(LM,y+1.5,LM+doc.getTextWidth(label),y+1.5);return y+5}
+  function totHook(len){return function(d){if(d.section==='body'&&d.row.index===len-1){d.cell.styles.fontStyle='bold';d.cell.styles.fillColor=TOTROW}}}
+  const tblBase={margin:{left:LM,right:RM},headStyles:{fillColor:BLUE,textColor:255,fontStyle:'bold'},alternateRowStyles:{fillColor:LTROW},styles:{textColor:DARK,lineColor:[225,227,232],lineWidth:0.15}};
+  // === PAGE 1 ===
+  drawBar();let y=14;
+  if(ent){doc.setFontSize(10);doc.setFont(undefined,'bold');doc.text(ent.name,LM,y);doc.setFont(undefined,'normal');y+=4;doc.setFontSize(8);doc.setTextColor(...MUTED);if(ent.address){doc.text(ent.address,LM,y);y+=3.5}if(ent.city){doc.text(ent.city,LM,y);y+=3.5}const contact=[ent.phone,ent.cell,ent.email].filter(Boolean).join('  \u2502  ');if(contact){doc.text(contact,LM,y);y+=3.5}doc.setTextColor(...DARK);y+=1}
+  doc.setFillColor(...BLUE);doc.rect(LM,y-3.5,1.5,7,'F');doc.setFontSize(16);doc.setFont(undefined,'bold');doc.text(name,LM+4,y);doc.setFont(undefined,'normal');y+=5;doc.setFontSize(9);doc.setTextColor(...MUTED);doc.text('Analysis Date: '+aDate,LM+4,y);doc.setTextColor(...DARK);y+=7;
+  // CFA
+  y=sectionHead('Cash Flow Analysis',y);
   const cfaBody=results.cfa.map(c=>[c.calendarYear,pf(c.rentalIncome),pf(c.otherIncome),pf(c.grossIncome),pf(c.vacancyAllowance),pf(c.grossOperatingIncome),pf(c.expenses),pf(c.noi),fmtPct(c.capRate),pf(c.principal),pf(c.interest),pf(c.capitalImprovements),pf(c.cfbt),fmtPct(c.coc),pf(c.taxSavings),pf(c.cfat),pf(c.cumCfat)]);
   cfaBody.push(['Total',pf(sc('rentalIncome')),pf(sc('otherIncome')),pf(sc('grossIncome')),pf(sc('vacancyAllowance')),pf(sc('grossOperatingIncome')),pf(sc('expenses')),pf(sc('noi')),'',pf(sc('principal')),pf(sc('interest')),pf(sc('capitalImprovements')),pf(sc('cfbt')),'',pf(sc('taxSavings')),pf(sc('cfat')),pf(lastC.cumCfat)]);
-  doc.autoTable({startY:headerY+2,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Yr','Rental','Other','Gross','Vacancy','GOI','Exp','NOI','Cap%','Prin','Int','CI','CFBT','CoC','Tax','CFAT','Cum']],body:cfaBody});
-  let tiaY=doc.lastAutoTable.finalY+6;
-  doc.setFontSize(10);doc.setFont(undefined,'bold');doc.text('Tax Impact Analysis',6,tiaY);doc.setFont(undefined,'normal');
+  doc.autoTable(Object.assign({},tblBase,{startY:y,styles:Object.assign({},tblBase.styles,{fontSize:6.5,cellPadding:1.3}),headStyles:Object.assign({},tblBase.headStyles,{fontSize:6.5}),head:[['Yr','Rental','Other','Gross','Vacancy','GOI','Exp','NOI','Cap%','Prin','Int','CI','CFBT','CoC','Tax','CFAT','Cum']],body:cfaBody,didParseCell:totHook(cfaBody.length)}));
+  // TIA
+  y=doc.lastAutoTable.finalY+6;y=sectionHead('Tax Impact Analysis',y);
   const tiaBody=results.tia.map((t,i)=>[results.cfa[i].calendarYear,pf(t.noi),pf(t.interestExpense),pf(t.realPropertyDep),pf(t.ciDep),pf(t.taxableIncome),fmtPct(t.marginalRate),pf(t.taxSavings)]);
   tiaBody.push(['Total',pf(st('noi')),pf(st('interestExpense')),pf(st('realPropertyDep')),pf(st('ciDep')),pf(st('taxableIncome')),'',pf(st('taxSavings'))]);
-  doc.autoTable({startY:tiaY+2,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Year','NOI','Interest','Real Dep.','CI Dep.','Taxable','Rate','Tax Sav.']],body:tiaBody});
-  // PAGE 2: Depreciation Schedule + Glossary / How It Works columns
-  doc.addPage();
-  doc.setFontSize(10);doc.setFont(undefined,'bold');doc.text('Depreciation Schedule',6,12);doc.setFont(undefined,'normal');
+  doc.autoTable(Object.assign({},tblBase,{startY:y,styles:Object.assign({},tblBase.styles,{fontSize:7,cellPadding:1.6}),headStyles:Object.assign({},tblBase.headStyles,{fontSize:7}),head:[['Year','NOI','Interest','Real Dep.','CI Dep.','Taxable','Rate','Tax Sav.']],body:tiaBody,didParseCell:totHook(tiaBody.length)}));
+  drawFooter(1);
+  // === PAGE 2 ===
+  doc.addPage();drawBar();y=14;
+  doc.setFillColor(...BLUE);doc.rect(LM,y-3.5,1.5,5.5,'F');doc.setFontSize(13);doc.setFont(undefined,'bold');doc.text(name,LM+4,y);doc.setFont(undefined,'normal');y+=7;
+  y=sectionHead('Depreciation Schedule',y);
   const depBody=results.dep.map((d,i)=>[results.cfa[i].calendarYear,pf(d.purchasePrice),pf(d.amountDepreciable),pf(d.landValue),pf(d.realPropertyDep),pf(d.capitalImprovements),pf(d.ciDep),pf(d.totalDep),pf(d.taxSavings),pf(d.cumDep),pf(d.cumTaxSavings)]);
   depBody.push(['Total','','','',pf(sd('realPropertyDep')),pf(sd('capitalImprovements')),pf(sd('ciDep')),pf(sd('totalDep')),pf(sd('taxSavings')),pf(lastD.cumDep),pf(lastD.cumTaxSavings)]);
-  doc.autoTable({startY:14,margin:{left:6,right:6},styles:{fontSize:6,cellPadding:1.2},headStyles:{fillColor:[74,122,219],fontSize:6},head:[['Year','Purchase','Depr.','Land','Real Dep.','CI','CI Dep.','Total','Tax Sav.','Cum Dep.','Cum Tax']],body:depBody});
-  // Two-column reference section below depreciation table
-  const refY=doc.lastAutoTable.finalY+6;const pw=279.4,colW=128,colGap=5,lm=6;
-  doc.setDrawColor(180);doc.setLineWidth(0.3);
-  doc.rect(lm,refY,colW,195-refY);doc.rect(lm+colW+colGap,refY,colW,195-refY);
-  // Left column: Glossary
-  doc.setFontSize(9);doc.setFont(undefined,'bold');doc.text('Glossary',lm+3,refY+5);doc.setFont(undefined,'normal');doc.setFontSize(7);
+  doc.autoTable(Object.assign({},tblBase,{startY:y,styles:Object.assign({},tblBase.styles,{fontSize:7,cellPadding:1.6}),headStyles:Object.assign({},tblBase.headStyles,{fontSize:7}),head:[['Year','Purchase','Depr.','Land','Real Dep.','CI','CI Dep.','Total','Tax Sav.','Cum Dep.','Cum Tax']],body:depBody,didParseCell:totHook(depBody.length)}));
+  // Two-column reference section
+  const refY=doc.lastAutoTable.finalY+8;const colW=Math.floor((TW-6)/2);const rx=LM+colW+6;const boxH=200-refY;
+  // Glossary column — header bar + bordered body
+  doc.setFillColor(...BLUE);doc.rect(LM,refY,colW,7,'F');doc.setFontSize(8.5);doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.text('Glossary',LM+4,refY+5);doc.setFont(undefined,'normal');doc.setTextColor(...DARK);
+  doc.setDrawColor(210,212,218);doc.setLineWidth(0.25);doc.rect(LM,refY+7,colW,boxH-7);
   const glossary=[['GOI','Gross Operating Income \u2014 Gross income minus vacancy allowance.'],['NOI','Net Operating Income \u2014 GOI minus operating expenses.'],['Cap Rate','Capitalization Rate \u2014 NOI divided by purchase price.'],['CFBT','Cash Flow Before Taxes \u2014 NOI minus debt service minus capital improvements.'],['CoC','Cash-on-Cash Return \u2014 CFBT divided by initial cash investment.'],['CFAT','Cash Flow After Taxes \u2014 CFBT plus or minus tax impact.'],['CI','Capital Improvements \u2014 Major property upgrades, depreciable over time.'],['Cum','Cumulative \u2014 Running total across all years.'],['Real Dep','Real Property Depreciation \u2014 Annual depreciation on the building.'],['CI Dep','Capital Improvements Depreciation \u2014 Cumulative depreciation on CI.']];
-  let gy=refY+10;
-  glossary.forEach(([term,def])=>{doc.setFont(undefined,'bold');doc.text(term,lm+3,gy);doc.setFont(undefined,'normal');const lines=doc.splitTextToSize(def,colW-24);doc.text(lines,lm+24,gy);gy+=lines.length*3.2+2});
-  // Right column: How It Works
-  const rx=lm+colW+colGap;
-  doc.setFontSize(9);doc.setFont(undefined,'bold');doc.text('How This Analysis Works',rx+3,refY+5);doc.setFont(undefined,'normal');doc.setFontSize(7);
+  doc.setFontSize(7.5);let gy=refY+14;
+  glossary.forEach(([term,def])=>{doc.setFont(undefined,'bold');doc.text(term,LM+4,gy);doc.setFont(undefined,'normal');const lines=doc.splitTextToSize(def,colW-30);doc.text(lines,LM+28,gy);gy+=lines.length*3.5+2.5});
+  // How It Works column — header bar + bordered body
+  doc.setFillColor(...BLUE);doc.rect(rx,refY,colW,7,'F');doc.setFontSize(8.5);doc.setTextColor(255,255,255);doc.setFont(undefined,'bold');doc.text('How This Analysis Works',rx+4,refY+5);doc.setFont(undefined,'normal');doc.setTextColor(...DARK);
+  doc.setDrawColor(210,212,218);doc.setLineWidth(0.25);doc.rect(rx,refY+7,colW,boxH-7);
   const howText=['The Buy Rent & Hold analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:','','Cash Flow Analysis starts with rental and other income, subtracts vacancy and operating expenses to arrive at Net Operating Income (NOI). From NOI, debt service and capital improvements are subtracted to produce Cash Flow Before Taxes. Tax savings or costs from the Tax Impact schedule are then applied for Cash Flow After Taxes.','','Tax Impact Analysis takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.','','Depreciation Schedule tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base. Depreciation creates tax-deductible paper losses.','','Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Year 1 uses both regular and first-year vacancy; years 2\u201310 use regular vacancy only. Debt service comes from linked loans aligned to the analysis date.'];
-  let hy=refY+10;howText.forEach(line=>{if(!line){hy+=2;return}const lines=doc.splitTextToSize(line,colW-6);doc.text(lines,rx+3,hy);hy+=lines.length*3.2+1.5});
+  doc.setFontSize(7.5);let hy=refY+14;howText.forEach(line=>{if(!line){hy+=2.5;return}const lines=doc.splitTextToSize(line,colW-8);doc.text(lines,rx+4,hy);hy+=lines.length*3.5+2});
+  drawFooter(2);
   const b64=doc.output('datauristring').split(',')[1];const fn=name.replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'_')+'.pdf';const form=document.createElement('form');form.method='POST';form.action=API+'/pdf/'+encodeURIComponent(fn);form.target='_blank';const inp=document.createElement('input');inp.type='hidden';inp.name='pdf';inp.value=b64;form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form)}
 
 // Init
