@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Buy Rent & Hold v3.5</title>
+  <title>REIW Buy Rent & Hold v3.6</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -59,6 +59,11 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 .tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border)}
 .tab{padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--text-muted)}
 .tab.active{color:var(--accent);border-bottom-color:var(--gold)}
+.out-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.out-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted)}
+.help-links{display:flex;gap:16px;margin-bottom:8px}
+.help-links a{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:none}
+.help-links a:hover{text-decoration:underline}
 .linked-loan-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);background:#fafbfc;margin-bottom:6px}
 .linked-loan-row .loan-info{flex:1}
 .linked-loan-row .loan-name{font-weight:600;font-size:14px}
@@ -97,7 +102,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.5</span></div>
+<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.6</span></div>
   <div class="nav-links"><a href="#" class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="main">
@@ -138,8 +143,9 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
     <div id="linkedLoansArea"><p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p></div>
     <div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-sm" onclick="showLoanPicker()">Attach Loan</button><a href="/cfw" class="btn btn-sm" style="text-decoration:none;display:inline-block">Create New Loan</a></div>
   </div></div>
-  <div style="margin-bottom:16px;display:flex;gap:10px;align-items:center"><button class="btn" id="btnPdf" onclick="createPDF()" style="display:none">Create PDF</button><a href="#" onclick="openGuide('glossary');return false" style="font-size:12px;color:var(--accent)">Glossary</a><a href="#" onclick="openGuide('howitworks');return false" style="font-size:12px;color:var(--accent)">How is this calculated?</a></div>
   <div id="outputArea" style="display:none">
+    <div class="help-links"><a onclick="openGuide('glossary')">Glossary</a><a onclick="openGuide('howitworks')">How is this calculated?</a></div>
+    <div class="out-header"><span class="out-title">10-Year Analysis</span><button class="btn" id="btnPdf" onclick="createPDF()">Create PDF</button></div>
     <div class="tab-bar"><div class="tab active" onclick="showTab('cfa',this)">Cash Flow</div><div class="tab" onclick="showTab('tia',this)">Tax Impact</div><div class="tab" onclick="showTab('dep',this)">Depreciation</div></div>
     <div id="tab-cfa" class="section" style="border-top:none;border-radius:0 0 var(--radius) var(--radius)"><div class="section-body"><div class="schedule-wrap"><table class="schedule" id="cfaTable"></table></div></div></div>
     <div id="tab-tia" class="section" style="display:none;border-top:none"><div class="section-body"><div class="schedule-wrap"><table class="schedule" id="tiaTable"></table></div></div></div>
@@ -197,7 +203,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">brh v3.5</div>
+<div class="version">brh v3.6</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
