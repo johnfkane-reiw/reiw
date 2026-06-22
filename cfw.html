@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.17</title>
+<title>REIW Creative Loan Modeler v0.18</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -192,7 +192,7 @@ body { font-family: var(--sans); background: #eef0f5; color: var(--text); line-h
 </style>
 </head>
 <body>
-<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.17</span></div>
+<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.18</span></div>
   <div class="nav-links"><a class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="app">
@@ -1035,12 +1035,10 @@ function renderSummary(schedule) {
   for(const r of schedule){tP+=r.payment;tI+=r.interest;tPr+=r.principal;tE+=r.extraPrincipal;}
   const ppy=currentLoan.base.paymentsPerYear||12, yrs=schedule.length/ppy;
   const cards=[
-    {l:'Periods',v:schedule.length.toLocaleString(),s:yrs.toFixed(1)+' years'},
     {l:'Total Payments',v:'$'+formatNumber(round2(tP))},
     {l:'Total Interest',v:'$'+formatNumber(round2(tI)),s:((tI/tP)*100).toFixed(1)+'% of total'},
     {l:'Total Principal',v:'$'+formatNumber(round2(tPr+tE)),s:tE>0?'$'+formatNumber(round2(tE))+' extra':''},
     {l:'Original Balance',v:'$'+formatNumber(schedule[0].beginBalance)},
-    {l:'Final Balance',v:'$'+formatNumber(schedule[schedule.length-1].endBalance),s:schedule.some(r=>r.isBalloonPayoff)?'Balloon payoff':'',green:true},
   ];
   el('summaryCards').innerHTML=cards.map(c=>'<div class="scard"><div class="label">'+c.l+'</div><div class="value'+(c.green?' green':'')+'">'+c.v+'</div>'+(c.s?'<div class="sub">'+c.s+'</div>':'')+'</div>').join('');
 }
