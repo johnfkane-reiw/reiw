@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.16</title>
+<title>REIW Creative Loan Modeler v0.17</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +38,7 @@
   --shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
+body { font-family: var(--sans); background: #eef0f5; color: var(--text); line-height: 1.5; min-height: 100vh; }
 .app { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
 
 /* ─── Branded Header Bar ──────────────────────────────── */
@@ -74,9 +74,13 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 .help-links a { font-size: 13px; color: var(--blue); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .help-links a:hover { text-decoration: underline; }
 
-.section { margin-bottom: 28px; }
+.section { margin-bottom: 16px; }
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); border-bottom: 2px solid var(--gold); padding-bottom: 4px; display: inline-block; }
+.card { background: var(--surface); border: 1px solid #e6ecf5; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); overflow: hidden; }
+.card .section-header { padding: 14px 22px 12px; margin-bottom: 0; border-bottom: 1px solid #f0f3f9; }
+.card .section-body { padding: 18px 22px 22px; }
+.card .schedule-wrap { border: none; box-shadow: none; border-radius: 0; }
 
 /* ─── Loan Bar (compact) ──────────────────────────────── */
 .loan-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -116,9 +120,10 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 .status-bar.error { background: var(--red-bg); color: var(--red); }
 
 .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-.scard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow-sm); }
+.scard { background: var(--surface); border: 1px solid #e6ecf5; border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow-sm); }
 .scard .label { font-size: 11px; font-weight: 700; color: #8896aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-.scard .value { font-size: 20px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.5px; }
+.scard .value { font-size: 26px; font-weight: 700; font-family: var(--serif); letter-spacing: -0.01em; color: var(--accent); }
+.scard .value.green { color: #15803d; }
 .scard .sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
 
 .adj-row { display: grid; grid-template-columns: 80px 6px 80px 1fr 1fr 1fr 32px; gap: 8px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; font-size: 13px; box-shadow: var(--shadow-sm); margin-bottom: 4px; }
@@ -187,7 +192,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 </style>
 </head>
 <body>
-<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.16</span></div>
+<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.17</span></div>
   <div class="nav-links"><a class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="app">
@@ -205,8 +210,9 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
   </div>
 
   <!-- ─── Base Loan ────────────────────────────────────── -->
-  <div class="section">
+  <div class="section card">
     <div class="section-header"><span class="section-title">Base Loan</span></div>
+    <div class="section-body">
     <div class="input-grid">
       <div class="field" id="f-principal">
         <label><span class="lbl">Principal ($) <span class="tip" data-tip="The loan amount borrowed. Enter any three of Principal, Rate, Term, and Payment, then click Calc on the fourth to solve for it.">?</span></span><button class="calc-btn" onclick="calcField('principal')">Calc</button></label>
@@ -259,6 +265,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
       </div>
     </div>
     <div class="status-bar" id="statusBar"></div>
+    </div>
   </div>
 
   <!-- ─── Summary ──────────────────────────────────────── -->
@@ -281,6 +288,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
   <!-- ─── Schedule ─────────────────────────────────────── -->
   <div class="section" id="scheduleSection" style="display:none;">
     <div class="help-links" style="margin-bottom:8px"><a onclick="openGuide('guide-glossary')">Glossary</a><a onclick="openGuide('guide-howitworks')">How is this calculated?</a></div>
+    <div class="card">
     <div class="section-header">
       <span class="section-title">Amortization Schedule</span>
       <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
@@ -296,6 +304,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
       </div>
     </div>
     <div id="scheduleContainer"></div>
+    </div>
   </div>
 </div>
 
@@ -1031,9 +1040,9 @@ function renderSummary(schedule) {
     {l:'Total Interest',v:'$'+formatNumber(round2(tI)),s:((tI/tP)*100).toFixed(1)+'% of total'},
     {l:'Total Principal',v:'$'+formatNumber(round2(tPr+tE)),s:tE>0?'$'+formatNumber(round2(tE))+' extra':''},
     {l:'Original Balance',v:'$'+formatNumber(schedule[0].beginBalance)},
-    {l:'Final Balance',v:'$'+formatNumber(schedule[schedule.length-1].endBalance),s:schedule.some(r=>r.isBalloonPayoff)?'Balloon payoff':''},
+    {l:'Final Balance',v:'$'+formatNumber(schedule[schedule.length-1].endBalance),s:schedule.some(r=>r.isBalloonPayoff)?'Balloon payoff':'',green:true},
   ];
-  el('summaryCards').innerHTML=cards.map(c=>'<div class="scard"><div class="label">'+c.l+'</div><div class="value">'+c.v+'</div>'+(c.s?'<div class="sub">'+c.s+'</div>':'')+'</div>').join('');
+  el('summaryCards').innerHTML=cards.map(c=>'<div class="scard"><div class="label">'+c.l+'</div><div class="value'+(c.green?' green':'')+'">'+c.v+'</div>'+(c.s?'<div class="sub">'+c.s+'</div>':'')+'</div>').join('');
 }
 
 function renderSchedule(schedule) {
