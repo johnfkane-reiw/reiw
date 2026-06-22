@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.12</title>
+<title>REIW Creative Loan Modeler v0.13</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -13,7 +13,8 @@
   --surface: #ffffff;
   --surface-hover: #f0f4f8;
   --border: #e4e7ec;
-  --border-focus: #1a2744;
+  --border-focus: #2554c7;
+  --blue: #2554c7;
   --text: #374151;
   --text-muted: #6b7280;
   --text-dim: #9aa0ab;
@@ -22,7 +23,7 @@
   --gold: #c4973b;
   --green: #2d8a5e;
   --green-bg: #e8f5ee;
-  --red: #c44040;
+  --red: #dc2626;
   --red-bg: #fceaea;
   --yellow: #a07c28;
   --yellow-bg: #fdf5e0;
@@ -45,7 +46,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 .site-header .header-left { display: flex; align-items: center; gap: 12px; }
 .site-header .logo-mark { flex-shrink: 0; }
 .site-header .logo { font-family: var(--serif); font-size: 20px; font-weight: 900; color: #fff; }
-.site-header .module-tag { font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85); padding: 3px 8px; border-radius: 4px; letter-spacing: 0.05em; }
+.site-header .module-tag { font-size: 11px; font-weight: 700; background: rgba(196,151,59,0.15); color: #e2b96a; border: 1px solid rgba(196,151,59,0.3); padding: 3px 9px; border-radius: 5px; letter-spacing: 0.07em; }
 .site-header .vpill { font-size: 11px; color: rgba(255,255,255,0.5); background: none; border: none; padding: 0; }
 .site-header .nav-links { display: flex; gap: 4px; }
 .site-header .nav-link { font-size: 13px; color: rgba(255,255,255,0.7); text-decoration: none; padding: 6px 12px; border-radius: var(--radius); cursor: pointer; }
@@ -70,17 +71,17 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 .guide-drawer dt { font-weight: 600; font-size: 13px; margin-top: 8px; color: var(--text); }
 .guide-drawer dd { font-size: 13px; color: var(--text-muted); margin-left: 0; margin-bottom: 4px; }
 .help-links { display: flex; gap: 16px; margin-top: 8px; }
-.help-links a { font-size: 12px; color: var(--accent); cursor: pointer; }
+.help-links a { font-size: 13px; color: var(--blue); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .help-links a:hover { text-decoration: underline; }
 
 .section { margin-bottom: 28px; }
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-.section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); }
+.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); border-bottom: 2px solid var(--gold); padding-bottom: 4px; display: inline-block; }
 
 /* ─── Loan Bar (compact) ──────────────────────────────── */
 .loan-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 .loan-bar input { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 14px; padding: 8px 12px; border-radius: var(--radius); outline: none; flex: 1; min-width: 200px; box-shadow: var(--shadow-sm); }
-.loan-bar input:focus { border-color: var(--border-focus); }
+.loan-bar input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,84,199,0.12); }
 .loan-bar.modified input { border-color: var(--orange); background: var(--orange-bg); }
 .loan-bar.modified .mod-tag { display: inline; }
 .mod-tag { display: none; font-size: 11px; color: var(--orange); font-weight: 500; white-space: nowrap; }
@@ -94,7 +95,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 .field { position: relative; }
 .field label { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .field input, .field select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 15px; font-family: var(--mono); padding: 10px 12px; border-radius: var(--radius); outline: none; transition: border-color 0.15s; box-shadow: var(--shadow-sm); }
-.field input:focus, .field select:focus { border-color: var(--border-focus); }
+.field input:focus, .field select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,84,199,0.12); }
 .field input[data-solved="true"] { border-color: var(--green); background: var(--green-bg); }
 .field input::placeholder { color: var(--text-dim); font-family: var(--sans); font-size: 13px; }
 
@@ -186,7 +187,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 </style>
 </head>
 <body>
-<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.12</span></div>
+<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.13</span></div>
   <div class="nav-links"><a class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="app">
