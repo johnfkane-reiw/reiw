@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>REIW Creative Loan Modeler v0.13</title>
+<title>REIW Creative Loan Modeler v0.16</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -93,7 +93,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 /* ─── Input Grid ──────────────────────────────────────── */
 .input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
 .field { position: relative; }
-.field label { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.field label { display: flex; align-items: center; justify-content: space-between; font-size: 11px; font-weight: 700; color: #8896aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .field input, .field select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 15px; font-family: var(--mono); padding: 10px 12px; border-radius: var(--radius); outline: none; transition: border-color 0.15s; box-shadow: var(--shadow-sm); }
 .field input:focus, .field select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,84,199,0.12); }
 .field input[data-solved="true"] { border-color: var(--green); background: var(--green-bg); }
@@ -117,7 +117,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 
 .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
 .scard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; box-shadow: var(--shadow-sm); }
-.scard .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+.scard .label { font-size: 11px; font-weight: 700; color: #8896aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
 .scard .value { font-size: 20px; font-weight: 600; font-family: var(--mono); letter-spacing: -0.5px; }
 .scard .sub { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
 
@@ -128,7 +128,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 .adj-row input::placeholder { color: var(--text-dim); font-family: var(--sans); font-size: 11px; }
 .adj-row .remove-btn { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 16px; padding: 0; line-height: 1; }
 .adj-row .remove-btn:hover { color: var(--red); }
-.adj-labels { display: grid; grid-template-columns: 80px 6px 80px 1fr 1fr 1fr 32px; gap: 8px; padding: 0 10px 4px; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+.adj-labels { display: grid; grid-template-columns: 80px 6px 80px 1fr 1fr 1fr 32px; gap: 8px; padding: 0 10px 4px; font-size: 11px; font-weight: 700; color: #8896aa; text-transform: uppercase; letter-spacing: 0.5px; }
 
 .btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 13px; font-weight: 600; padding: 8px 18px; border-radius: var(--radius); cursor: pointer; transition: background 0.15s, border-color 0.15s; box-shadow: var(--shadow-sm); }
 .btn:hover { background: var(--surface-hover); border-color: var(--accent); }
@@ -187,7 +187,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); line
 </style>
 </head>
 <body>
-<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.13</span></div>
+<div class="site-header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">CFW</span><span class="vpill">Creative Loan Modeler v0.16</span></div>
   <div class="nav-links"><a class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="app">
@@ -1145,7 +1145,7 @@ function hideSchedule(){el('scheduleSection').style.display='none';el('summarySe
 // ─── Fine Tuner ──────────────────────────────────────────
 function addAdjustment() {
   const c=el('adjContainer'); const e=el('adjEmpty'); if(e)e.remove();
-  if(!c.querySelector('.adj-labels')){const l=document.createElement('div');l.className='adj-labels';l.innerHTML='<span>From</span><span></span><span>To</span><span>Rate %</span><span>Payment $</span><span>Extra $</span><span></span>';c.prepend(l);}
+  if(!c.querySelector('.adj-labels')){const l=document.createElement('div');l.className='adj-labels';l.innerHTML='<span>From <span class="tip" data-tip="First period this adjustment applies to.">?</span></span><span></span><span>To <span class="tip" data-tip="Last period this adjustment applies to. Defaults to the end of the loan.">?</span></span><span>Rate % <span class="tip" data-tip="Override the interest rate for this period range. Leave blank to keep the base rate.">?</span></span><span>Payment $ <span class="tip" data-tip="Override the payment for this range — model interest-only, reduced, or custom payments.">?</span></span><span>Extra $ <span class="tip" data-tip="Extra principal applied each period in this range, on top of the scheduled payment.">?</span></span><span></span>';c.prepend(l);}
   const row=document.createElement('div'); row.className='adj-row';
   row.innerHTML='<input class="adj-from" type="number" min="1" placeholder="1" onblur="tryRegenerate()"><span class="sep">→</span><input class="adj-to" type="number" min="1" placeholder="360" onblur="tryRegenerate()"><input class="adj-rate" type="text" placeholder="—" onblur="tryRegenerate()"><input class="adj-pmt" type="text" placeholder="—" onblur="tryRegenerate()"><input class="adj-extra" type="text" placeholder="—" onblur="tryRegenerate()"><button class="remove-btn" onclick="removeAdjustment(this)" title="Remove">×</button>';
   c.appendChild(row);
@@ -1362,7 +1362,7 @@ function populateUI() {
   const c = el('adjContainer'); c.innerHTML = '';
   if (currentLoan.adjustments && currentLoan.adjustments.length > 0) {
     const l = document.createElement('div'); l.className='adj-labels';
-    l.innerHTML='<span>From</span><span></span><span>To</span><span>Rate %</span><span>Payment $</span><span>Extra $</span><span></span>';
+    l.innerHTML='<span>From <span class="tip" data-tip="First period this adjustment applies to.">?</span></span><span></span><span>To <span class="tip" data-tip="Last period this adjustment applies to. Defaults to the end of the loan.">?</span></span><span>Rate % <span class="tip" data-tip="Override the interest rate for this period range. Leave blank to keep the base rate.">?</span></span><span>Payment $ <span class="tip" data-tip="Override the payment for this range — model interest-only, reduced, or custom payments.">?</span></span><span>Extra $ <span class="tip" data-tip="Extra principal applied each period in this range, on top of the scheduled payment.">?</span></span><span></span>';
     c.appendChild(l);
     for (const adj of currentLoan.adjustments) {
       const row = document.createElement('div'); row.className='adj-row';
