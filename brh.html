@@ -3,66 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Buy Rent & Hold v3.6</title>
+  <title>REIW Buy Rent & Hold v3.7</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#faf9f7;--surface:#fff;--border:#e4e7ec;--border-focus:#1a2744;--text:#374151;--text-muted:#6b7280;--accent:#1a2744;--accent-hover:#0f1a32;--gold:#c4973b;--green:#2d8a5e;--green-bg:#e8f5ee;--red:#c44040;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
+:root{--bg:#eef0f5;--surface:#fff;--border:#e4e7ec;--card-border:#e6ecf5;--input-border:#e0e8f4;--input-bg:#f8fafd;--border-focus:#2554c7;--blue:#2554c7;--text:#374151;--text-muted:#6b7280;--accent:#1a2744;--accent-hover:#0f1a32;--gold:#c4973b;--green:#2d8a5e;--green-bg:#e8f5ee;--red:#dc2626;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
 body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
-.header{background:var(--accent);padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.header{background:var(--accent);height:52px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.25)}
 .header-left{display:flex;align-items:center;gap:12px}
 .logo{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:900;color:#fff}
 .logo-mark{flex-shrink:0}
-.module-tag{font-size:10px;font-weight:700;background:rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);padding:3px 8px;border-radius:4px;letter-spacing:0.05em}
+.module-tag{font-size:11px;font-weight:700;background:rgba(196,151,59,0.15);color:#e2b96a;border:1px solid rgba(196,151,59,0.3);padding:3px 9px;border-radius:5px;letter-spacing:0.07em}
 .vpill{font-size:11px;color:rgba(255,255,255,0.5)}
 .nav-links{display:flex;gap:4px}
 .nav-link{font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
 .nav-link:hover{background:rgba(255,255,255,0.1);color:#fff}
-.main{max-width:1100px;margin:0 auto;padding:20px}
-.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
-.section-header{padding:10px 16px;font-weight:700;font-size:12.5px;color:#1a2744;border-bottom:1px solid var(--border);background:#faf9f7;border-radius:var(--radius) var(--radius) 0 0}
-.section-body{padding:16px}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.main{max-width:1020px;margin:0 auto;padding:20px}
+.section{background:var(--surface);border:1px solid var(--card-border);border-radius:12px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.section-header{padding:14px 22px 12px;border-bottom:1px solid #f0f3f9}
+.sh{font-size:11px;font-weight:700;color:#1a2744;letter-spacing:0.1em;text-transform:uppercase;border-bottom:2px solid var(--gold);padding-bottom:4px;display:inline-block}
+.section-body{padding:18px 22px 22px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .form-group{display:flex;flex-direction:column;gap:4px}
-.form-group label{font-size:12px;font-weight:500;color:var(--text-muted);display:flex;align-items:center;gap:4px}
-.form-group input,.form-group select{padding:7px 10px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit;background:#fff}
-.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--border-focus)}
-.tip{position:relative;display:inline-block;width:14px;height:14px;border-radius:50%;background:#ccc;color:#fff;font-size:9px;text-align:center;line-height:14px;cursor:help;flex-shrink:0}
+.form-group label{font-size:10px;font-weight:700;color:#8896aa;text-transform:uppercase;letter-spacing:0.08em;display:flex;align-items:center;gap:4px}
+.form-group input,.form-group select{padding:8px 11px;font-size:14px;border:1.5px solid var(--input-border);border-radius:7px;font-family:inherit;background:var(--input-bg);color:#1a2744;font-weight:500}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,84,199,0.12)}
+.tip{position:relative;display:inline-block;width:12px;height:12px;border-radius:50%;background:#eef1f6;color:#aab4c4;font-size:8px;font-weight:700;text-align:center;line-height:12px;cursor:help;flex-shrink:0}
 .tip:hover::after{content:attr(data-tip);position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:6px 10px;border-radius:4px;font-size:11px;white-space:normal;width:220px;z-index:50;font-weight:400;line-height:1.4}
 .tip:hover::before{content:'';position:absolute;bottom:110%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#333}
 .loan-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
 .loan-bar input{flex:1;padding:8px 12px;font-size:15px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit}
 .loan-bar.modified input{border-color:var(--orange);background:var(--orange-bg)}
 .modified-tag{font-size:12px;font-weight:600;color:var(--orange)}
-.btn{padding:8px 18px;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;font-family:inherit;background:var(--surface);color:var(--text)}
+.btn{padding:8px 18px;font-size:13px;font-weight:600;border:1.5px solid #dde3ec;border-radius:8px;cursor:pointer;font-family:inherit;background:var(--surface);color:var(--text)}
 .btn:hover{background:#f0f4f8}
-.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px rgba(26,39,68,0.22)}.btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
 .btn-sm{padding:6px 14px;font-size:12px}
 .status-bar{padding:8px 16px;font-size:13px;border-radius:var(--radius);margin-bottom:8px;display:none}
-.status-bar.ok{display:block;background:var(--green-bg);color:var(--green)}
+.status-bar.ok{display:block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
 .status-bar.error{display:block;background:var(--red-bg);color:var(--red)}
 #undoArea{margin-bottom:12px}
 .undo-link{color:var(--accent);cursor:pointer;font-size:13px}.undo-link:hover{text-decoration:underline}
 .schedule-wrap{overflow-x:auto}
 .schedule{width:100%;border-collapse:collapse;font-size:12px}
-.schedule th{background:#1a2744;color:#fff;padding:6px 8px;text-align:right;font-weight:600;white-space:nowrap;border:none;position:sticky;top:0;font-size:11px;letter-spacing:0.02em}
+.schedule th{background:#1a2744;color:#fff;padding:8px 8px;text-align:right;font-weight:700;white-space:nowrap;border:none;position:sticky;top:0;font-size:9.5px;letter-spacing:0.05em;text-transform:uppercase}
 .schedule th:first-child{text-align:center}
 .schedule td{padding:5px 8px;text-align:right;border:1px solid #e8e9ec;white-space:nowrap}
 .schedule td:first-child{text-align:center;font-weight:600;background:#fafbfc}
-.schedule tr:hover td{background:#f8f9fb}
+.schedule tbody tr:nth-child(even) td{background:#f8fafd}
+.schedule tr:hover td{background:#f1f5fb}
 .negative{color:var(--red)}.pct{color:var(--accent)}.subtotal{font-weight:700}
 tr.subtotal td{background:#1a2744!important;color:#fff!important;border-color:#1a2744}
 tr.subtotal .negative{color:#fca5a5!important}
 tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 .tab-bar{display:flex;gap:0;border-bottom:2px solid var(--border)}
-.tab{padding:8px 16px;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--text-muted)}
+.tab{padding:13px 22px 11px 0;font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;color:#7a8899}
 .tab.active{color:var(--accent);border-bottom-color:var(--gold)}
 .out-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.out-title{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted)}
+.out-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#1a2744;border-bottom:2px solid var(--gold);padding-bottom:4px;display:inline-block}
 .help-links{display:flex;gap:16px;margin-bottom:8px}
-.help-links a{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:none}
+.help-links a{font-size:13px;color:var(--blue);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .help-links a:hover{text-decoration:underline}
 .linked-loan-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);background:#fafbfc;margin-bottom:6px}
 .linked-loan-row .loan-info{flex:1}
@@ -80,9 +82,9 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 .load-row .loan-name{font-weight:600;font-size:14px}
 .load-row .loan-meta{font-size:12px;color:var(--text-muted)}
 .delete-btn{background:none;border:none;color:var(--red);font-size:18px;cursor:pointer;padding:0 4px}
-.equity-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-top:16px;display:none}
-.equity-box h4{font-size:14px;margin-bottom:8px}
-.equity-val{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:var(--accent)}
+.equity-box{background:var(--surface);border:1px solid var(--card-border);border-radius:12px;padding:22px 26px;margin-top:16px;display:none;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.equity-box h4{font-size:11px;font-weight:700;color:#1a2744;letter-spacing:0.1em;text-transform:uppercase;border-bottom:2px solid var(--gold);padding-bottom:4px;display:inline-block;margin-bottom:12px}
+.equity-val{font-family:'Playfair Display',Georgia,serif;font-size:44px;font-weight:900;color:#15803d;letter-spacing:-0.02em;line-height:1}
 .equity-note{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.5}
 /* Guide Drawer */
 .guide-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.3);z-index:200;display:none}
@@ -102,14 +104,14 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.6</span></div>
+<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.7</span></div>
   <div class="nav-links"><a href="#" class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="main">
   <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Analysis name"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
   <div class="entity-bar"><label style="color:var(--text-muted)">Entity for PDF:</label><select id="entitySelect" onchange="markDirty()"><option value="">— None —</option></select><a href="/settings" style="font-size:12px;color:var(--accent)">Manage entities</a></div>
   <div id="statusBar" class="status-bar"></div><div id="undoArea"></div>
-  <div class="section"><div class="section-header">Property Information</div><div class="section-body"><div class="form-grid">
+  <div class="section"><div class="section-header"><span class="sh">Property Information</span></div><div class="section-body"><div class="form-grid">
     <div class="form-group"><label>Purchase Price <span class="tip" data-tip="The agreed price for the property at closing.">?</span></label><input type="text" id="purchasePrice" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Down Payment <span class="tip" data-tip="Cash paid at closing toward the purchase price, excluding closing costs.">?</span></label><input type="text" id="downPayment" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Closing Costs <span class="tip" data-tip="Fees paid at closing: title insurance, attorney, recording, etc.">?</span></label><input type="text" id="closingCosts" oninput="markDirty()" onblur="autoRecalc()"></div>
@@ -119,27 +121,27 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
     <div class="form-group"><label>Property Type <span class="tip" data-tip="Determines the default depreciation period: 27.5 years residential, 39 years commercial.">?</span></label><select id="propertyType" onchange="onPropertyTypeChange();markDirty();autoRecalc()"><option value="residential">Residential</option><option value="commercial">Commercial</option></select></div>
     <div class="form-group"><label>Depreciation Years <span class="tip" data-tip="Number of years for straight-line depreciation. Can be overridden from the default.">?</span></label><input type="text" id="depYears" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
-  <div class="section"><div class="section-header">Income</div><div class="section-body"><div class="form-grid">
+  <div class="section"><div class="section-header"><span class="sh">Income</span></div><div class="section-body"><div class="form-grid">
     <div class="form-group"><label>Monthly Rental Income <span class="tip" data-tip="Gross monthly rent collected from all units.">?</span></label><input type="text" id="rentalIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Monthly Other Income <span class="tip" data-tip="Laundry, parking, storage, pet fees, or other non-rent income per month.">?</span></label><input type="text" id="otherIncome" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Annual Rental Increase % <span class="tip" data-tip="Expected annual percentage increase in rental and other income.">?</span></label><input type="text" id="rentalIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
-  <div class="section"><div class="section-header">Operating Expenses</div><div class="section-body"><div class="form-grid" style="grid-template-columns:1fr 1fr">
+  <div class="section"><div class="section-header"><span class="sh">Operating Expenses</span></div><div class="section-body"><div class="form-grid" style="grid-template-columns:1fr 1fr">
     <div class="form-group"><label>Monthly Operating Expenses <span class="tip" data-tip="Total monthly expenses: taxes, insurance, maintenance, management, utilities, etc.">?</span></label><input type="text" id="monthlyExpenses" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Annual Expense Increase % <span class="tip" data-tip="Expected annual percentage increase in operating expenses.">?</span></label><input type="text" id="expenseIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
-  <div class="section"><div class="section-header">Financing &amp; Tax Assumptions</div><div class="section-body"><div class="form-grid">
+  <div class="section"><div class="section-header"><span class="sh">Financing &amp; Tax Assumptions</span></div><div class="section-body"><div class="form-grid">
     <div class="form-group"><label>Vacancy % <span class="tip" data-tip="Expected percentage of time the property is vacant in a typical year.">?</span></label><input type="text" id="vacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>First Year Vacancy % <span class="tip" data-tip="Additional vacancy expected in the first year (renovation, finding tenants). Added to regular vacancy for year 1 only.">?</span></label><input type="text" id="firstYearVacancy" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Marginal Tax Rate % <span class="tip" data-tip="Your highest income tax bracket. Used to calculate tax impact of rental income and depreciation deductions.">?</span></label><input type="text" id="marginalRate" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Cash-on-Cash Based On <span class="tip" data-tip="Denominator for cash-on-cash return: just the down payment, or total initial cash outlay including closing costs and first year CI.">?</span></label><select id="cocMethod" onchange="markDirty();autoRecalc()"><option value="downPayment">Down Payment Only</option><option value="totalCash">Total Initial Cash</option></select></div>
   </div></div></div>
-  <div class="section"><div class="section-header">Capital Improvements</div><div class="section-body"><div class="form-grid">
+  <div class="section"><div class="section-header"><span class="sh">Capital Improvements</span></div><div class="section-body"><div class="form-grid">
     <div class="form-group"><label>First Year CI <span class="tip" data-tip="One-time capital improvements in the first year (rehab, major repairs). Depreciable.">?</span></label><input type="text" id="firstYearCI" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Annual Ongoing CI <span class="tip" data-tip="Recurring annual capital improvements (appliance replacement, upgrades). Grows by CI Increase %.">?</span></label><input type="text" id="ongoingCI" oninput="markDirty()" onblur="autoRecalc()"></div>
     <div class="form-group"><label>Annual CI Increase % <span class="tip" data-tip="Expected annual increase in capital improvement costs.">?</span></label><input type="text" id="ciIncrease" oninput="markDirty()" onblur="autoRecalc()"></div>
   </div></div></div>
-  <div class="section"><div class="section-header">Debt Service</div><div class="section-body">
+  <div class="section"><div class="section-header"><span class="sh">Debt Service</span></div><div class="section-body">
     <div id="linkedLoansArea"><p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p></div>
     <div style="margin-top:12px;display:flex;gap:8px"><button class="btn btn-sm" onclick="showLoanPicker()">Attach Loan</button><a href="/cfw" class="btn btn-sm" style="text-decoration:none;display:inline-block">Create New Loan</a></div>
   </div></div>
@@ -203,7 +205,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">brh v3.6</div>
+<div class="version">brh v3.7</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
