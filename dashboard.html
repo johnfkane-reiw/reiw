@@ -255,33 +255,19 @@
 <div id="loading" class="loading-screen">Loading…</div>
 
 <div id="app" style="display:none;">
-  <div class="header">
-    <div class="header-left">
-      <svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.55)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg>
-      <div class="logo">REIW</div>
-      <div class="tenant-badge" id="tenant-name"></div>
-    </div>
-    <div class="header-right">
-      <span class="user-email" id="user-email"></span>
-      <span id="user-role"></span>
-      <a href="/settings" style="font-size:13px;color:rgba(255,255,255,0.75);text-decoration:none;padding:6px 12px;">Settings</a><button class="btn-logout" onclick="logout()">Sign out</button>
-    </div>
-  </div>
+  <div id="reiw-header"></div>
+  <script>window.REIW_HEADER = { label:'Dashboard', version:'v1.8', pageLabel:false };</script>
+  <script src="/header.js"></script>
 
   <div class="main">
     <div class="page-title">Studios</div>
     <div class="page-desc">Real Estate Investment Tools</div>
 
     <div class="module-grid" id="module-grid"></div>
-
-    <div id="switcher-section" class="switcher-section" style="display:none;">
-      <div class="switcher-title">Switch account</div>
-      <div class="switcher-list" id="switcher-list"></div>
-    </div>
   </div>
 </div>
 
-<div class="version">dashboard v1.7</div>
+<div class="version">dashboard v1.8</div>
 
 <script>
 const API = 'https://reiw-worker.reiw.app';
@@ -326,14 +312,6 @@ async function init() {
 }
 
 function render(data) {
-  document.getElementById('tenant-name').textContent = data.tenant.name;
-  const fn = (data.user.first_name || '').trim();
-  const ln = (data.user.last_name || '').trim();
-  const fullName = (fn + ' ' + ln).trim();
-  document.getElementById('user-email').textContent =
-    fullName ? `${fullName} (${data.user.email})` : data.user.email;
-  document.getElementById('user-role').textContent = data.user.role;
-
   const grid = document.getElementById('module-grid');
   grid.innerHTML = '';
 
@@ -363,26 +341,6 @@ function render(data) {
 
     grid.appendChild(card);
   });
-
-  // Account switcher
-  if (data.other_tenants && data.other_tenants.length > 0) {
-    document.getElementById('switcher-section').style.display = 'block';
-    const list = document.getElementById('switcher-list');
-    list.innerHTML = '';
-
-    data.other_tenants.forEach(t => {
-      const btn = document.createElement('button');
-      btn.className = 'switcher-btn';
-      const color = t.primary_color || '#1a2744';
-      const initial = (t.tenant_name || '?')[0].toUpperCase();
-      btn.innerHTML = `
-        <div class="switcher-icon" style="background:${color}">${initial}</div>
-        <span>${t.tenant_name} (${t.role})</span>
-      `;
-      btn.onclick = () => switchTenant(t.tenant_id);
-      list.appendChild(btn);
-    });
-  }
 
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
