@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Buy Rent & Hold v3.7</title>
+  <title>REIW Rental Studio v3.8</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -16,7 +16,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 .logo{font-family:'Playfair Display',Georgia,serif;font-size:20px;font-weight:900;color:#fff}
 .logo-mark{flex-shrink:0}
 .module-tag{font-size:11px;font-weight:700;background:rgba(196,151,59,0.15);color:#e2b96a;border:1px solid rgba(196,151,59,0.3);padding:3px 9px;border-radius:5px;letter-spacing:0.07em}
-.vpill{font-size:11px;color:rgba(255,255,255,0.5)}
+.vpill{font-size:11px;color:rgba(255,255,255,0.72);font-weight:500}
 .nav-links{display:flex;gap:4px}
 .nav-link{font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
 .nav-link:hover{background:rgba(255,255,255,0.1);color:#fff}
@@ -104,7 +104,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">BRH</span><span class="vpill">Buy Rent &amp; Hold v3.7</span></div>
+<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">RENTAL</span><span class="vpill">Rental Studio v3.8</span></div>
   <div class="nav-links"><a href="#" class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="main">
@@ -160,7 +160,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 <div class="guide-overlay" id="guideOverlay" onclick="closeGuide()"></div>
 <div class="guide-drawer" id="guideDrawer">
   <button class="guide-close" onclick="closeGuide()">&times;</button>
-  <h2>Buy Rent &amp; Hold Guide</h2>
+  <h2>Rental Studio Guide</h2>
   <p>This module analyzes a property's suitability as a rental investment over a 10-year holding period. It produces three schedules: Cash Flow Analysis, Tax Impact Analysis, and a Depreciation Schedule.</p>
 
   <h3 id="guide-fields">Field Guide</h3>
@@ -205,7 +205,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">brh v3.7</div>
+<div class="version">brh v3.8</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -370,7 +370,7 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
   const NAVY=[26,39,68],GOLD=[196,151,59],MUTED=[154,146,137],DTXT=[55,65,81];
   const ODDROW=[247,249,252],FTRBG=[250,249,247],ROWBD=[237,240,245],FTBD=[232,228,220],PROPBD=[240,237,232];
   const IBOXBD=[228,236,244],IBOXBG=[248,250,252];
-  const name=el('analysisName').value||'Buy Rent & Hold Analysis';const aDate=el('analysisDate').value||'';
+  const name=el('analysisName').value||'Rental Studio Analysis';const aDate=el('analysisDate').value||'';
   const entId=el('entitySelect').value;const ent=userEntities.find(e=>e.id===entId);
   // Register fonts
   doc.addFileToVFS('PJS-400.ttf',FONT_PJS400);doc.addFont('PJS-400.ttf','PJS','normal');
@@ -407,7 +407,7 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
     doc.setFillColor(...FTRBG);doc.rect(0,fy,PW,PH-fy,'F');
     drawLogo(LM,fy+2.5,5,false);
     doc.setFont('PJS','normal');doc.setFontSize(7);doc.setTextColor(...MUTED);
-    doc.text('REIW Buy Rent & Hold',LM+8,fy+5);
+    doc.text('REIW Rental Studio',LM+8,fy+5);
     if(aDate)doc.text('Analysis Date: '+aDate,PW/2,fy+5,{align:'center'});
     doc.text('Page '+pg+' of 2',PW-RM,fy+5,{align:'right'});
     doc.setTextColor(...DTXT);
@@ -479,7 +479,7 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
   doc.setFillColor(...NAVY);doc.roundedRect(rx,refY,colW,7,boxR,boxR,'F');
   doc.setFont('PJS','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);doc.text('How This Analysis Works',rx+5,refY+4.8);
   doc.setTextColor(...DTXT);
-  const howParts=[{t:'The Buy Rent & Hold analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:',b:false},{t:'Cash Flow Analysis',b:true,rest:' starts with rental and other income, subtracts vacancy and operating expenses to arrive at NOI. From NOI, debt service and capital improvements are subtracted to produce CFBT. Tax savings or costs from the Tax Impact schedule are then applied to produce Cash Flow After Taxes.'},{t:'Tax Impact Analysis',b:true,rest:' takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.'},{t:'Depreciation Schedule',b:true,rest:' tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base.'},{t:'Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Debt service comes from linked loans aligned to the analysis date.',b:false}];
+  const howParts=[{t:'The Rental Studio analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:',b:false},{t:'Cash Flow Analysis',b:true,rest:' starts with rental and other income, subtracts vacancy and operating expenses to arrive at NOI. From NOI, debt service and capital improvements are subtracted to produce CFBT. Tax savings or costs from the Tax Impact schedule are then applied to produce Cash Flow After Taxes.'},{t:'Tax Impact Analysis',b:true,rest:' takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.'},{t:'Depreciation Schedule',b:true,rest:' tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base.'},{t:'Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Debt service comes from linked loans aligned to the analysis date.',b:false}];
   let hy=refY+12;
   howParts.forEach(p=>{doc.setFont('PJS','normal');doc.setFontSize(8);doc.setTextColor(75,85,99);const fullText=p.b?(p.t+p.rest):p.t;const lines=doc.splitTextToSize(fullText,colW-10);doc.text(lines,rx+5,hy);hy+=lines.length*3.3+2.5});
   // Draw box bodies (light bg + border) sized to content
