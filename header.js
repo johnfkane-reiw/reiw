@@ -78,7 +78,7 @@
 
   // ── Page label into the content container (deferred until the host exists) ──
   function insertLabel() {
-    if (!cfg.label) return;
+    if (!cfg.label || cfg.pageLabel === false) return;
     var host = document.querySelector(cfg.content || '.main, .app, [data-reiw-content]');
     if (!host) return;
     if (host.querySelector('.reiwh-pagelabel')) return;
