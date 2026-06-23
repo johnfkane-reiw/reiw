@@ -1,4 +1,4 @@
-/* REIW shared header — header.js v1.0
+/* REIW shared header — header.js v1.1
    Usage on a gated page:
      <div id="reiw-header"></div>
      <script>window.REIW_HEADER = { label:'Rental Studio', badge:'RENTAL', version:'v3.10', guide:true };</script>
@@ -38,7 +38,10 @@
     + '.reiwh-ticon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}'
     + '.reiwh-tname{font-size:13px;color:#374151}'
     + '.reiwh-logout{color:#b23b3b}'
-    + '.reiwh-pagelabel{font-family:\'Playfair Display\',Georgia,serif;font-size:28px;font-weight:700;color:#1a2744;line-height:1.1;margin:2px 0 18px}';
+    + '.reiwh-pagelabel{font-family:\'Playfair Display\',Georgia,serif;font-size:28px;font-weight:700;color:#1a2744;line-height:1.1;margin:0}'
+    + '.reiwh-pagehead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:2px 0 18px}'
+    + '.reiwh-dashlink{font-size:13px;font-weight:600;color:#2554c7;text-decoration:none;white-space:nowrap;flex-shrink:0}'
+    + '.reiwh-dashlink:hover{text-decoration:underline}';
   var st = document.createElement('style');
   st.textContent = css;
   document.head.appendChild(st);
@@ -81,11 +84,21 @@
     if (!cfg.label || cfg.pageLabel === false) return;
     var host = document.querySelector(cfg.content || '.main, .app, [data-reiw-content]');
     if (!host) return;
-    if (host.querySelector('.reiwh-pagelabel')) return;
+    if (host.querySelector('.reiwh-pagehead')) return;
+    var row = document.createElement('div');
+    row.className = 'reiwh-pagehead';
     var h = document.createElement('h1');
     h.className = 'reiwh-pagelabel';
     h.textContent = cfg.label;
-    host.insertBefore(h, host.firstChild);
+    row.appendChild(h);
+    if (cfg.dashLink !== false) {
+      var a = document.createElement('a');
+      a.className = 'reiwh-dashlink';
+      a.href = '/dashboard.html';
+      a.textContent = '\u2190 Dashboard';
+      row.appendChild(a);
+    }
+    host.insertBefore(row, host.firstChild);
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', insertLabel);
