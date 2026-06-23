@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW — Complete your profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a2744;
+      --navy-hover: #0f1a32;
+      --gold: #c4973b;
+      --blue: #2554c7;
+      --bg: #eef0f5;
+      --card: #ffffff;
+      --text: #374151;
+      --muted: #6b7280;
+      --label: #8896aa;
+      --border: #e4e7ec;
+      --input-border: #e0e8f4;
+      --input-bg: #f8fafd;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+      width: 100%;
+      max-width: 400px;
+      padding: 40px 32px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .version {
+      position: fixed;
+      bottom: 8px;
+      right: 12px;
+      font-size: 11px;
+      color: #c9ccd1;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .screen-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .screen-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--label);
+      margin-bottom: 6px;
+    }
+
+    .field { margin-bottom: 16px; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 7px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,84,199,.12);
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--navy);
+      color: #fff;
+      margin-top: 8px;
+    }
+
+    .btn-primary:hover:not(:disabled) { background: var(--navy-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-primary.loading {
+      position: relative;
+      color: transparent;
+    }
+
+    .btn-primary.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 20px; height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2.5px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-msg {
+      display: none;
+      padding: 10px 14px;
+      background: var(--error-bg);
+      color: var(--error);
+      font-size: 13px;
+      border-radius: var(--radius);
+      margin-top: 12px;
+      line-height: 1.4;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* Hide the card until the auth/settings check decides what to show */
+    #card { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="login-card" id="card">
+  <div class="brand">
+    <svg width="34" height="22" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="#1a2744" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg>
+    <div class="logo">REIW</div>
+  </div>
+  <div class="subtitle">Real Estate Investment Workshop</div>
+
+  <div class="screen-title">One more thing</div>
+  <div class="screen-desc">Tell us your name to finish setting up your account. It appears on your dashboard and on the reports you generate.</div>
+
+  <div class="field">
+    <label for="firstName">First Name</label>
+    <input type="text" id="firstName" autocomplete="given-name" autocapitalize="words">
+  </div>
+  <div class="field">
+    <label for="lastName">Last Name</label>
+    <input type="text" id="lastName" autocomplete="family-name" autocapitalize="words">
+  </div>
+
+  <button class="btn btn-primary" id="btn-submit" onclick="submitName()">Continue</button>
+  <div id="form-error" class="error-msg"></div>
+</div>
+
+<script>
+const API = 'https://reiw-worker.reiw.app';
+let currentSettings = {};
+
+function setLoading(loading) {
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+}
+
+function showError(msg) {
+  const el = document.getElementById('form-error');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function clearError() {
+  const el = document.getElementById('form-error');
+  el.textContent = '';
+  el.classList.remove('visible');
+}
+
+// Gate: must be authed; if a name already exists, skip straight to the dashboard.
+async function init() {
+  try {
+    const r = await fetch(API + '/api/settings', { credentials: 'include' });
+    if (r.status === 401) { window.location.href = '/login.html'; return; }
+    if (r.ok) {
+      currentSettings = await r.json();
+      const hasName = (currentSettings.first_name && currentSettings.first_name.trim())
+                   && (currentSettings.last_name && currentSettings.last_name.trim());
+      if (hasName) { window.location.href = '/dashboard.html'; return; }
+      // Prefill anything partially present
+      document.getElementById('firstName').value = currentSettings.first_name || '';
+      document.getElementById('lastName').value = currentSettings.last_name || '';
+    }
+    document.getElementById('card').style.display = 'block';
+    document.getElementById('firstName').focus();
+  } catch (e) {
+    window.location.href = '/login.html';
+  }
+}
+
+async function submitName() {
+  clearError();
+  const first = document.getElementById('firstName').value.trim();
+  const last = document.getElementById('lastName').value.trim();
+  if (!first || !last) {
+    showError('Please enter both your first and last name.');
+    return;
+  }
+
+  setLoading(true);
+  try {
+    // Send the full settings object so existing defaults aren't reset.
+    const body = Object.assign({}, currentSettings, { first_name: first, last_name: last });
+    const r = await fetch(API + '/api/settings', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body),
+    });
+    if (!r.ok) {
+      showError('Could not save. Please try again.');
+      setLoading(false);
+      return;
+    }
+    window.location.href = '/dashboard.html';
+  } catch (e) {
+    showError('Could not connect. Please try again.');
+    setLoading(false);
+  }
+}
+
+document.getElementById('lastName').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') submitName();
+});
+document.getElementById('firstName').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') document.getElementById('lastName').focus();
+});
+
+init();
+</script>
+
+  <div class="version">complete-profile v1.0</div>
+</body>
+</html>
