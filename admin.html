@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Admin v0.1</title>
+  <title>REIW Admin v0.2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -134,16 +134,11 @@
 <body>
 
 <div id="page">
-  <div class="site-header">
-    <svg width="30" height="20" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg>
-    <div class="logo">REIW</div>
-    <span class="module-tag">ADMIN</span>
-    <span class="vpill">Admin v0.1</span>
-    <div class="header-right"><a class="nav-link" href="/dashboard.html">Dashboard</a></div>
-  </div>
+  <div id="reiw-header"></div>
+  <script>window.REIW_HEADER = { label:'Admin', version:'v0.2', pageLabel:true };</script>
+  <script src="/header.js"></script>
 
   <div class="main">
-    <h1 class="studio-title">Admin</h1>
     <div class="card">
       <h2>Admin — coming soon</h2>
       <p>Tenant management lives here: creating and inviting users into <span id="tenant-name">your workspace</span>, managing roles, and tenant settings.</p>
@@ -181,6 +176,6 @@ const API = 'https://reiw-worker.reiw.app';
 })();
 </script>
 
-  <div class="version">admin v0.1</div>
+  <div class="version">admin v0.2</div>
 </body>
 </html>
