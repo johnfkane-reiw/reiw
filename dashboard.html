@@ -281,7 +281,7 @@
   </div>
 </div>
 
-<div class="version">dashboard v1.6</div>
+<div class="version">dashboard v1.7</div>
 
 <script>
 const API = 'https://reiw-worker.reiw.app';
@@ -305,6 +305,19 @@ async function init() {
       return;
     }
     const data = await res.json();
+    let settings = {};
+    try {
+      const sr = await fetch(API + '/api/settings', { credentials: 'include' });
+      if (sr.ok) settings = await sr.json();
+    } catch (e) {}
+    const hasName = (settings.first_name && String(settings.first_name).trim())
+                 && (settings.last_name && String(settings.last_name).trim());
+    if (!hasName) {
+      window.location.href = '/complete-profile.html';
+      return;
+    }
+    data.user.first_name = settings.first_name;
+    data.user.last_name = settings.last_name;
     currentUser = data;
     render(data);
   } catch (err) {
@@ -314,7 +327,11 @@ async function init() {
 
 function render(data) {
   document.getElementById('tenant-name').textContent = data.tenant.name;
-  document.getElementById('user-email').textContent = data.user.email;
+  const fn = (data.user.first_name || '').trim();
+  const ln = (data.user.last_name || '').trim();
+  const fullName = (fn + ' ' + ln).trim();
+  document.getElementById('user-email').textContent =
+    fullName ? `${fullName} (${data.user.email})` : data.user.email;
   document.getElementById('user-role').textContent = data.user.role;
 
   const grid = document.getElementById('module-grid');
