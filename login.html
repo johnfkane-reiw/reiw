@@ -637,12 +637,21 @@ function renderTenantPicker() {
 
 // ─── Login Success ───
 
-function loginSuccess(data) {
+async function loginSuccess(data) {
   showScreen('success');
-  // Redirect after brief pause
+  // After auth, send the user to fill in their name if it's not set yet.
+  let dest = '/dashboard.html';
+  try {
+    const r = await fetch(API + '/api/settings', { credentials: 'include' });
+    if (r.ok) {
+      const s = await r.json();
+      const hasName = (s.first_name && s.first_name.trim()) && (s.last_name && s.last_name.trim());
+      if (!hasName) dest = '/complete-profile.html';
+    }
+  } catch (e) {}
   setTimeout(() => {
-    window.location.href = '/dashboard.html';
-  }, 1000);
+    window.location.href = dest;
+  }, 900);
 }
 
 // ─── Utilities ───
@@ -659,6 +668,6 @@ document.getElementById('email-input').addEventListener('keydown', (e) => {
 });
 </script>
 
-  <div class="version">login v1.2</div>
+  <div class="version">login v1.3</div>
 </body>
 </html>
