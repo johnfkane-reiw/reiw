@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Rental Studio v3.8</title>
+  <title>REIW Rental Studio v3.9</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -17,6 +17,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 .logo-mark{flex-shrink:0}
 .module-tag{font-size:11px;font-weight:700;background:rgba(196,151,59,0.15);color:#e2b96a;border:1px solid rgba(196,151,59,0.3);padding:3px 9px;border-radius:5px;letter-spacing:0.07em}
 .vpill{font-size:11px;color:rgba(255,255,255,0.72);font-weight:500}
+.studio-title{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:var(--accent);line-height:1.1;margin:2px 0 18px}
 .nav-links{display:flex;gap:4px}
 .nav-link{font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;padding:6px 12px;border-radius:var(--radius)}
 .nav-link:hover{background:rgba(255,255,255,0.1);color:#fff}
@@ -104,10 +105,11 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">RENTAL</span><span class="vpill">Rental Studio v3.8</span></div>
+<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.5)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span class="module-tag">RENTAL</span><span class="vpill">Rental Studio v3.9</span></div>
   <div class="nav-links"><a href="#" class="nav-link" onclick="openGuide();return false">Guide</a><a href="/dashboard" class="nav-link">Dashboard</a></div>
 </div>
 <div class="main">
+  <h1 class="studio-title">Rental Studio</h1>
   <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Analysis name"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
   <div class="entity-bar"><label style="color:var(--text-muted)">Entity for PDF:</label><select id="entitySelect" onchange="markDirty()"><option value="">— None —</option></select><a href="/settings" style="font-size:12px;color:var(--accent)">Manage entities</a></div>
   <div id="statusBar" class="status-bar"></div><div id="undoArea"></div>
@@ -205,7 +207,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">brh v3.8</div>
+<div class="version">brh v3.9</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
