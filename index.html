@@ -161,6 +161,30 @@
   <span class="copy">© 2026 Real Estate Investors Workshop</span>
 </footer>
 
-<div class="version">index v2.3</div>
+<script>
+/* When a valid session exists, flip the marketing nav: "Sign in" -> "Log Out",
+   and hide the signup CTA. Signed-out visitors see the nav unchanged. */
+(function () {
+  var API = 'https://reiw-worker.reiw.app';
+  fetch(API + '/auth/me', { credentials: 'include' }).then(function (r) {
+    if (!r.ok) return;
+    var cta = document.querySelector('.btn-primary-nav');
+    if (cta) cta.style.display = 'none';
+    var signin = document.querySelector('.nav-signin');
+    if (signin) {
+      signin.textContent = 'Log Out';
+      signin.removeAttribute('href');
+      signin.style.cursor = 'pointer';
+      signin.addEventListener('click', function (e) {
+        e.preventDefault();
+        fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' })
+          .catch(function () {})
+          .then(function () { window.location.reload(); });
+      });
+    }
+  }).catch(function () {});
+})();
+</script>
+<div class="version">index v2.4</div>
 </body>
 </html>
