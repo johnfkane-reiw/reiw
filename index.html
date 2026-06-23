@@ -58,18 +58,16 @@
     .badge{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.09em;padding:3px 9px;border-radius:4px;margin-bottom:13px}
     .card-name{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:9px}
     .card-desc{font-size:13px;color:var(--muted);line-height:1.65}
-    .b-cfw{background:#eef2ff;color:#2554c7}
-    .b-brh{background:#f0fdfa;color:#0d9488}
-    .b-bfs{background:#fffbeb;color:#d97706}
-    .b-lo{background:#f5f3ff;color:#7c3aed}
-    .b-paw{background:#eef2ff;color:#2554c7}
-    .b-fsw{background:#f0fdf4;color:#16a34a}
-    .b-ocw{background:#fff1f2;color:#be185d}
-    .b-fl{background:#fefce8;color:#c4973b}
-    .cta-card{background:linear-gradient(140deg,#1a2744 0%,#2554c7 100%);border-radius:var(--radius);padding:30px;display:flex;flex-direction:column;justify-content:space-between}
-    .cta-card .cta-title{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:10px;line-height:1.2}
+    .b-loan{background:#eef2ff;color:#2554c7}
+    .b-rental{background:#f0fdfa;color:#0d9488}
+    .b-flip{background:#fffbeb;color:#d97706}
+    .b-lease{background:#f5f3ff;color:#7c3aed}
+    .b-property{background:#fff1f2;color:#be185d}
+    .b-payday{background:#f0fdf4;color:#16a34a}
+    .cta-card{background:linear-gradient(140deg,#1a2744 0%,#2554c7 100%);border-radius:var(--radius);padding:28px 36px;grid-column:1/-1;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:24px}
+    .cta-card .cta-title{font-family:'Playfair Display',Georgia,serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.2}
     .cta-card .cta-sub{font-size:13px;color:rgba(255,255,255,.6);line-height:1.65}
-    .cta-card .cta-btn{background:var(--gold);color:var(--navy);border-radius:8px;padding:12px 22px;font-size:14px;font-weight:700;display:inline-block;margin-top:28px;text-align:center}
+    .cta-card .cta-btn{background:var(--gold);color:var(--navy);border-radius:8px;padding:12px 22px;font-size:14px;font-weight:700;display:inline-block;text-align:center;white-space:nowrap}
     .cta-card .cta-btn:hover{background:#b88a33}
 
     /* ── Footer ── */
@@ -98,6 +96,7 @@
       .modules{padding:56px 20px 64px}
       .modules-title{font-size:32px}
       .footer{padding:24px 20px;flex-direction:column;gap:14px;text-align:center}
+      .cta-card{flex-direction:column;align-items:flex-start;gap:18px;padding:26px 24px}
     }
   </style>
 </head>
@@ -121,7 +120,7 @@
 <section class="hero">
   <div class="hero-watermark" aria-hidden="true">REIW</div>
   <div class="hero-inner">
-    <div class="pill"><span class="dot"></span><span>8 analysis tools · one platform</span></div>
+    <div class="pill"><span class="dot"></span><span>6 Studios · one platform</span></div>
     <h1 class="hero-title">Analyze deals.<br>Model loans.<br><span class="blue">Make better decisions.</span></h1>
     <p class="hero-desc">REIW is a complete real estate investment analysis platform — built for investors who run the numbers before they write the check.</p>
     <div class="hero-cta">
@@ -134,22 +133,20 @@
 <section class="modules" id="toolkit">
   <div class="modules-head">
     <div class="eyebrow">The Complete Toolkit</div>
-    <h2 class="modules-title">Eight tools, one platform</h2>
+    <h2 class="modules-title">Six Studios, one platform</h2>
     <p class="modules-subtitle">Everything from loan modeling to financial statements to deal evaluation.</p>
   </div>
   <div class="grid">
-    <div class="card"><span class="badge b-cfw">CFW</span><div class="card-name">Creative Financier</div><div class="card-desc">Model any loan structure with fine-tuned adjustments and full amortization schedules.</div></div>
-    <div class="card"><span class="badge b-brh">BRH</span><div class="card-name">Buy Rent &amp; Hold</div><div class="card-desc">Analyze rental properties with 10-year cash flow projections.</div></div>
-    <div class="card"><span class="badge b-bfs">BFS</span><div class="card-name">Buy Fix &amp; Sell</div><div class="card-desc">Evaluate flips with repair costs, holding costs, and profit analysis.</div></div>
-    <div class="card"><span class="badge b-lo">LO</span><div class="card-name">Lease Option</div><div class="card-desc">Standard and sandwich lease option deal evaluator.</div></div>
-    <div class="card"><span class="badge b-paw">PAW</span><div class="card-name">Property Analysis</div><div class="card-desc">Central hub for property-level investment analysis.</div></div>
-    <div class="card"><span class="badge b-fsw">FSW</span><div class="card-name">Financial Statement</div><div class="card-desc">Build personal financial statements with schedules A through G.</div></div>
-    <div class="card"><span class="badge b-ocw">OCW</span><div class="card-name">Offers &amp; Contracts</div><div class="card-desc">Generate offers and contract documents.</div></div>
-    <div class="card"><span class="badge b-fl">FL</span><div class="card-name">Farmer Logic</div><div class="card-desc">Structured deal evaluation framework.</div></div>
+    <div class="card"><span class="badge b-loan">LOAN</span><div class="card-name">Creative Loan Studio</div><div class="card-desc">Model any loan structure with fine-tuned adjustments and full amortization schedules.</div></div>
+    <div class="card"><span class="badge b-rental">RENTAL</span><div class="card-name">Rental Studio</div><div class="card-desc">Analyze rental properties with 10-year cash flow, tax, and depreciation projections.</div></div>
+    <div class="card"><span class="badge b-flip">FLIP</span><div class="card-name">Flip Studio</div><div class="card-desc">Evaluate flips with repair costs, holding costs, and profit analysis.</div></div>
+    <div class="card"><span class="badge b-lease">LEASE</span><div class="card-name">Lease Option Studio</div><div class="card-desc">Standard and sandwich lease option deal evaluation.</div></div>
+    <div class="card"><span class="badge b-property">PROPERTY</span><div class="card-name">Property Studio</div><div class="card-desc">Full property-level analysis with line-by-line income, expenses, and valuation.</div></div>
+    <div class="card"><span class="badge b-payday">PAYDAY</span><div class="card-name">Payday Studio</div><div class="card-desc">Your financial scorecard, plus ready-to-send offers and contracts.</div></div>
     <div class="cta-card">
-      <div>
+      <div class="cta-text">
         <div class="cta-title">Ready to start analyzing?</div>
-        <div class="cta-sub">All 8 tools included with every plan.</div>
+        <div class="cta-sub">All 6 Studios included with every plan.</div>
       </div>
       <a href="/login.html" class="cta-btn">Get started free →</a>
     </div>
@@ -164,6 +161,6 @@
   <span class="copy">© 2026 Real Estate Investors Workshop</span>
 </footer>
 
-<div class="version">index v2.2</div>
+<div class="version">index v2.3</div>
 </body>
 </html>
