@@ -114,20 +114,21 @@
 
     .module-card {
       background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
+      border: 1px solid #e4ecf4;
+      border-radius: 12px;
+      padding: 24px;
       text-decoration: none;
       color: inherit;
-      transition: border-color 0.15s, box-shadow 0.15s;
+      transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
     .module-card:hover:not(.locked) {
-      border-color: var(--blue);
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+      border-color: #e4ecf4;
+      box-shadow: 0 8px 28px rgba(16,24,40,0.08);
+      transform: translateY(-2px);
     }
 
     .module-card.locked {
@@ -141,14 +142,23 @@
       justify-content: space-between;
     }
 
-    .module-abbr {
-      font-size: 13px;
+    .badge {
+      display: inline-block;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--blue);
+      letter-spacing: 0.09em;
+      padding: 3px 9px;
+      border-radius: 4px;
     }
 
-    .module-card.locked .module-abbr { color: var(--muted); }
+    .b-loan{background:#eef2ff;color:#2554c7}
+    .b-rental{background:#f0fdfa;color:#0d9488}
+    .b-flip{background:#fffbeb;color:#d97706}
+    .b-lease{background:#f5f3ff;color:#7c3aed}
+    .b-property{background:#fff1f2;color:#be185d}
+    .b-payday{background:#f0fdf4;color:#16a34a}
+
+    .module-card.locked .badge { background:#eef0f3; color: var(--muted); }
 
     .module-status {
       font-size: 11px;
@@ -163,6 +173,7 @@
     .module-name {
       font-size: 16px;
       font-weight: 600;
+      color: var(--navy);
     }
 
     .module-desc {
@@ -270,20 +281,18 @@
   </div>
 </div>
 
-<div class="version">dashboard v1.4</div>
+<div class="version">dashboard v1.5</div>
 
 <script>
 const API = 'https://reiw-worker.reiw.app';
 
 const MODULES = [
-  { abbr: 'CFW', name: 'Creative Financier', desc: 'Loan modeler with fine tuner and amortization schedules.', href: '/cfw.html', live: true, free: true },
-  { abbr: 'PAW', name: 'Property Analysis', desc: 'Central hub for property-level investment analysis.', href: null, live: false, free: false },
-  { abbr: 'BRH', name: 'Buy Rent & Hold', desc: 'Rental property analysis with 10-year projections.', href: '/brh.html', live: true, free: false },
-  { abbr: 'BFS', name: 'Buy Fix & Sell', desc: 'Flip analysis with repair costs, holding costs, and profit.', href: null, live: false, free: false },
-  { abbr: 'LO',  name: 'Lease Option', desc: 'Standard and sandwich lease option evaluator.', href: null, live: false, free: false },
-  { abbr: 'FSW', name: 'Financial Statement', desc: 'Personal financial statement builder.', href: null, live: false, free: false },
-  { abbr: 'OCW', name: 'Offers & Contracts', desc: 'Document and offer generator.', href: null, live: false, free: false },
-  { abbr: 'FL',  name: 'Farmer Logic', desc: 'Deal evaluation framework.', href: null, live: false, free: false },
+  { cls: 'b-loan',     tag: 'LOAN',     name: 'Creative Loan Studio', desc: 'Model any loan structure with fine-tuned adjustments and full amortization schedules.', href: '/cfw.html', live: true,  free: true },
+  { cls: 'b-rental',   tag: 'RENTAL',   name: 'Rental Studio',        desc: 'Analyze rental properties with 10-year cash flow, tax, and depreciation projections.', href: '/brh.html', live: true,  free: false },
+  { cls: 'b-flip',     tag: 'FLIP',     name: 'Flip Studio',          desc: 'Evaluate flips with repair costs, holding costs, and profit analysis.', href: null, live: false, free: false },
+  { cls: 'b-lease',    tag: 'LEASE',    name: 'Lease Option Studio',  desc: 'Standard and sandwich lease option deal evaluation.', href: null, live: false, free: false },
+  { cls: 'b-property', tag: 'PROPERTY', name: 'Property Studio',      desc: 'Full property-level analysis with line-by-line income, expenses, and valuation.', href: null, live: false, free: false },
+  { cls: 'b-payday',   tag: 'PAYDAY',   name: 'Payday Studio',        desc: 'Your financial scorecard, plus ready-to-send offers and contracts.', href: null, live: false, free: false },
 ];
 
 let currentUser = null;
@@ -328,7 +337,7 @@ function render(data) {
 
     card.innerHTML = `
       <div class="module-card-header">
-        <span class="module-abbr">${mod.abbr}</span>
+        <span class="badge ${mod.cls}">${mod.tag}</span>
         ${statusHTML}
       </div>
       <div class="module-name">${mod.name}</div>
