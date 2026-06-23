@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Settings v1.3</title>
+  <title>REIW Settings v1.4</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -55,9 +55,10 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
   </style>
 </head>
 <body>
-<div class="header"><div class="header-left"><svg class="logo-mark" width="28" height="18" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="rgba(255,255,255,0.55)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg><div class="logo">REIW</div><span style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.85);">Settings</span></div><div><a href="/dashboard" class="nav-link">Dashboard</a></div></div>
+<div id="reiw-header"></div>
+<script>window.REIW_HEADER = { label:'Settings', version:'v1.4', pageLabel:true };</script>
+<script src="/header.js"></script>
 <div class="main">
-  <div class="page-title">Settings</div>
   <div class="page-desc">Set defaults for new analyses and manage investor entities.</div>
 
   <!-- User -->
@@ -127,7 +128,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">settings v1.3</div>
+<div class="version">settings v1.4</div>
 
 <script>
 const API='https://reiw-worker.reiw.app';
