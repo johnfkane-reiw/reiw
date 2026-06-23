@@ -13,15 +13,18 @@
       --navy: #1a2744;
       --navy-hover: #0f1a32;
       --gold: #c4973b;
-      --blue: #1a2744;
-      --blue-hover: #0f1a32;
-      --bg: #faf9f7;
+      --blue: #2554c7;
+      --blue-hover: #1e47a8;
+      --bg: #eef0f5;
       --card: #ffffff;
       --text: #374151;
       --muted: #6b7280;
+      --label: #8896aa;
       --border: #e4e7ec;
-      --error: #c44040;
-      --error-bg: #fceaea;
+      --input-border: #e0e8f4;
+      --input-bg: #f8fafd;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
       --radius: 8px;
     }
 
@@ -101,7 +104,7 @@
       display: block;
       font-size: 13px;
       font-weight: 500;
-      color: var(--muted);
+      color: var(--label);
       margin-bottom: 6px;
     }
 
@@ -109,15 +112,17 @@
       width: 100%;
       padding: 12px 14px;
       font-size: 16px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 7px;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
       font-family: inherit;
     }
 
     input[type="email"]:focus {
       border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,84,199,.12);
     }
 
     /* ─── OTP Inputs ─── */
@@ -134,16 +139,18 @@
       text-align: center;
       font-size: 24px;
       font-weight: 600;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius);
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 7px;
       outline: none;
-      transition: border-color 0.15s;
+      transition: border-color 0.15s, box-shadow 0.15s;
       font-family: inherit;
       caret-color: var(--blue);
     }
 
     .otp-input:focus {
       border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,84,199,.12);
     }
 
     /* ─── Buttons ─── */
@@ -161,12 +168,12 @@
     }
 
     .btn-primary {
-      background: var(--blue);
+      background: var(--navy);
       color: #fff;
       margin-top: 20px;
     }
 
-    .btn-primary:hover:not(:disabled) { background: var(--blue-hover); }
+    .btn-primary:hover:not(:disabled) { background: var(--navy-hover); }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
     .btn-primary.loading {
@@ -282,7 +289,7 @@
       margin: 0 auto 16px;
     }
 
-    .success-icon svg { color: #16a34a; }
+    .success-icon svg { color: #15803d; }
 
     .success-text {
       text-align: center;
@@ -652,6 +659,6 @@ document.getElementById('email-input').addEventListener('keydown', (e) => {
 });
 </script>
 
-  <div class="version">login v1.1</div>
+  <div class="version">login v1.2</div>
 </body>
 </html>
