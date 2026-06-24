@@ -3,179 +3,243 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Admin v0.2</title>
+  <title>REIW Admin v0.3</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --navy: #1a2744;
-      --gold: #c4973b;
-      --blue: #2554c7;
-      --bg: #faf9f7;
-      --card: #ffffff;
-      --text: #374151;
-      --muted: #6b7280;
-      --border: #e4ecf4;
-      --radius: 8px;
+      --navy: #1a2744; --gold: #c4973b; --blue: #2554c7;
+      --bg: #faf9f7; --card: #ffffff; --text: #374151; --muted: #6b7280;
+      --label: #8896aa; --border: #e4ecf4; --radius: 8px;
     }
-
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100dvh;
+      background: var(--bg); color: var(--text); min-height: 100dvh;
     }
-
-    /* Page hidden until the role check passes */
     #page { display: none; }
-
-    .site-header {
-      background: var(--navy);
-      height: 52px;
-      display: flex;
-      align-items: center;
-      padding: 0 24px;
-      gap: 12px;
-    }
-
-    .site-header .logo {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 20px;
-      font-weight: 900;
-      color: #fff;
-    }
-
-    .module-tag {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #e2b96a;
-      background: rgba(196,151,59,0.15);
-      border: 1px solid rgba(196,151,59,0.4);
-      border-radius: 4px;
-      padding: 2px 8px;
-    }
-
-    .vpill { font-size: 11px; color: rgba(255,255,255,0.72); font-weight: 500; }
-
-    .header-right { margin-left: auto; }
-
-    .nav-link {
-      color: rgba(255,255,255,0.85);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .nav-link:hover { color: #fff; }
-
     .main { max-width: 1020px; margin: 0 auto; padding: 24px 20px 60px; }
 
-    .studio-title {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--navy);
-      line-height: 1.1;
-      margin: 2px 0 18px;
-    }
+    .sub { font-size: 14px; color: var(--muted); margin: -8px 0 22px; }
+    .sub strong { color: var(--text); font-weight: 600; }
 
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 40px 32px;
-      text-align: center;
+    .panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
     }
+    .panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+    }
+    .panel-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .panel-count { font-size: 13px; color: var(--muted); }
 
-    .card h2 {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 10px;
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; font-size: 11px; font-weight: 700; color: var(--label);
+      text-transform: uppercase; letter-spacing: .5px;
+      padding: 12px 20px; background: #f8fafd; border-bottom: 1px solid var(--border);
     }
+    tbody td { padding: 14px 20px; font-size: 14px; border-bottom: 1px solid #f0f3f9; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background: #fbfcfe; }
 
-    .card p {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 520px;
-      margin: 0 auto;
-    }
+    .u-name { font-weight: 600; color: var(--navy); }
+    .u-name .you { font-size: 11px; font-weight: 600; color: var(--blue); background: #eef2ff; border-radius: 999px; padding: 2px 7px; margin-left: 6px; }
+    .u-email { color: var(--muted); }
+    .u-muted { color: #9aa3b2; }
 
-    .card .planned {
-      margin-top: 22px;
-      display: inline-flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-    }
+    .badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .3px; border-radius: 999px; padding: 3px 10px; text-transform: uppercase; }
+    .badge-owner { color: #92400e; background: #fef3c7; }
+    .badge-admin { color: #3730a3; background: #e0e7ff; }
+    .badge-user  { color: #475569; background: #eef2f6; }
+    .badge-pro   { color: #15803d; background: #dcfce7; }
+    .badge-free  { color: #475569; background: #eef2f6; }
 
-    .chip {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--navy);
-      background: #eef2ff;
-      border-radius: 999px;
-      padding: 5px 12px;
+    select.role-select {
+      font-family: inherit; font-size: 13px; font-weight: 600; color: var(--navy);
+      background: #fff; border: 1.5px solid var(--input-border, #e0e8f4); border-radius: 7px;
+      padding: 6px 28px 6px 10px; cursor: pointer; outline: none;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 9px center;
     }
+    select.role-select:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,84,199,.12); }
+    select.role-select:disabled { opacity: .55; cursor: not-allowed; }
+    .row-saving { opacity: .5; pointer-events: none; }
 
-    .version {
-      position: fixed;
-      bottom: 8px;
-      right: 12px;
-      font-size: 11px;
-      color: #c9ccd1;
+    .state { padding: 44px 20px; text-align: center; color: var(--muted); font-size: 14px; }
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: var(--navy); color: #fff; font-size: 13px; font-weight: 500;
+      padding: 10px 18px; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.18);
+      opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 50;
     }
+    .toast.show { opacity: 1; }
+    .toast.err { background: #b42318; }
+
+    .version { position: fixed; bottom: 8px; right: 12px; font-size: 11px; color: #c9ccd1; }
   </style>
 </head>
 <body>
 
 <div id="page">
   <div id="reiw-header"></div>
-  <script>window.REIW_HEADER = { label:'Admin', version:'v0.2', pageLabel:true };</script>
+  <script>window.REIW_HEADER = { label:'Admin', version:'v0.3', pageLabel:true };</script>
   <script src="/header.js"></script>
 
   <div class="main">
-    <div class="card">
-      <h2>Admin — coming soon</h2>
-      <p>Tenant management lives here: creating and inviting users into <span id="tenant-name">your workspace</span>, managing roles, and tenant settings.</p>
-      <div class="planned">
-        <span class="chip">Users &amp; roles</span>
-        <span class="chip">Invitations</span>
-        <span class="chip">Tenant settings</span>
-        <span class="chip">Billing</span>
+    <div class="sub">Manage the people in <strong id="tenant-name">your workspace</strong>. Roles take effect on the member's next sign-in.</div>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Users &amp; roles</span>
+        <span class="panel-count" id="user-count"></span>
+      </div>
+      <div id="table-wrap">
+        <div class="state" id="loading">Loading users…</div>
       </div>
     </div>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+<div class="version">admin v0.3</div>
+
 <script>
 const API = 'https://reiw-worker.reiw.app';
+let ACTOR = { id: null, role: null };
 
-// Role gate: must be authed AND owner/admin in the current tenant.
+// ── Role gate: authed AND owner/admin in the current tenant ──
 (async function () {
   try {
-    const res = await fetch(API + '/auth/me', { credentials: 'include' });
+    const res = await fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' });
     if (!res.ok) { window.location.href = '/login.html'; return; }
     const data = await res.json();
     const role = data.user && data.user.role;
-    if (role !== 'owner' && role !== 'admin') {
-      window.location.href = '/dashboard.html';
+    if (role !== 'owner' && role !== 'admin') { window.location.href = '/dashboard.html'; return; }
+    if (data.tenant && data.tenant.name) document.getElementById('tenant-name').textContent = data.tenant.name;
+    document.getElementById('page').style.display = 'block';
+    loadUsers();
+  } catch (e) { window.location.href = '/login.html'; }
+})();
+
+function esc(s) { const d = document.createElement('div'); d.textContent = (s == null ? '' : String(s)); return d.innerHTML; }
+
+function fmtDate(s) {
+  if (!s) return null;
+  let iso = String(s).trim();
+  if (iso.indexOf('T') === -1) iso = iso.replace(' ', 'T');
+  if (!/[zZ]|[+-]\d\d:?\d\d$/.test(iso)) iso += 'Z';
+  const d = new Date(iso);
+  if (isNaN(d)) return String(s);
+  return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+}
+
+async function loadUsers() {
+  const wrap = document.getElementById('table-wrap');
+  try {
+    const res = await fetch(API + '/api/admin/users', { credentials: 'include', cache: 'no-store' });
+    if (!res.ok) {
+      if (res.status === 403) { window.location.href = '/dashboard.html'; return; }
+      throw new Error('load failed');
+    }
+    const data = await res.json();
+    ACTOR = data.actor || ACTOR;
+    renderUsers(data.users || []);
+  } catch (e) {
+    wrap.innerHTML = '<div class="state">Could not load users. <a href="#" onclick="loadUsers();return false;" style="color:var(--blue)">Retry</a></div>';
+  }
+}
+
+function roleBadge(role) {
+  const cls = role === 'owner' ? 'badge-owner' : role === 'admin' ? 'badge-admin' : 'badge-user';
+  return '<span class="badge ' + cls + '">' + esc(role) + '</span>';
+}
+
+// Can the current actor edit this target's role?
+function canEdit(target) {
+  if (ACTOR.role === 'owner') return true;            // owner can edit anyone
+  if (ACTOR.role === 'admin') return target.role !== 'owner'; // admin can't touch owners
+  return false;
+}
+// Which options an actor may assign.
+function roleOptions() {
+  return ACTOR.role === 'owner' ? ['user', 'admin', 'owner'] : ['user', 'admin'];
+}
+
+function roleControl(u) {
+  if (!canEdit(u)) return roleBadge(u.role);
+  const opts = roleOptions().map(function (r) {
+    return '<option value="' + r + '"' + (r === u.role ? ' selected' : '') + '>' + r + '</option>';
+  }).join('');
+  return '<select class="role-select" data-uid="' + esc(u.id) + '" data-prev="' + esc(u.role) +
+         '" onchange="onRoleChange(this)">' + opts + '</select>';
+}
+
+function renderUsers(users) {
+  document.getElementById('user-count').textContent = users.length + (users.length === 1 ? ' member' : ' members');
+  if (!users.length) { document.getElementById('table-wrap').innerHTML = '<div class="state">No users yet.</div>'; return; }
+
+  const rows = users.map(function (u) {
+    const name = (u.first_name || u.last_name) ? esc(((u.first_name || '') + ' ' + (u.last_name || '')).trim()) : '<span class="u-muted">—</span>';
+    const you = (u.id === ACTOR.id) ? '<span class="you">you</span>' : '';
+    const tierCls = u.tier === 'pro' ? 'badge-pro' : 'badge-free';
+    const last = fmtDate(u.last_login_at);
+    const joined = fmtDate(u.created_at);
+    return '<tr data-uid="' + esc(u.id) + '">' +
+      '<td><span class="u-name">' + name + you + '</span></td>' +
+      '<td class="u-email">' + esc(u.email) + '</td>' +
+      '<td>' + roleControl(u) + '</td>' +
+      '<td><span class="badge ' + tierCls + '">' + esc(u.tier || 'free') + '</span></td>' +
+      '<td>' + (last ? esc(last) : '<span class="u-muted">Never</span>') + '</td>' +
+      '<td>' + (joined ? esc(joined) : '<span class="u-muted">—</span>') + '</td>' +
+    '</tr>';
+  }).join('');
+
+  document.getElementById('table-wrap').innerHTML =
+    '<table><thead><tr>' +
+      '<th>Name</th><th>Email</th><th>Role</th><th>Tier</th><th>Last login</th><th>Joined</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+async function onRoleChange(sel) {
+  const uid = sel.dataset.uid;
+  const prev = sel.dataset.prev;
+  const newRole = sel.value;
+  if (newRole === prev) return;
+  const row = sel.closest('tr');
+  row.classList.add('row-saving');
+  try {
+    const res = await fetch(API + '/api/admin/users/role', {
+      method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'include',
+      body: JSON.stringify({ user_id: uid, role: newRole }),
+    });
+    const data = await res.json().catch(function () { return {}; });
+    if (!res.ok) {
+      sel.value = prev;                       // revert
+      toast(data.error || 'Could not update role.', true);
       return;
     }
-    if (data.tenant && data.tenant.name) {
-      document.getElementById('tenant-name').textContent = data.tenant.name;
-    }
-    document.getElementById('page').style.display = 'block';
+    sel.dataset.prev = newRole;               // commit
+    toast('Role updated.');
+    loadUsers();                              // refresh (owner counts, option sets)
   } catch (e) {
-    window.location.href = '/login.html';
+    sel.value = prev;
+    toast('Could not connect. Try again.', true);
+  } finally {
+    row.classList.remove('row-saving');
   }
-})();
+}
+
+let toastTimer = null;
+function toast(msg, isErr) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.className = 'toast' + (isErr ? ' err' : ''); }, 2600);
+}
 </script>
 
-  <div class="version">admin v0.2</div>
 </body>
 </html>
