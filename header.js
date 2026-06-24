@@ -1,4 +1,4 @@
-/* REIW shared header — header.js v1.1
+/* REIW shared header — header.js v1.2
    Usage on a gated page:
      <div id="reiw-header"></div>
      <script>window.REIW_HEADER = { label:'Rental Studio', badge:'RENTAL', version:'v3.10', guide:true };</script>
@@ -9,6 +9,9 @@
 (function () {
   var cfg = window.REIW_HEADER || {};
   var API = cfg.api || 'https://reiw-worker.reiw.app';
+  // Copyright holder for the About dialog. Single override point = window.REIW_ENTITY
+  // (also used by footer.js); falls back to the literal below.
+  var ENTITY = window.REIW_ENTITY || 'VectorSprint LLC';
   var mount = document.getElementById('reiw-header');
   if (!mount) return;
 
@@ -41,7 +44,18 @@
     + '.reiwh-pagelabel{font-family:\'Playfair Display\',Georgia,serif;font-size:28px;font-weight:700;color:#1a2744;line-height:1.1;margin:0}'
     + '.reiwh-pagehead{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:2px 0 18px}'
     + '.reiwh-dashlink{font-size:13px;font-weight:600;color:#2554c7;text-decoration:none;white-space:nowrap;flex-shrink:0}'
-    + '.reiwh-dashlink:hover{text-decoration:underline}';
+    + '.reiwh-dashlink:hover{text-decoration:underline}'
+    + '.reiwh-overlay{position:fixed;inset:0;background:rgba(16,24,40,0.55);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px}'
+    + '.reiwh-overlay[hidden]{display:none}'
+    + '.reiwh-modal{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(16,24,40,0.3);max-width:380px;width:100%;padding:28px 28px 24px;position:relative;text-align:center}'
+    + '.reiwh-modal-x{position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;line-height:1;color:#9aa3b2;cursor:pointer}'
+    + '.reiwh-modal-x:hover{color:#374151}'
+    + '.reiwh-modal-logo{font-family:\'Playfair Display\',Georgia,serif;font-size:30px;font-weight:900;color:#1a2744;margin-bottom:2px}'
+    + '.reiwh-modal-ver{font-size:12px;color:#8896aa;margin-bottom:18px}'
+    + '.reiwh-modal-links{display:flex;gap:18px;justify-content:center;margin-bottom:16px}'
+    + '.reiwh-modal-links a{font-size:13px;font-weight:600;color:#2554c7;text-decoration:none}'
+    + '.reiwh-modal-links a:hover{text-decoration:underline}'
+    + '.reiwh-modal-copy{font-size:12px;color:#9aa3b2;border-top:1px solid #eef0f5;padding-top:14px}';
   var st = document.createElement('style');
   st.textContent = css;
   document.head.appendChild(st);
@@ -73,6 +87,7 @@
             '<a class="reiwh-mi" id="reiwh-admin" href="/admin.html" hidden>Admin</a>' +
             '<div id="reiwh-switch" hidden><div class="reiwh-sep"></div><div class="reiwh-mlabel">Switch account</div></div>' +
             '<div class="reiwh-sep"></div>' +
+            '<button class="reiwh-mi" id="reiwh-about">About</button>' +
             '<button class="reiwh-mi reiwh-logout" id="reiwh-logout">Log Out</button>' +
           '</div>' +
         '</div>' +
@@ -118,6 +133,28 @@
   gearBtn.addEventListener('click', function (e) { e.stopPropagation(); menu.hidden = !menu.hidden; });
   document.addEventListener('click', function (e) { if (!menu.hidden && !menu.contains(e.target) && e.target !== gearBtn) menu.hidden = true; });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') menu.hidden = true; });
+
+  // ── About modal ──
+  var modal = document.createElement('div');
+  modal.className = 'reiwh-overlay';
+  modal.hidden = true;
+  modal.innerHTML =
+    '<div class="reiwh-modal">' +
+      '<button class="reiwh-modal-x" aria-label="Close">\u00d7</button>' +
+      '<div class="reiwh-modal-logo">REIW</div>' +
+      '<div class="reiwh-modal-ver">' + esc(vpillText) + '</div>' +
+      '<div class="reiwh-modal-links">' +
+        '<a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>' +
+        '<a href="/terms.html" target="_blank" rel="noopener">Terms &amp; Conditions</a>' +
+      '</div>' +
+      '<div class="reiwh-modal-copy">\u00a9 ' + new Date().getFullYear() + ' ' + esc(ENTITY) + '</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+  function closeAbout() { modal.hidden = true; }
+  document.getElementById('reiwh-about').addEventListener('click', function () { menu.hidden = true; modal.hidden = false; });
+  modal.querySelector('.reiwh-modal-x').addEventListener('click', closeAbout);
+  modal.addEventListener('click', function (e) { if (e.target === modal) closeAbout(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeAbout(); });
 
   document.getElementById('reiwh-logout').addEventListener('click', function () {
     fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' })
