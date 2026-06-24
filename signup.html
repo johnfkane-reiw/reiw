@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW — Create Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a2744;
+      --navy-hover: #0f1a32;
+      --gold: #c4973b;
+      --blue: #2554c7;
+      --bg: #eef0f5;
+      --card: #ffffff;
+      --text: #374151;
+      --muted: #6b7280;
+      --label: #8896aa;
+      --border: #e4e7ec;
+      --input-border: #e0e8f4;
+      --input-bg: #f8fafd;
+      --error: #dc2626;
+      --error-bg: #fef2f2;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+      width: 100%;
+      max-width: 440px;
+      padding: 40px 32px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .logo { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 900; color: var(--navy); }
+    .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+    .version { position: fixed; bottom: 8px; right: 12px; font-size: 11px; color: #c9ccd1; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .screen-title { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+    .screen-desc { font-size: 14px; color: var(--muted); margin-bottom: 22px; line-height: 1.5; }
+    .screen-desc strong { color: var(--text); font-weight: 600; }
+
+    label { display: block; font-size: 13px; font-weight: 500; color: var(--label); margin-bottom: 6px; }
+
+    input[type="text"], input[type="email"], input[type="tel"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 7px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-family: inherit;
+    }
+    input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,84,199,.12); }
+
+    .field { margin-bottom: 15px; }
+    .field-row { display: flex; gap: 12px; }
+    .field-row .field { flex: 1; }
+
+    /* ─── Consent ─── */
+    .consent { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; }
+    .consent input[type="checkbox"] { margin-top: 3px; width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--blue); cursor: pointer; }
+    .consent label { font-size: 12px; color: var(--muted); font-weight: 400; line-height: 1.55; margin: 0; cursor: pointer; }
+    .consent a { color: var(--blue); text-decoration: none; }
+    .consent a:hover { text-decoration: underline; }
+
+    /* ─── OTP ─── */
+    .otp-row { display: flex; gap: 8px; margin-bottom: 24px; }
+    .otp-input {
+      width: 100%; aspect-ratio: 1; max-width: 52px; text-align: center;
+      font-size: 24px; font-weight: 600; background: var(--input-bg);
+      border: 1.5px solid var(--input-border); border-radius: 7px; outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s; font-family: inherit; caret-color: var(--blue);
+    }
+    .otp-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,84,199,.12); }
+
+    /* ─── Buttons ─── */
+    .btn { display: block; width: 100%; padding: 12px; font-size: 15px; font-weight: 600; font-family: inherit; border: none; border-radius: var(--radius); cursor: pointer; transition: background 0.15s, opacity 0.15s; }
+    .btn-primary { background: var(--navy); color: #fff; margin-top: 22px; }
+    .btn-primary:hover:not(:disabled) { background: var(--navy-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary.loading { position: relative; color: transparent; }
+    .btn-primary.loading::after { content: ''; position: absolute; top: 50%; left: 50%; width: 20px; height: 20px; margin: -10px 0 0 -10px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .link-row { margin-top: 16px; text-align: center; }
+    .link-btn { background: none; border: none; color: var(--blue); font-size: 13px; font-family: inherit; cursor: pointer; padding: 4px; }
+    .link-btn:hover { text-decoration: underline; }
+
+    .error-msg { display: none; padding: 10px 14px; background: var(--error-bg); color: var(--error); font-size: 13px; border-radius: var(--radius); margin-top: 14px; line-height: 1.4; }
+    .error-msg.visible { display: block; }
+    .error-msg a { color: var(--error); font-weight: 600; }
+
+    /* ─── Tenant Picker ─── */
+    .tenant-list { display: flex; flex-direction: column; gap: 10px; }
+    .tenant-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: border-color 0.15s, background 0.15s; background: var(--card); }
+    .tenant-card:hover { border-color: var(--blue); background: #f8faff; }
+    .tenant-icon { width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: #fff; flex-shrink: 0; }
+    .tenant-info { flex: 1; }
+    .tenant-name { font-size: 15px; font-weight: 600; }
+    .tenant-role { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ─── Success ─── */
+    .success-icon { width: 48px; height: 48px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+    .success-icon svg { color: #15803d; }
+    .success-text { text-align: center; font-size: 15px; color: var(--muted); }
+
+    .resend-row { margin-top: 12px; text-align: center; font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="brand">
+    <svg width="34" height="22" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="#1a2744" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4" fill="#c4973b"/></svg>
+    <div class="logo">REIW</div>
+  </div>
+  <div class="subtitle">Real Estate Investment Workshop</div>
+
+  <!-- Screen 1: Signup form -->
+  <div id="screen-form" class="screen active">
+    <div class="screen-title">Create your free account</div>
+    <div class="screen-desc">It's free. We'll email you a code to confirm.</div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="first">First name</label>
+        <input type="text" id="first" autocomplete="given-name" autofocus>
+      </div>
+      <div class="field">
+        <label for="last">Last name</label>
+        <input type="text" id="last" autocomplete="family-name">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="email">Email address</label>
+      <input type="email" id="email" placeholder="you@example.com" autocomplete="email">
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" placeholder="(555) 555-5555" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="zip">ZIP code</label>
+        <input type="text" id="zip" inputmode="numeric" maxlength="5" placeholder="29681" autocomplete="postal-code">
+      </div>
+    </div>
+
+    <div class="consent">
+      <input type="checkbox" id="agree-terms">
+      <label for="agree-terms">I affirm that I have read and accept the REIW <a href="/terms.html" target="_blank" rel="noopener">Terms of Service</a> and <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</label>
+    </div>
+
+    <div class="consent">
+      <input type="checkbox" id="agree-sms">
+      <label for="agree-sms">By checking this box, I agree to receive text messages from REIW regarding investment analysis tools, product updates, and account communications. Message frequency varies. Message and data rates may apply. Reply STOP to unsubscribe. Reply HELP for help. Consent is not a condition of purchase. View our <a href="/privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="/terms.html" target="_blank" rel="noopener">Terms of Service</a>.</label>
+    </div>
+
+    <div id="form-error" class="error-msg"></div>
+    <button id="btn-create" class="btn btn-primary" onclick="submitSignup()">Create account</button>
+    <div class="link-row">
+      <a class="link-btn" href="/login.html">Already have an account? Sign in</a>
+    </div>
+  </div>
+
+  <!-- Screen 2: OTP -->
+  <div id="screen-otp" class="screen">
+    <div class="screen-title">Check your email</div>
+    <div class="screen-desc">Enter the 6-digit code sent to <strong id="otp-email-display"></strong></div>
+    <div class="otp-row" id="otp-row"></div>
+    <div id="otp-error" class="error-msg"></div>
+    <button id="btn-verify" class="btn btn-primary" onclick="verifyOTP()">Verify</button>
+    <div class="resend-row">
+      <span id="resend-timer"></span>
+      <button id="btn-resend" class="link-btn" onclick="resendOTP()" style="display:none;">Resend code</button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Tenant Picker -->
+  <div id="screen-tenants" class="screen">
+    <div class="screen-title">Choose an account</div>
+    <div class="screen-desc">Your email is associated with multiple accounts.</div>
+    <div id="tenant-list" class="tenant-list"></div>
+    <div id="tenant-error" class="error-msg"></div>
+  </div>
+
+  <!-- Screen 4: Success -->
+  <div id="screen-success" class="screen">
+    <div class="success-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <div class="screen-title" style="text-align:center;">You're in</div>
+    <div class="success-text">Redirecting…</div>
+  </div>
+</div>
+
+<script>
+const API = 'https://reiw-worker.reiw.app';
+let currentEmail = '';
+let tenantList = [];
+let resendCountdown = null;
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  clearErrors();
+  if (name === 'otp') { buildOTPInputs(); startResendTimer(); }
+}
+
+function clearErrors() {
+  document.querySelectorAll('.error-msg').forEach(e => { e.innerHTML = ''; e.classList.remove('visible'); });
+}
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.innerHTML = msg;
+  el.classList.add('visible');
+}
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.classList.toggle('loading', loading);
+}
+
+// ─── Signup submit ───
+async function submitSignup() {
+  const first = document.getElementById('first').value.trim();
+  const last = document.getElementById('last').value.trim();
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const phone = document.getElementById('phone').value.trim();
+  const zip = document.getElementById('zip').value.trim();
+  const terms = document.getElementById('agree-terms').checked;
+  const sms = document.getElementById('agree-sms').checked;
+
+  if (!first || !last || !email || !phone || !zip) {
+    showError('form-error', 'All fields are required.'); return;
+  }
+  if (!email.includes('@')) { showError('form-error', 'Enter a valid email address.'); return; }
+  if ((phone.replace(/\D/g, '')).length < 10) { showError('form-error', 'Enter a valid phone number.'); return; }
+  if (!/^\d{5}$/.test(zip)) { showError('form-error', 'Enter a valid 5-digit ZIP code.'); return; }
+  if (!terms) { showError('form-error', 'Please accept the Terms of Service and Privacy Policy to continue.'); return; }
+
+  setLoading('btn-create', true);
+  try {
+    const res = await fetch(API + '/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        first_name: first, last_name: last, email, phone, zip,
+        terms_accepted: terms, sms_consent: sms,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      if (data.error === 'account_exists') {
+        showError('form-error', 'An account with this email already exists. <a href="/login.html">Sign in instead</a>.');
+      } else {
+        showError('form-error', data.error || 'Something went wrong.');
+      }
+      return;
+    }
+    currentEmail = email;
+    document.getElementById('otp-email-display').textContent = email;
+    showScreen('otp');
+  } catch (err) {
+    showError('form-error', 'Could not connect. Try again.');
+  } finally {
+    setLoading('btn-create', false);
+  }
+}
+
+// ─── OTP inputs ───
+function buildOTPInputs() {
+  const row = document.getElementById('otp-row');
+  row.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'text'; inp.inputMode = 'numeric'; inp.maxLength = 1;
+    inp.className = 'otp-input'; inp.dataset.idx = i; inp.autocomplete = 'one-time-code';
+    inp.addEventListener('input', (e) => {
+      const val = e.target.value.replace(/\D/g, ''); e.target.value = val;
+      if (val && i < 5) row.children[i + 1].focus();
+      if (getOTPValue().length === 6) verifyOTP();
+    });
+    inp.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !e.target.value && i > 0) row.children[i - 1].focus();
+    });
+    inp.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const data = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+      for (let j = 0; j < data.length && j < 6; j++) row.children[j].value = data[j];
+      if (data.length === 6) verifyOTP();
+      else if (data.length > 0) row.children[Math.min(data.length, 5)].focus();
+    });
+    row.appendChild(inp);
+  }
+  setTimeout(() => row.children[0]?.focus(), 50);
+}
+function getOTPValue() {
+  return Array.from(document.querySelectorAll('.otp-input')).map(i => i.value).join('');
+}
+
+function startResendTimer() {
+  let seconds = 60;
+  const timerEl = document.getElementById('resend-timer');
+  const resendBtn = document.getElementById('btn-resend');
+  resendBtn.style.display = 'none';
+  if (resendCountdown) clearInterval(resendCountdown);
+  timerEl.textContent = 'Resend code in ' + seconds + 's';
+  resendCountdown = setInterval(() => {
+    seconds--;
+    if (seconds <= 0) { clearInterval(resendCountdown); timerEl.textContent = ''; resendBtn.style.display = 'inline'; }
+    else { timerEl.textContent = 'Resend code in ' + seconds + 's'; }
+  }, 1000);
+}
+async function resendOTP() {
+  setLoading('btn-verify', true);
+  try {
+    await fetch(API + '/auth/otp/send', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', body: JSON.stringify({ email: currentEmail }),
+    });
+    document.querySelectorAll('.otp-input').forEach(i => i.value = '');
+    document.querySelector('.otp-input')?.focus();
+    startResendTimer();
+  } catch (err) {
+    showError('otp-error', 'Could not resend. Try again.');
+  } finally { setLoading('btn-verify', false); }
+}
+
+async function verifyOTP() {
+  const code = getOTPValue();
+  if (code.length !== 6) { showError('otp-error', 'Enter all 6 digits.'); return; }
+  setLoading('btn-verify', true);
+  try {
+    const res = await fetch(API + '/auth/otp/verify', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', body: JSON.stringify({ email: currentEmail, code }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showError('otp-error', data.error || 'Verification failed.');
+      document.querySelectorAll('.otp-input').forEach(i => i.value = '');
+      document.querySelector('.otp-input')?.focus();
+      return;
+    }
+    if (data.action === 'pick_tenant') {
+      tenantList = data.tenants; renderTenantPicker(); showScreen('tenants'); return;
+    }
+    loginSuccess(data);
+  } catch (err) {
+    showError('otp-error', 'Could not connect. Try again.');
+  } finally { setLoading('btn-verify', false); }
+}
+
+async function pickTenant(tenantId) {
+  document.querySelectorAll('.tenant-card').forEach(c => c.style.pointerEvents = 'none');
+  try {
+    const res = await fetch(API + '/auth/switch-tenant', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      credentials: 'include', body: JSON.stringify({ tenant_id: tenantId }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showError('tenant-error', data.error || 'Could not select account.');
+      document.querySelectorAll('.tenant-card').forEach(c => c.style.pointerEvents = 'auto');
+      return;
+    }
+    loginSuccess(data);
+  } catch (err) {
+    showError('tenant-error', 'Could not connect. Try again.');
+    document.querySelectorAll('.tenant-card').forEach(c => c.style.pointerEvents = 'auto');
+  }
+}
+
+function renderTenantPicker() {
+  const list = document.getElementById('tenant-list');
+  list.innerHTML = '';
+  tenantList.forEach(t => {
+    const card = document.createElement('div');
+    card.className = 'tenant-card';
+    card.onclick = () => pickTenant(t.tenant_id);
+    const color = t.primary_color || '#1a2744';
+    const initial = (t.tenant_name || '?')[0].toUpperCase();
+    card.innerHTML = `
+      <div class="tenant-icon" style="background:${color}">${initial}</div>
+      <div class="tenant-info">
+        <div class="tenant-name">${escHTML(t.tenant_name)}</div>
+        <div class="tenant-role">${t.role}</div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+async function loginSuccess(data) {
+  showScreen('success');
+  let dest = '/dashboard.html';
+  try {
+    const r = await fetch(API + '/api/settings', { credentials: 'include' });
+    if (r.ok) {
+      const s = await r.json();
+      const hasName = (s.first_name && s.first_name.trim()) && (s.last_name && s.last_name.trim());
+      if (!hasName) dest = '/complete-profile.html';
+    }
+  } catch (e) {}
+  setTimeout(() => { window.location.href = dest; }, 900);
+}
+
+function escHTML(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+// Enter key submits the form screen
+['first','last','email','phone','zip'].forEach(id => {
+  document.getElementById(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') submitSignup(); });
+});
+</script>
+
+  <div class="version">signup v1.0</div>
+</body>
+</html>

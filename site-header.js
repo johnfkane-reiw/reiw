@@ -1,4 +1,4 @@
-/* REIW marketing header — site-header.js v1.0
+/* REIW marketing header — site-header.js v1.1
    The shared PUBLIC (pre-login) nav, rendered by this component (mirror of header.js
    for the app side). One source of truth for the marketing nav + its behavior.
    Usage (place at the very top of <body>):
@@ -47,7 +47,7 @@
         '<a href="/dashboard.html" class="reiwsh-link" data-page="dashboard">Dashboard</a>' +
         '<span class="reiwsh-div"></span>' +
         '<a href="/login.html" class="reiwsh-signin" id="reiwsh-signin">Sign in</a>' +
-        '<a href="/login.html" class="reiwsh-cta" id="reiwsh-cta">Get started free</a>' +
+        '<a href="/signup.html" class="reiwsh-cta" id="reiwsh-cta">Get started free</a>' +
       '</div>' +
     '</nav>';
 
