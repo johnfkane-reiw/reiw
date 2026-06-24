@@ -102,20 +102,9 @@
 </head>
 <body>
 
-<nav class="nav">
-  <a href="/" class="brand">
-    <svg width="34" height="22" viewBox="0 0 56 36" fill="none"><polyline points="2,34 13,8 23,21 34,2 45,15 54,5" stroke="#1a2744" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="34,2 45,15 54,5" stroke="#c4973b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="34" cy="2" r="4.5" fill="#c4973b"/></svg>
-    <span class="word">REIW</span>
-  </a>
-  <div class="nav-right">
-    <a href="/tools.html" class="nav-link">Tools</a>
-    <a href="/pricing.html" class="nav-link">Pricing</a>
-    <a href="/dashboard.html" class="nav-link">Dashboard</a>
-    <span class="nav-div"></span>
-    <a href="/login.html" class="nav-signin">Sign in</a>
-    <a href="/login.html" class="btn-primary-nav">Get started free</a>
-  </div>
-</nav>
+<div id="reiw-site-header"></div>
+<script>window.REIW_SITE_HEADER = { page: 'home' };</script>
+<script src="/site-header.js"></script>
 
 <section class="hero">
   <div class="hero-watermark" aria-hidden="true">REIW</div>
@@ -163,52 +152,6 @@
 </footer>
 <script src="/footer.js"></script>
 
-<script>
-/* Flip the marketing nav to match the real session: "Sign in" <-> "Log Out",
-   show/hide the signup CTA. Runs on first load AND on pageshow (fires on
-   back/forward-cache restores), and sets the nav BOTH ways, so returning to
-   home via back/history/logo always reflects the current session. */
-(function () {
-  var API = 'https://reiw-worker.reiw.app';
-  var signin = document.querySelector('.nav-signin');
-  var cta = document.querySelector('.btn-primary-nav');
-
-  if (signin) {
-    signin.addEventListener('click', function (e) {
-      if (signin.dataset.mode !== 'out') return; // logged out: let the /login.html link work normally
-      e.preventDefault();
-      fetch(API + '/auth/logout', { method: 'POST', credentials: 'include' })
-        .catch(function () {})
-        .then(function () { window.location.reload(); });
-    });
-  }
-
-  function applyAuthNav() {
-    fetch(API + '/auth/me', { credentials: 'include', cache: 'no-store' })
-      .then(function (r) {
-        var loggedIn = r.ok;
-        if (signin) {
-          if (loggedIn) {
-            signin.textContent = 'Log Out';
-            signin.removeAttribute('href');
-            signin.style.cursor = 'pointer';
-            signin.dataset.mode = 'out';
-          } else {
-            signin.textContent = 'Sign in';
-            signin.setAttribute('href', '/login.html');
-            signin.style.cursor = '';
-            signin.dataset.mode = 'in';
-          }
-        }
-        if (cta) cta.style.display = loggedIn ? 'none' : '';
-      })
-      .catch(function () {});
-  }
-
-  applyAuthNav();
-  window.addEventListener('pageshow', applyAuthNav);
-})();
-</script>
-<div class="version">index v2.6</div>
+<div class="version">index v2.7</div>
 </body>
 </html>
