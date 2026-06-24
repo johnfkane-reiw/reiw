@@ -1,4 +1,4 @@
-/* REIW shared header — header.js v1.2
+/* REIW shared header — header.js v1.3
    Usage on a gated page:
      <div id="reiw-header"></div>
      <script>window.REIW_HEADER = { label:'Rental Studio', badge:'RENTAL', version:'v3.10', guide:true };</script>
@@ -9,8 +9,8 @@
 (function () {
   var cfg = window.REIW_HEADER || {};
   var API = cfg.api || 'https://reiw-worker.reiw.app';
-  // Copyright holder for the About dialog. Single override point = window.REIW_ENTITY
-  // (also used by footer.js); falls back to the literal below.
+  // Copyright holder for the About dialog (also shown in the marketing footer via footer.js).
+  // Falls back to the literal below; window.REIW_ENTITY can override if ever set.
   var ENTITY = window.REIW_ENTITY || 'VectorSprint LLC';
   var mount = document.getElementById('reiw-header');
   if (!mount) return;
@@ -34,6 +34,7 @@
     + '.reiwh-menu[hidden]{display:none}'
     + '.reiwh-mi{display:block;width:100%;text-align:left;background:none;border:none;font:inherit;font-size:14px;color:#374151;padding:9px 12px;border-radius:7px;cursor:pointer;text-decoration:none}'
     + '.reiwh-mi:hover{background:#f3f6fb}'
+    + '.reiwh-mi[hidden]{display:none}'
     + '.reiwh-sep{height:1px;background:#eef0f5;margin:6px 4px}'
     + '.reiwh-mlabel{font-size:11px;font-weight:700;color:#8896aa;letter-spacing:.5px;text-transform:uppercase;padding:6px 12px 4px}'
     + '.reiwh-trow{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:7px;cursor:pointer}'
