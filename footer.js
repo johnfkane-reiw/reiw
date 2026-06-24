@@ -1,7 +1,8 @@
-/* REIW footer — footer.js v1.0
+/* REIW footer — footer.js v1.1
    Static footer markup (with hardcoded legal links for crawler/Meta visibility)
    lives in each page's HTML. This component owns the styling and fills the
    copyright entity + year, so the entity name changes in ONE place.
+   v1.1: sticky footer — pins to the viewport bottom on short pages, pushed down by content.
    Usage (place right after the <footer> markup):
      <footer class="reiwf-footer">
        <a href="/" class="reiwf-brand">[logo]<span class="reiwf-word">REIW</span></a>
@@ -13,10 +14,13 @@
      </footer>
      <script src="/footer.js"></script> */
 (function () {
-  var ENTITY = 'VectorSprint LLC'; // <-- change the copyright holder here, one place
+  // Single override point = window.REIW_ENTITY (shared with header.js About dialog).
+  var ENTITY = window.REIW_ENTITY || 'VectorSprint LLC'; // <-- change the copyright holder here
 
   var css = ''
-    + '.reiwf-footer{background:#1a2744;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:22px 40px}'
+    + 'html{height:100%}'
+    + 'body{min-height:100vh;display:flex;flex-direction:column}'
+    + '.reiwf-footer{margin-top:auto;background:#1a2744;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:22px 40px}'
     + '.reiwf-brand{display:flex;align-items:center;gap:9px;text-decoration:none}'
     + '.reiwf-word{font-family:\'Playfair Display\',Georgia,serif;font-size:18px;font-weight:900;color:#fff}'
     + '.reiwf-links{display:flex;gap:20px;align-items:center;flex-wrap:wrap}'
