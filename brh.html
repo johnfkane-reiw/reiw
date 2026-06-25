@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Rental Studio v3.10</title>
+  <title>REIW Rental Studio v3.11</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -109,7 +109,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </head>
 <body>
 <div id="reiw-header"></div>
-<script>window.REIW_HEADER = { label:'Rental Studio', badge:'RENTAL', version:'v3.10', guide:true };</script>
+<script>window.REIW_HEADER = { label:'Rental Studio', badge:'RENTAL', version:'v3.11', guide:true };</script>
 <script src="/header.js"></script>
 <div class="main">
   <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Analysis name"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
@@ -209,7 +209,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">brh v3.10</div>
+<div class="version">brh v3.11</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -350,7 +350,7 @@ function renderDep(dep){let h='<tr><th>Year</th><th>Purchase</th><th>Depreciable
 function showTab(name,tabEl){['cfa','tia','dep'].forEach(t=>el('tab-'+t).style.display=t===name?'':'none');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));tabEl.classList.add('active')}
 
 // Linked loans
-function renderLinkedLoans(){const a=el('linkedLoansArea');if(!linkedLoans.length){a.innerHTML='<p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p>';return}a.innerHTML=linkedLoans.map((l,i)=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');const sd=l.applyFrom||el('analysisDate').value||'';return'<div class="linked-loan-row"><div class="loan-info"><div class="loan-name">'+esc(l.name)+'</div><div class="loan-meta">'+m+'</div></div><div class="loan-start"><label>Applies from</label><input type="date" value="'+sd+'" onchange="setLoanStart('+i+',this.value)"></div><button class="remove-loan" onclick="removeLoan('+i+')" title="Remove">×</button></div>'}).join('')}
+function renderLinkedLoans(){const a=el('linkedLoansArea');if(!linkedLoans.length){a.innerHTML='<p style="color:var(--text-muted);font-size:13px">No loans linked. Attach a loan to pull year-by-year debt service.</p>';return}a.innerHTML=linkedLoans.map((l,i)=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');const sd=l.applyFrom||el('analysisDate').value||'';return'<div class="linked-loan-row"><div class="loan-info"><div class="loan-name">'+esc(l.name)+'</div><div class="loan-meta">'+m+'</div></div><div class="loan-start"><label>Applies from <span class="tip" data-tip="When this loan begins within the analysis. Defaults to the analysis start. Set a later date to stagger a refinance or second loan into a future year — its debt service lands in that year. The loan&#39;s own start date does not affect placement.">?</span></label><input type="date" value="'+sd+'" onchange="setLoanStart('+i+',this.value)"></div><button class="remove-loan" onclick="removeLoan('+i+')" title="Remove">×</button></div>'}).join('')}
 function setLoanStart(i,v){const ad=el('analysisDate').value;linkedLoans[i].applyFrom=(!v||v===ad)?'':v;markDirty();autoRecalc()}
 function removeLoan(i){linkedLoans.splice(i,1);renderLinkedLoans();markDirty();autoRecalc()}
 async function showLoanPicker(){let loans=[];try{const r=await fetch(API+'/api/loans',{credentials:'include'});if(r.ok){const d=await r.json();loans=d.loans}}catch{}const ex=new Set(linkedLoans.map(l=>l.id));const av=loans.filter(l=>!ex.has(l.id));let body;if(!av.length)body='<div style="color:var(--text-muted);padding:20px;text-align:center">No available loans. <a href="/cfw">Create one.</a></div>';else body='<div class="load-list">'+av.map(l=>{const b=l.base||{};const m=[b.principal?'$'+fmt(b.principal):'',b.annualRate!=null?b.annualRate+'%':'',b.termYears?b.termYears+'yr':''].filter(Boolean).join(' · ');return'<div class="load-row" onclick="attachLoan(\''+l.id+'\')"><div><div class="loan-name">'+esc(l.name)+'</div><div class="loan-meta">'+m+'</div></div></div>'}).join('')+'</div>';el('modalRoot').innerHTML='<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Attach a Loan</h3>'+body+'<div class="modal-actions"><button class="btn btn-sm" onclick="closeModal()">Cancel</button></div></div></div>'}
@@ -484,7 +484,7 @@ function createPDF(){if(!results)return;const{jsPDF}=window.jspdf;const doc=new 
   doc.setFillColor(...NAVY);doc.roundedRect(rx,refY,colW,7,boxR,boxR,'F');
   doc.setFont('PJS','bold');doc.setFontSize(9);doc.setTextColor(255,255,255);doc.text('How This Analysis Works',rx+5,refY+4.8);
   doc.setTextColor(...DTXT);
-  const howParts=[{t:'The Rental Studio analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:',b:false},{t:'Cash Flow Analysis',b:true,rest:' starts with rental and other income, subtracts vacancy and operating expenses to arrive at NOI. From NOI, debt service and capital improvements are subtracted to produce CFBT. Tax savings or costs from the Tax Impact schedule are then applied to produce Cash Flow After Taxes.'},{t:'Tax Impact Analysis',b:true,rest:' takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.'},{t:'Depreciation Schedule',b:true,rest:' tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base.'},{t:'Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Debt service comes from linked loans aligned to the analysis date.',b:false}];
+  const howParts=[{t:'The Rental Studio analysis evaluates a property\'s suitability as a rental investment over a 10-year holding period using three connected schedules:',b:false},{t:'Cash Flow Analysis',b:true,rest:' starts with rental and other income, subtracts vacancy and operating expenses to arrive at NOI. From NOI, debt service and capital improvements are subtracted to produce CFBT. Tax savings or costs from the Tax Impact schedule are then applied to produce Cash Flow After Taxes.'},{t:'Tax Impact Analysis',b:true,rest:' takes NOI and subtracts interest payments and depreciation to calculate taxable income or loss. A loss generates tax savings at your marginal rate. This feeds back into the Cash Flow schedule.'},{t:'Depreciation Schedule',b:true,rest:' tracks straight-line depreciation on the building and accumulated capital improvements. Each year\'s new CI adds to the depreciable base.'},{t:'Income grows annually by the Rental Increase %. Expenses grow by the Expense Increase %. Debt service comes from linked loans, each placed on the timeline by its Applies-from date (default: the analysis start).',b:false}];
   let hy=refY+12;
   howParts.forEach(p=>{doc.setFont('PJS','normal');doc.setFontSize(8);doc.setTextColor(75,85,99);const fullText=p.b?(p.t+p.rest):p.t;const lines=doc.splitTextToSize(fullText,colW-10);doc.text(lines,rx+5,hy);hy+=lines.length*3.3+2.5});
   // Draw box bodies (light bg + border) sized to content
