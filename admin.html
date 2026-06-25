@@ -75,11 +75,11 @@
     .state { padding: 44px 20px; text-align: center; color: var(--muted); font-size: 14px; }
 
     /* Drawer */
-    .drawer-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.34); opacity: 0; transition: opacity .2s; z-index: 40; }
+    .drawer-overlay { position: fixed; inset: 0; background: rgba(15,23,42,.34); opacity: 0; transition: opacity .2s; z-index: 1500; }
     .drawer-overlay.open { opacity: 1; }
     .drawer {
       position: fixed; top: 0; right: 0; height: 100dvh; width: 440px; max-width: 92vw;
-      background: #fff; box-shadow: -8px 0 30px rgba(15,23,42,.16); z-index: 41;
+      background: #fff; box-shadow: -8px 0 30px rgba(15,23,42,.16); z-index: 1501;
       transform: translateX(100%); transition: transform .22s ease; display: flex; flex-direction: column;
     }
     .drawer.open { transform: translateX(0); }
@@ -119,7 +119,7 @@
 
 <div id="page">
   <div id="reiw-header"></div>
-  <script>window.REIW_HEADER = { label:'Admin', version:'v0.4', pageLabel:true };</script>
+  <script>window.REIW_HEADER = { label:'Admin', version:'v0.5', pageLabel:true };</script>
   <script src="/header.js"></script>
 
   <div class="main">
@@ -180,7 +180,7 @@
 </aside>
 
 <div class="toast" id="toast"></div>
-<div class="version">admin v0.4</div>
+<div class="version">admin v0.5</div>
 
 <script>
 const API = 'https://reiw-worker.reiw.app';
@@ -299,11 +299,13 @@ function render() {
 
 // ── Permission logic (server is source of truth; this mirrors it for the UI) ──
 function canEdit(target) {
-  if (ACTOR.role === 'owner') return true;
-  if (ACTOR.role === 'admin') return target.role !== 'owner';
-  return false;
+  // The owner is the single account holder for the tenant — structural, never
+  // reassigned through role management (no second owner can be minted here).
+  if (target.role === 'owner') return false;
+  // Owner/admin actors may move non-owners between user and admin.
+  return ACTOR.role === 'owner' || ACTOR.role === 'admin';
 }
-function roleOptions() { return ACTOR.role === 'owner' ? ['user', 'admin', 'owner'] : ['user', 'admin']; }
+function roleOptions() { return ['user', 'admin']; } // owner is never assignable here
 
 function openDrawer(uid) {
   const u = ALL_USERS.find(function (x) { return x.id === uid; });
@@ -327,7 +329,7 @@ function openDrawer(uid) {
     sel.dataset.prev = u.role;
     sel.addEventListener('change', function () { onDrawerRoleChange(sel); });
   } else {
-    wrap.innerHTML = badge(u.role, u.role) + '<div class="d-note" style="margin-top:6px">Only an owner can change an owner\u2019s role.</div>';
+    wrap.innerHTML = badge(u.role, u.role) + '<div class="d-note" style="margin-top:6px">The owner is the single account holder for this tenant. Ownership isn\u2019t reassigned here.</div>';
   }
 
   document.getElementById('drawer-overlay').hidden = false;
