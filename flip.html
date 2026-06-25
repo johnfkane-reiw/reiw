@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Flip Studio v0.3</title>
+  <title>REIW Flip Studio v0.4</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -88,7 +88,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 <body>
 
 <div id="reiw-header"></div>
-<script>window.REIW_HEADER = { label:'Flip Studio', badge:'FLIP', version:'v0.3', guide:true };</script>
+<script>window.REIW_HEADER = { label:'Flip Studio', badge:'FLIP', version:'v0.4', guide:true };</script>
 <script src="/header.js"></script>
 
 <div class="main">
@@ -227,7 +227,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">flip v0.3</div>
+<div class="version">flip v0.4</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -428,7 +428,7 @@ function createPDF(){
   doc.autoTable(Object.assign({},tblBase,{startY:y,body:dirows,columnStyles:{0:{cellWidth:colA},1:{cellWidth:24,halign:'right',font:'PJS',fontStyle:'bold'},2:{cellWidth:colA},3:{cellWidth:24,halign:'right',font:'PJS',fontStyle:'bold'}}}));
 
   drawFooter(1);
-  doc.save(name.replace(/[^\w\- ]/g,'').trim().replace(/\s+/g,'-')+'.pdf');
+  const b64=doc.output('datauristring').split(',')[1];const fn=name.replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'_')+'.pdf';const form=document.createElement('form');form.method='POST';form.action=API+'/pdf/'+encodeURIComponent(fn);form.target='_blank';const inp=document.createElement('input');inp.type='hidden';inp.name='pdf';inp.value=b64;form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form)
 }
 </script>
 
