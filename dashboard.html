@@ -256,7 +256,7 @@
 
 <div id="app" style="display:none;">
   <div id="reiw-header"></div>
-  <script>window.REIW_HEADER = { label:'Dashboard', version:'v1.8', pageLabel:false };</script>
+  <script>window.REIW_HEADER = { label:'Dashboard', version:'v1.9', pageLabel:false };</script>
   <script src="/header.js"></script>
 
   <div class="main">
@@ -267,7 +267,7 @@
   </div>
 </div>
 
-<div class="version">dashboard v1.8</div>
+<div class="version">dashboard v1.9</div>
 
 <script>
 const API = 'https://reiw-worker.reiw.app';
@@ -275,8 +275,8 @@ const API = 'https://reiw-worker.reiw.app';
 const MODULES = [
   { cls: 'b-loan',     tag: 'LOAN',     name: 'Creative Loan Studio', desc: 'Model any loan structure with fine-tuned adjustments and full amortization schedules.', href: '/cfw.html', live: true,  free: true },
   { cls: 'b-rental',   tag: 'RENTAL',   name: 'Rental Studio',        desc: 'Analyze rental properties with 10-year cash flow, tax, and depreciation projections.', href: '/brh.html', live: true,  free: false },
-  { cls: 'b-flip',     tag: 'FLIP',     name: 'Flip Studio',          desc: 'Evaluate flips with repair costs, holding costs, and profit analysis.', href: null, live: false, free: false },
-  { cls: 'b-lease',    tag: 'LEASE',    name: 'Lease Option Studio',  desc: 'Standard and sandwich lease option deal evaluation.', href: null, live: false, free: false },
+  { cls: 'b-flip',     tag: 'FLIP',     name: 'Flip Studio',          desc: 'Evaluate flips with repair costs, holding costs, and profit analysis.', href: '/flip.html', live: true, free: false },
+  { cls: 'b-lease',    tag: 'LEASE',    name: 'Lease Option Studio',  desc: 'Sandwich and straight lease option deal evaluation.', href: '/lease-option.html', live: true, free: false },
   { cls: 'b-property', tag: 'PROPERTY', name: 'Property Studio',      desc: 'Full property-level analysis with line-by-line income, expenses, and valuation.', href: null, live: false, free: false },
   { cls: 'b-payday',   tag: 'PAYDAY',   name: 'Payday Studio',        desc: 'Your financial scorecard, plus ready-to-send offers and contracts.', href: null, live: false, free: false },
 ];
