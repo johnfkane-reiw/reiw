@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REIW Flip Studio v0.1</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#eef0f5;--surface:#fff;--border:#e4e7ec;--card-border:#e6ecf5;--input-border:#e0e8f4;--input-bg:#f8fafd;--border-focus:#2554c7;--blue:#2554c7;--text:#374151;--text-muted:#6b7280;--accent:#1a2744;--accent-hover:#0f1a32;--gold:#c4973b;--green:#15803d;--green-bg:#e8f5ee;--red:#dc2626;--red-bg:#fceaea;--orange:#e08a2e;--orange-bg:#fff5e6;--radius:6px}
+body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.studio-title{font-family:'Playfair Display',Georgia,serif;font-size:28px;font-weight:700;color:var(--accent);line-height:1.1;margin:2px 0 18px}
+.main{max-width:1020px;margin:0 auto;padding:20px}
+.section{background:var(--surface);border:1px solid var(--card-border);border-radius:12px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.section-header{padding:14px 22px 12px;border-bottom:1px solid #f0f3f9}
+.sh{font-size:11px;font-weight:700;color:#1a2744;letter-spacing:0.1em;text-transform:uppercase;border-bottom:2px solid var(--gold);padding-bottom:4px;display:inline-block}
+.section-body{padding:18px 22px 22px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:10px;font-weight:700;color:#8896aa;text-transform:uppercase;letter-spacing:0.08em;display:flex;align-items:center;gap:4px}
+.form-group input,.form-group select{padding:8px 11px;font-size:14px;border:1.5px solid var(--input-border);border-radius:7px;font-family:inherit;background:var(--input-bg);color:#1a2744;font-weight:500}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,84,199,0.12)}
+.tip{position:relative;display:inline-block;width:12px;height:12px;border-radius:50%;background:#eef1f6;color:#aab4c4;font-size:8px;font-weight:700;text-align:center;line-height:12px;cursor:help;flex-shrink:0}
+.tip:hover::after{content:attr(data-tip);position:absolute;bottom:120%;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:6px 10px;border-radius:4px;font-size:11px;white-space:normal;width:220px;z-index:50;font-weight:400;line-height:1.4}
+.tip:hover::before{content:'';position:absolute;bottom:110%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#333}
+.loan-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px}
+.loan-bar input{flex:1;padding:8px 12px;font-size:15px;border:1px solid var(--border);border-radius:var(--radius);font-family:inherit}
+.btn{padding:8px 18px;font-size:13px;font-weight:600;border:1.5px solid #dde3ec;border-radius:8px;cursor:pointer;font-family:inherit;background:var(--surface);color:var(--text)}
+.btn:hover{background:#f0f4f8}
+.btn-accent{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px rgba(26,39,68,0.22)}.btn-accent:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.status-bar{padding:8px 16px;font-size:13px;border-radius:var(--radius);margin-bottom:8px;display:none}
+.status-bar.ok{display:block;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0}
+.status-bar.info{display:block;background:#eef4ff;color:#2554c7;border:1px solid #cfe0ff}
+.status-bar.error{display:block;background:var(--red-bg);color:var(--red)}
+.calc-row{display:flex;justify-content:flex-end;margin-bottom:16px}
+/* Outputs */
+#outputArea{display:none}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.metric{background:var(--surface);border:1px solid var(--card-border);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.metric .mlabel{font-size:10px;font-weight:700;color:#8896aa;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.metric .mval{font-family:'Playfair Display',Georgia,serif;font-size:34px;font-weight:900;color:var(--accent);letter-spacing:-0.02em;line-height:1}
+.metric.hero .mval{font-size:40px}
+.metric .mval.green{color:var(--green)}.metric .mval.red{color:var(--red)}
+.metric .mnote{font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.4}
+.bd-table{width:100%;border-collapse:collapse;font-size:14px}
+.bd-table td{padding:9px 8px;border-bottom:1px solid #f0f3f9}
+.bd-table td.r{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;color:#1a2744}
+.bd-table td.neg{color:var(--red)}
+.bd-table tr.tot td{border-top:2px solid #1a2744;border-bottom:none;font-weight:800;padding-top:12px}
+.bd-table tr.tot td:first-child{color:#1a2744}
+.bd-sub{color:var(--text-muted);font-size:12px}
+.version{position:fixed;bottom:8px;right:12px;font-size:11px;color:#ccc}
+  </style>
+</head>
+<body>
+
+<div id="reiw-header"></div>
+<script>window.REIW_HEADER = { label:'Flip Studio', badge:'FLIP', version:'v0.1', guide:false };</script>
+<script src="/header.js"></script>
+
+<div class="main">
+
+  <div class="loan-bar" id="loanBar">
+    <input type="text" id="analysisName" placeholder="Analysis name">
+    <button class="btn btn-accent" onclick="clickSave()">Save</button>
+    <button class="btn" onclick="clickNew()">New</button>
+    <button class="btn" onclick="clickLoad()">Load</button>
+  </div>
+
+  <div id="statusBar" class="status-bar"></div>
+
+  <div class="section"><div class="section-header"><span class="sh">The Deal</span></div><div class="section-body"><div class="form-grid">
+    <div class="form-group"><label>Purchase / Offer Price <span class="tip" data-tip="What you pay to acquire the property.">?</span></label><input type="text" id="offerPrice" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>After-Repair Value (ARV) <span class="tip" data-tip="Estimated market value once the rehab is complete.">?</span></label><input type="text" id="arv" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Expected Sale Price (% of ARV) <span class="tip" data-tip="What you realistically expect to sell for, as a percent of ARV. Default 100%.">?</span></label><input type="text" id="salePct" placeholder="100" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Holding Period (months) <span class="tip" data-tip="Months from purchase to sale — drives holding costs and the annualized return.">?</span></label><input type="text" id="holdMonths" placeholder="6" oninput="markDirty()" onblur="recalc()"></div>
+  </div></div></div>
+
+  <div class="section"><div class="section-header"><span class="sh">Rehab</span></div><div class="section-body"><div class="form-grid">
+    <div class="form-group"><label>Rehab Budget <span class="tip" data-tip="Total estimated cost of repairs and improvements.">?</span></label><input type="text" id="rehabBudget" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Rehab Contingency (%) <span class="tip" data-tip="Buffer on top of the rehab budget for overruns. Default 10%.">?</span></label><input type="text" id="rehabContingencyPct" placeholder="10" oninput="markDirty()" onblur="recalc()"></div>
+  </div></div></div>
+
+  <div class="section"><div class="section-header"><span class="sh">Acquisition Costs</span></div><div class="section-body"><div class="form-grid">
+    <div class="form-group"><label>Buying Closing Costs <span class="tip" data-tip="Title, escrow, recording, attorney, transfer tax paid at purchase.">?</span></label><input type="text" id="buyClosing" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Inspection &amp; Appraisal <span class="tip" data-tip="Inspection, appraisal, and survey fees.">?</span></label><input type="text" id="inspectionAppraisal" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Other Acquisition Costs <span class="tip" data-tip="Any other up-front costs to acquire the property.">?</span></label><input type="text" id="otherAcq" oninput="markDirty()" onblur="recalc()"></div>
+  </div></div></div>
+
+  <div class="section"><div class="section-header"><span class="sh">Financing</span></div><div class="section-body"><div class="form-grid">
+    <div class="form-group"><label>Loan Amount (0 = all cash) <span class="tip" data-tip="Amount borrowed (hard money or private). Leave 0 for an all-cash deal.">?</span></label><input type="text" id="loanAmount" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Interest Rate (% annual) <span class="tip" data-tip="Annual interest rate. Interest is computed interest-only over the holding period.">?</span></label><input type="text" id="loanRate" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Points (% of loan) <span class="tip" data-tip="Loan origination points, as a percent of the loan amount.">?</span></label><input type="text" id="loanPoints" placeholder="0" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Lender / Broker Fees <span class="tip" data-tip="Flat lender or broker fees, in dollars.">?</span></label><input type="text" id="lenderFees" oninput="markDirty()" onblur="recalc()"></div>
+  </div></div></div>
+
+  <div class="section"><div class="section-header"><span class="sh">Holding Costs (monthly)</span></div><div class="section-body"><div class="form-grid">
+    <div class="form-group"><label>Property Taxes / mo <span class="tip" data-tip="Monthly property tax while you hold the property.">?</span></label><input type="text" id="taxMonthly" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Insurance / mo <span class="tip" data-tip="Monthly insurance (often a vacant/builder's-risk policy).">?</span></label><input type="text" id="insMonthly" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Utilities / mo <span class="tip" data-tip="Monthly utilities while holding.">?</span></label><input type="text" id="utilMonthly" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Other Holding / mo <span class="tip" data-tip="Any other recurring monthly carrying cost.">?</span></label><input type="text" id="otherHoldMonthly" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Income While Held (total $) <span class="tip" data-tip="Any rent or other income collected during the hold (optional).">?</span></label><input type="text" id="incomeWhileHeld" oninput="markDirty()" onblur="recalc()"></div>
+  </div></div></div>
+
+  <div class="section"><div class="section-header"><span class="sh">Selling Costs</span></div><div class="section-body"><div class="form-grid">
+    <div class="form-group"><label>Sales Commission (% of sale) <span class="tip" data-tip="Agent commission as a percent of the sale price. Default 6%.">?</span></label><input type="text" id="commPct" placeholder="6" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Selling Closing Costs (% of sale) <span class="tip" data-tip="Seller-side closing costs as a percent of the sale price. Default 1%.">?</span></label><input type="text" id="sellClosingPct" placeholder="1" oninput="markDirty()" onblur="recalc()"></div>
+    <div class="form-group"><label>Other Selling Costs ($) <span class="tip" data-tip="Staging, concessions, or other flat selling costs.">?</span></label><input type="text" id="otherSell" oninput="markDirty()" onblur="recalc()"></div>
+  </div></div></div>
+
+  <div class="section"><div class="section-header"><span class="sh">Max Offer Rule</span></div><div class="section-body"><div class="form-grid">
+    <div class="form-group"><label>MAO Rule (% of ARV) <span class="tip" data-tip="The classic flip rule: Max Allowable Offer = (ARV × this %) − total rehab. Default 70%.">?</span></label><input type="text" id="maoPct" placeholder="70" oninput="markDirty()" onblur="recalc()"></div>
+  </div></div></div>
+
+  <div class="calc-row"><button class="btn btn-accent" onclick="calculate()">Calculate</button></div>
+
+  <div id="outputArea">
+    <div class="metrics">
+      <div class="metric hero"><div class="mlabel">Net Profit</div><div class="mval" id="mProfit">—</div><div class="mnote" id="mProfitNote"></div></div>
+      <div class="metric"><div class="mlabel">Return on Investment</div><div class="mval" id="mRoi">—</div><div class="mnote">Net profit ÷ cash invested</div></div>
+      <div class="metric"><div class="mlabel">Annualized ROI</div><div class="mval" id="mAnnRoi">—</div><div class="mnote" id="mAnnNote">ROI scaled to a full year</div></div>
+      <div class="metric"><div class="mlabel">Max Allowable Offer</div><div class="mval" id="mMao">—</div><div class="mnote" id="mMaoNote"></div></div>
+    </div>
+
+    <div class="section"><div class="section-header"><span class="sh">Profit Breakdown</span></div><div class="section-body">
+      <table class="bd-table">
+        <tr><td>Expected Sale Price</td><td class="r" id="bEsp">—</td></tr>
+        <tr><td>(−) Purchase Price</td><td class="r neg" id="bPurch">—</td></tr>
+        <tr><td>(−) Total Rehab <span class="bd-sub" id="bRehabSub"></span></td><td class="r neg" id="bRehab">—</td></tr>
+        <tr><td>(−) Acquisition Costs</td><td class="r neg" id="bAcq">—</td></tr>
+        <tr><td>(−) Holding Costs <span class="bd-sub" id="bHoldSub"></span></td><td class="r neg" id="bHold">—</td></tr>
+        <tr><td>(−) Selling Costs</td><td class="r neg" id="bSell">—</td></tr>
+        <tr><td>(+) Income While Held</td><td class="r" id="bIncome">—</td></tr>
+        <tr class="tot"><td>Net Profit</td><td class="r" id="bProfit">—</td></tr>
+      </table>
+      <table class="bd-table" style="margin-top:14px">
+        <tr><td>Cash Invested <span class="bd-sub">(out of pocket; selling costs come from sale proceeds)</span></td><td class="r" id="bCash">—</td></tr>
+      </table>
+    </div></div>
+  </div>
+
+</div>
+
+<div class="version">flip v0.1</div>
+
+<script>
+const API='https://reiw-worker.reiw.app';
+const MODULE_TYPE='flip'; // used when persistence is wired (next step)
+const el=id=>document.getElementById(id);
+const num=id=>{const v=(el(id).value||'').toString().replace(/[$,\s%]/g,'');const n=parseFloat(v);return isNaN(n)?0:n};
+const pnum=(id,def)=>{const v=(el(id).value||'').toString().replace(/[$,\s%]/g,'');if(v==='')return def;const n=parseFloat(v);return isNaN(n)?def:n};
+const money=n=>{const neg=n<0;const s='$'+Math.abs(Math.round(n)).toLocaleString();return neg?'-'+s:s};
+const pct=n=>(Math.round(n*10)/10).toFixed(1)+'%';
+
+function compute(){
+  const offer=num('offerPrice'), arv=num('arv'), salePct=pnum('salePct',100), months=pnum('holdMonths',6);
+  const rehab=num('rehabBudget'), contPct=pnum('rehabContingencyPct',10);
+  const buyClosing=num('buyClosing'), inspect=num('inspectionAppraisal'), otherAcq=num('otherAcq');
+  const loan=num('loanAmount'), rate=num('loanRate'), pointsPct=pnum('loanPoints',0), lenderFees=num('lenderFees');
+  const taxM=num('taxMonthly'), insM=num('insMonthly'), utilM=num('utilMonthly'), otherHoldM=num('otherHoldMonthly'), income=num('incomeWhileHeld');
+  const commPct=pnum('commPct',6), sellClosePct=pnum('sellClosingPct',1), otherSell=num('otherSell');
+  const maoPct=pnum('maoPct',70);
+
+  const esp = arv * salePct/100;
+  const contingency = rehab * contPct/100;
+  const totalRehab = rehab + contingency;
+  const points$ = loan * pointsPct/100;
+  const totalAcq = buyClosing + inspect + otherAcq + lenderFees + points$;
+  const loanInterest = loan * (rate/100) * (months/12); // interest-only over the hold
+  const monthlyHold = taxM + insM + utilM + otherHoldM;
+  const totalHold = monthlyHold * months + loanInterest;
+  const totalSell = esp * (commPct + sellClosePct)/100 + otherSell;
+  const netProfit = esp - offer - totalRehab - totalAcq - totalHold - totalSell + income;
+  const cashInvested = (offer - loan) + totalAcq + totalRehab + totalHold;
+  const roi = cashInvested>0 ? netProfit/cashInvested*100 : null;
+  const annRoi = (roi!==null && months>0) ? roi*(12/months) : null;
+  const mao = arv * maoPct/100 - totalRehab;
+
+  return {esp,totalRehab,contingency,rehab,totalAcq,totalHold,monthlyHold,loanInterest,totalSell,netProfit,cashInvested,roi,annRoi,mao,offer,income,months,maoPct};
+}
+
+function render(r){
+  el('mProfit').textContent=money(r.netProfit);
+  el('mProfit').className='mval '+(r.netProfit>=0?'green':'red');
+  el('mProfitNote').textContent = r.netProfit>=0?'Estimated profit on this flip':'This deal loses money as entered';
+  el('mRoi').textContent = r.roi===null?'—':pct(r.roi);
+  el('mAnnRoi').textContent = r.annRoi===null?'—':pct(r.annRoi);
+  el('mAnnNote').textContent = 'ROI over a '+(r.months||0)+'-month hold, annualized';
+  el('mMao').textContent = money(r.mao);
+  el('mMaoNote').textContent = 'At '+pct(r.maoPct)+' of ARV, minus rehab';
+
+  el('bEsp').textContent=money(r.esp);
+  el('bPurch').textContent=money(r.offer);
+  el('bRehab').textContent=money(r.totalRehab);
+  el('bRehabSub').textContent = r.contingency>0 ? '(incl. '+money(r.contingency)+' contingency)' : '';
+  el('bAcq').textContent=money(r.totalAcq);
+  el('bHold').textContent=money(r.totalHold);
+  el('bHoldSub').textContent = r.months+' mo × '+money(r.monthlyHold)+'/mo'+(r.loanInterest>0?' + '+money(r.loanInterest)+' interest':'');
+  el('bSell').textContent=money(r.totalSell);
+  el('bIncome').textContent=money(r.income);
+  el('bProfit').textContent=money(r.netProfit);
+  el('bProfit').className='r '+(r.netProfit>=0?'':'neg');
+  el('bCash').textContent=money(r.cashInvested);
+}
+
+function calculate(){ render(compute()); el('outputArea').style.display='block'; }
+function recalc(){ if(el('outputArea').style.display==='block') render(compute()); }
+function markDirty(){ /* persistence step: will flag unsaved changes */ }
+
+// Persistence — wired in the next step
+function clickSave(){ showStatus('info','Saving is the next build step — the calculator math is what to check now.'); }
+function clickLoad(){ showStatus('info','Load arrives with the persistence step.'); }
+function clickNew(){
+  document.querySelectorAll('.form-grid input').forEach(i=>i.value='');
+  el('analysisName').value=''; el('outputArea').style.display='none'; clearStatus();
+}
+let stTimer=null;
+function showStatus(type,msg){ const s=el('statusBar'); s.textContent=msg; s.className='status-bar '+type; clearTimeout(stTimer); stTimer=setTimeout(clearStatus,3000); }
+function clearStatus(){ el('statusBar').className='status-bar'; el('statusBar').textContent=''; }
+</script>
+
+</body>
+</html>
