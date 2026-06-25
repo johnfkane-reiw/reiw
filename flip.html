@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Flip Studio v0.2</title>
+  <title>REIW Flip Studio v0.3</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -88,7 +88,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 <body>
 
 <div id="reiw-header"></div>
-<script>window.REIW_HEADER = { label:'Flip Studio', badge:'FLIP', version:'v0.2', guide:true };</script>
+<script>window.REIW_HEADER = { label:'Flip Studio', badge:'FLIP', version:'v0.3', guide:true };</script>
 <script src="/header.js"></script>
 
 <div class="main">
@@ -151,7 +151,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 
   <div class="calc-row">
     <span id="undoArea2"></span>
-    <span><button class="btn" id="btnPdf" style="display:none" onclick="createPDF()">Download PDF</button>
+    <span><button class="btn" id="btnPdf" style="display:none" onclick="createPDF()">Create PDF</button>
     <button class="btn btn-accent" onclick="calculate()">Calculate</button></span>
   </div>
 
@@ -227,7 +227,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">flip v0.2</div>
+<div class="version">flip v0.3</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -239,7 +239,7 @@ const FONT_PD900='AAEAAAAQAQAABAAAR0RFRhdxFjQAAI7AAAAAqkdQT1NdHL4/AACPbAAAPC5HU1
 
 <script>
 const API='https://reiw-worker.reiw.app';
-const MODULE_TYPE='flip';
+const MODULE_TYPE='bfs';
 const el=id=>document.getElementById(id);
 const num=id=>{const v=(el(id).value||'').toString().replace(/[$,\s%]/g,'');const n=parseFloat(v);return isNaN(n)?0:n};
 const pnum=(id,def)=>{const v=(el(id).value||'').toString().replace(/[$,\s%]/g,'');if(v==='')return def;const n=parseFloat(v);return isNaN(n)?def:n};
