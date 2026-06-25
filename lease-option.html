@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Lease Option Studio v0.1</title>
+  <title>REIW Lease Option Studio v0.2</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -44,8 +44,8 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 #undoArea{font-size:13px}
 /* Outputs */
 #outputArea{display:none}
-.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
-.metric{background:var(--surface);border:1px solid var(--card-border);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+.metrics{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-bottom:16px}
+.metric{flex:0 1 calc(33.333% - 8px);min-width:190px;background:var(--surface);border:1px solid var(--card-border);border-radius:12px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
 .metric .mlabel{font-size:10px;font-weight:700;color:#8896aa;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
 .metric .mval{font-family:'Playfair Display',Georgia,serif;font-size:34px;font-weight:900;color:var(--accent);letter-spacing:-0.02em;line-height:1}
 .metric.hero .mval{font-size:40px}
@@ -92,7 +92,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 <body>
 
 <div id="reiw-header"></div>
-<script>window.REIW_HEADER = { label:'Lease Option Studio', badge:'LEASE', version:'v0.1', guide:true };</script>
+<script>window.REIW_HEADER = { label:'Lease Option Studio', badge:'LEASE', version:'v0.2', guide:true };</script>
 <script src="/header.js"></script>
 
 <div class="main">
@@ -226,7 +226,7 @@ body{font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI'
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">lease-option v0.1</div>
+<div class="version">lease-option v0.2</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -433,23 +433,23 @@ function createPDF(){
   doc.setFont('PJS','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MUTED);doc.text((r.sw?'Sandwich':'Straight')+' Lease Option Analysis',LM,y);y+=3;
   doc.setDrawColor.apply(doc,PROPBD);doc.setLineWidth(0.2);doc.line(LM,y,PW-RM,y);doc.setTextColor.apply(doc,DTXT);y+=7;
 
-  // Metric cells (2-up, 3 rows)
+  // Metric cells (3-up then 2-up)
   const cocS = r.coc===null?'\u2014':(r.coc===Infinity?'\u221E':pp(r.coc));
   const cells=[['Total Profit',pf(r.total),r.total>=0?GREEN:RED],['Monthly Cash Flow',pf(r.monthlySpread),r.monthlySpread>=0?GREEN:RED],['Back-End Profit',pf(r.backEnd),r.backEnd>=0?GREEN:RED],['Cash-on-Cash',cocS,NAVY],['Return on Basis',pp(r.rob),NAVY]];
-  const cw=(TW-6)/2,ch=20;
-  cells.forEach((c,i)=>{const cx=LM+(i%2)*(cw+6),cy=y+Math.floor(i/2)*(ch+5);
+  const cw=(TW-12)/3,ch=18;
+  cells.forEach((c,i)=>{const col=i%3,row=Math.floor(i/3);const cx=LM+col*(cw+6),cy=y+row*(ch+5);
     doc.setDrawColor.apply(doc,PROPBD);doc.setLineWidth(0.3);doc.setFillColor(255,255,255);doc.roundedRect(cx,cy,cw,ch,1.5,1.5,'S');
-    doc.setFont('PJS','bold');doc.setFontSize(7);doc.setTextColor.apply(doc,MUTED);doc.text(c[0].toUpperCase(),cx+5,cy+6.5);
-    doc.setFont('PD','bold');doc.setFontSize(17);doc.setTextColor.apply(doc,c[2]);doc.text(c[1],cx+5,cy+15.5);
+    doc.setFont('PJS','bold');doc.setFontSize(6.5);doc.setTextColor.apply(doc,MUTED);doc.text(c[0].toUpperCase(),cx+4.5,cy+6);
+    doc.setFont('PD','bold');doc.setFontSize(16);doc.setTextColor.apply(doc,c[2]);doc.text(c[1],cx+4.5,cy+14);
   });
   doc.setTextColor.apply(doc,DTXT);
-  y+=3*(ch+5)+3;
+  y+=2*(ch+5)+3;
 
   // Profit Breakdown
   y=sectionHead('Profit Breakdown',y);
   const bd=[[r.sw?'Upfront Option Spread':'Option Fee Collected',pf(r.upfront)],['Monthly Cash Flow  ('+r.term+' mo \u00D7 '+pf(r.monthlySpread)+'/mo)',pf(r.totalMonthly)],[r.sw?'Back-End at Exercise':'Back-End at Sale',pf(r.backEnd)],['Total Profit',pf(r.total)]];
   doc.autoTable(Object.assign({},tblBase,{startY:y,body:bd,columnStyles:{0:{cellWidth:TW-42},1:{cellWidth:42,halign:'right',font:'PJS',fontStyle:'bold'}},didParseCell:function(d){if(d.row.index===bd.length-1){d.cell.styles.fillColor=NAVY;d.cell.styles.textColor=[255,255,255];d.cell.styles.fontStyle='bold'}}}));
-  y=doc.lastAutoTable.finalY+5;
+  y=doc.lastAutoTable.finalY+4;
 
   // Back-End Detail
   y=sectionHead('Back-End Detail',y);
@@ -458,7 +458,7 @@ function createPDF(){
   y=doc.lastAutoTable.finalY+3;
   doc.setFont('PJS','normal');doc.setFontSize(8);doc.setTextColor.apply(doc,MUTED);
   doc.text('Cash at risk: '+(r.cashAtRisk>=1?pf(r.cashAtRisk):'$0')+'   \u00B7   returns annualized over the '+r.term+'-month option term',LM,y);
-  doc.setTextColor.apply(doc,DTXT);y+=9;
+  doc.setTextColor.apply(doc,DTXT);y+=7;
 
   // Deal Inputs (two logical columns)
   y=sectionHead('Deal Inputs',y);
