@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Payday Studio · Financial Statement v0.4</title>
+  <title>REIW Payday Studio · Financial Statement v0.5</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -109,7 +109,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </head>
 <body>
 <div id="reiw-header"></div>
-<script>window.REIW_HEADER = { label:'Financial Statement', badge:'PAYDAY', version:'v0.4', guide:true };</script>
+<script>window.REIW_HEADER = { label:'Financial Statement', badge:'PAYDAY', version:'v0.5', guide:true };</script>
 <script src="/header.js"></script>
 <div class="main">
   <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Statement name (e.g. Personal Financial Statement)"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
@@ -150,7 +150,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">fsw v0.4</div>
+<div class="version">fsw v0.5</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -311,23 +311,20 @@ function createPDF(){
   doc.addFileToVFS('PJS-700.ttf',FONT_PJS700);doc.addFont('PJS-700.ttf','PJS','bold');
   doc.addFileToVFS('PD-700.ttf',FONT_PD700);doc.addFont('PD-700.ttf','PD','normal');
   doc.addFileToVFS('PD-900.ttf',FONT_PD900);doc.addFont('PD-900.ttf','PD','bold');
-  const NAVY=[26,39,68],GOLD=[196,151,59],MUT=[107,114,128],GREEN=[21,128,94],RED=[220,38,38];
-  const PW=doc.internal.pageSize.getWidth(),LM=16,RM=PW-16;
+  const NAVY=[26,39,68],GOLD=[196,151,59],MUTED=[154,146,137],DTXT=[55,65,81],GREEN=[21,128,94],RED=[220,38,38];
+  const PW=doc.internal.pageSize.getWidth(),PH=doc.internal.pageSize.getHeight(),LM=16,RIGHT=PW-16;
   const name=el('analysisName').value||'Personal Financial Statement';const asof=el('asof').value||'';
-  // Header
-  doc.setFillColor(26,39,68);doc.rect(0,0,PW,26,'F');
-  doc.setFont('PD','bold');doc.setFontSize(20);doc.setTextColor(255,255,255);doc.text('REIW',LM,16);
-  doc.setFont('PD','normal');doc.setFontSize(13);doc.setTextColor(226,185,106);doc.text('Financial Statement',LM+30,16);
-  doc.setFont('PJS','normal');doc.setFontSize(9);doc.setTextColor(255,255,255);
-  doc.text(name+(asof?'   ·   As of '+asof:''),RM,12,{align:'right'});
+  function drawLogo(x,y,s,dark){const pts=[[2,34],[13,8],[23,21],[34,2],[45,15],[54,5]];const sx=s/56,sy=(s*36/56)/36;if(dark){doc.setDrawColor(140,147,161)}else{doc.setDrawColor.apply(doc,NAVY)}doc.setLineWidth(0.4*s/9);doc.setLineCap('round');doc.setLineJoin('round');for(let i=0;i<3;i++){doc.line(x+pts[i][0]*sx,y+pts[i][1]*sy,x+pts[i+1][0]*sx,y+pts[i+1][1]*sy)}doc.setDrawColor.apply(doc,GOLD);for(let i=3;i<5;i++){doc.line(x+pts[i][0]*sx,y+pts[i][1]*sy,x+pts[i+1][0]*sx,y+pts[i+1][1]*sy)}doc.setFillColor.apply(doc,GOLD);doc.circle(x+34*sx,y+2*sy,0.55*s/9,'F')}
+  function drawBar(){doc.setFillColor.apply(doc,NAVY);doc.rect(0,0,PW,9,'F');drawLogo(LM,1.5,9,true);doc.setFont('PD','bold');doc.setFontSize(12);doc.setTextColor(255,255,255);doc.text('REIW',LM+12,6.2);doc.setFont('PJS','normal');doc.setFontSize(9);doc.setTextColor(255,255,255);doc.text(name,RIGHT,6.2,{align:'right'});doc.setTextColor.apply(doc,DTXT)}
+  function drawFooter(pg,pc){const fy=PH-7;doc.setDrawColor(232,228,220);doc.setLineWidth(0.2);doc.line(0,fy,PW,fy);doc.setFillColor(250,249,247);doc.rect(0,fy,PW,PH-fy,'F');drawLogo(LM,fy+1.5,5,false);doc.setFont('PJS','normal');doc.setFontSize(7);doc.setTextColor.apply(doc,MUTED);doc.text('REIW Payday Studio · Financial Statement',LM+8,fy+4);if(asof)doc.text('As of '+asof,PW/2,fy+4,{align:'center'});doc.text('Page '+pg+' of '+pc,RIGHT,fy+4,{align:'right'});doc.setTextColor.apply(doc,DTXT)}
   // Summary band
-  let y=36;
-  doc.setFont('PJS','bold');doc.setFontSize(8);doc.setTextColor.apply(doc,MUT);
+  let y=16;
+  doc.setFont('PJS','bold');doc.setFontSize(8);doc.setTextColor.apply(doc,MUTED);
   doc.text('TOTAL ASSETS',LM,y);doc.text('TOTAL LIABILITIES',LM+62,y);doc.text('NET WORTH',LM+128,y);
   doc.setFont('PD','bold');doc.setFontSize(15);doc.setTextColor.apply(doc,NAVY);
   doc.text(fmtD(results.totalAssets),LM,y+7);doc.text(fmtD(results.totalLiabilities),LM+62,y+7);
   doc.setTextColor.apply(doc,results.netWorth>=0?GREEN:RED);doc.text(fmtD(results.netWorth),LM+128,y+7);
-  doc.setDrawColor(228,236,244);doc.line(LM,y+12,RM,y+12);
+  doc.setDrawColor(228,236,244);doc.line(LM,y+12,RIGHT,y+12);
   y+=18;
   // Schedule tables
   const money=v=>fmtD(parseNum(v));
@@ -340,7 +337,7 @@ function createPDF(){
     const foot=dual?[['Subtotal',fmtD(sub.v),fmtD(sub.l),'']]:[['Subtotal',fmtD(sub.v)]];
     const title=s.title.replace(/&amp;/g,'&');
     doc.autoTable({
-      startY:y,margin:{left:LM,right:16,top:30},
+      startY:y,margin:{left:LM,right:16,top:14,bottom:14},
       head:[[{content:title,colSpan:ncol,styles:{halign:'left',fillColor:[240,244,248],textColor:NAVY,fontStyle:'bold',fontSize:8}}],colLabels],
       body,foot,
       styles:{font:'PJS',fontSize:8,cellPadding:1.6,textColor:[55,65,81],lineColor:[228,236,244],lineWidth:0.1,halign:'right'},
@@ -353,12 +350,12 @@ function createPDF(){
   // Contingent
   if(model.contingent.length){
     const body=model.contingent.map(r=>[r.desc||'',fmtD(parseNum(r.val))]);
-    doc.autoTable({startY:y,head:[[{content:'Contingent Liabilities (memo — not included in net worth)',colSpan:2,styles:{halign:'left',fillColor:[240,244,248],textColor:NAVY,fontStyle:'bold',fontSize:8}}],['Description','Amount']],body,foot:[['Total Contingent',fmtD(results.contingent)]],margin:{left:LM,right:16,top:30},styles:{font:'PJS',fontSize:8,cellPadding:1.6,textColor:[55,65,81],lineColor:[228,236,244],lineWidth:0.1,halign:'right'},headStyles:{fillColor:NAVY,textColor:[255,255,255],fontStyle:'bold',fontSize:7.5},footStyles:{fillColor:[240,244,248],textColor:NAVY,fontStyle:'bold'},columnStyles:{0:{halign:'left',cellWidth:118}}});
+    doc.autoTable({startY:y,head:[[{content:'Contingent Liabilities (memo — not included in net worth)',colSpan:2,styles:{halign:'left',fillColor:[240,244,248],textColor:NAVY,fontStyle:'bold',fontSize:8}}],['Description','Amount']],body,foot:[['Total Contingent',fmtD(results.contingent)]],margin:{left:LM,right:16,top:14,bottom:14},styles:{font:'PJS',fontSize:8,cellPadding:1.6,textColor:[55,65,81],lineColor:[228,236,244],lineWidth:0.1,halign:'right'},headStyles:{fillColor:NAVY,textColor:[255,255,255],fontStyle:'bold',fontSize:7.5},footStyles:{fillColor:[240,244,248],textColor:NAVY,fontStyle:'bold'},columnStyles:{0:{halign:'left',cellWidth:118}}});
     y=doc.lastAutoTable.finalY+6;
   }
   // Footer on each page
   const pc=doc.internal.getNumberOfPages();
-  for(let p=1;p<=pc;p++){doc.setPage(p);const PH=doc.internal.pageSize.getHeight();doc.setFont('PJS','normal');doc.setFontSize(7.5);doc.setTextColor.apply(doc,MUT);doc.text('REIW Payday Studio · Financial Statement',LM,PH-8);doc.text('Page '+p+' of '+pc,RM,PH-8,{align:'right'});doc.text('Not financial advice. A personal statement of financial condition.',PW/2,PH-8,{align:'center'})}
+  for(let p=1;p<=pc;p++){doc.setPage(p);drawBar();drawFooter(p,pc)}
   const b64=doc.output('datauristring').split(',')[1];const fn=name.replace(/[^a-zA-Z0-9 ]/g,'').replace(/\s+/g,'_')+'.pdf';const form=document.createElement('form');form.method='POST';form.action=API+'/pdf/'+encodeURIComponent(fn);form.target='_blank';const inp=document.createElement('input');inp.type='hidden';inp.name='pdf';inp.value=b64;form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form);
 }
 </script>
