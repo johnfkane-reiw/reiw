@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Payday Studio · Financial Statement v0.2</title>
+  <title>REIW Payday Studio · Financial Statement v0.3</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -109,10 +109,10 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </head>
 <body>
 <div id="reiw-header"></div>
-<script>window.REIW_HEADER = { label:'Financial Statement', badge:'PAYDAY', version:'v0.2', guide:true };</script>
+<script>window.REIW_HEADER = { label:'Financial Statement', badge:'PAYDAY', version:'v0.3', guide:true };</script>
 <script src="/header.js"></script>
 <div class="main">
-  <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Statement name (e.g. Personal Financial Statement)"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
+  <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Statement name (e.g. Personal Financial Statement)"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button><button class="btn" onclick="createPDF()">Create PDF</button></div>
   <div class="entity-bar"><label style="color:var(--text-muted)">As-of Date <span class="tip" data-tip="The point-in-time this statement reflects. A personal financial statement is a snapshot; the as-of date is its identity. You can keep as many statements as you like for different dates.">?</span></label><input type="date" id="asof" onchange="markDirty()"></div>
   <div id="statusBar" class="status-bar"></div><div id="undoArea"></div>
   <div id="schedules"></div>
@@ -150,7 +150,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">fsw v0.2</div>
+<div class="version">fsw v0.3</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -283,8 +283,7 @@ function renderSummary(){
     '</div>'+
     '<div style="border-top:1px solid #e4ecf4;padding-top:12px"><div style="font-size:11px;font-weight:700;color:#8896aa;text-transform:uppercase;letter-spacing:.08em">Net Worth</div>'+
       '<div class="equity-val" style="color:'+nwColor+'">'+fmtD(results.netWorth)+'</div></div>'+
-    (results.contingent>0?'<div class="equity-note">Contingent liabilities (memo, not included): '+fmtD(results.contingent)+'</div>':'')+
-    '<div style="margin-top:16px"><button class="btn btn-accent btn-sm" onclick="createPDF()">Create PDF</button></div>';
+    (results.contingent>0?'<div class="equity-note">Contingent liabilities (memo, not included): '+fmtD(results.contingent)+'</div>':'');
 }
 
 // ---- Persistence ----
