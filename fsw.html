@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REIW Payday Studio · Financial Statement v0.5</title>
+  <title>REIW Payday Studio · Financial Statement v0.6</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -109,7 +109,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </head>
 <body>
 <div id="reiw-header"></div>
-<script>window.REIW_HEADER = { label:'Financial Statement', badge:'PAYDAY', version:'v0.5', guide:true };</script>
+<script>window.REIW_HEADER = { label:'Financial Statement', badge:'PAYDAY', version:'v0.6', guide:true };</script>
 <script src="/header.js"></script>
 <div class="main">
   <div class="loan-bar" id="loanBar"><input type="text" id="analysisName" placeholder="Statement name (e.g. Personal Financial Statement)"><span class="modified-tag" id="modifiedTag" style="display:none">Modified</span><button class="btn btn-accent" onclick="clickSave()">Save</button><button class="btn" onclick="clickNew()">New</button><button class="btn" onclick="showLoadModal()">Load</button></div>
@@ -141,6 +141,8 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
   <dl>
     <dt>G — Loans, Charge Accounts, Bills Payable &amp; Unpaid Taxes</dt><dd>Mortgages on your residence, vehicle loans, credit cards, personal loans, and unpaid taxes.</dd>
   </dl>
+  <h3>Categories &amp; subtotals</h3>
+  <p>Schedules A, E, and G let you tag each row by type (e.g. Savings, IRA / Retirement, Mortgage). The statement subtotals by category — on screen and in the PDF — matching how a lender reads SBA Form 413. Tagging is optional; untagged rows still count in the totals.</p>
   <h3>Net Worth</h3>
   <p><strong>Net Worth = Total Assets − Total Liabilities.</strong></p>
   <h3>Contingent Liabilities</h3>
@@ -150,7 +152,7 @@ tr.subtotal .pct{color:rgba(255,255,255,0.6)!important}
 </div>
 
 <div id="modalRoot"></div>
-<div class="version">fsw v0.5</div>
+<div class="version">fsw v0.6</div>
 
 <script>
 // Embedded fonts for PDF (Latin subsets, base64-encoded TTF)
@@ -163,13 +165,13 @@ const API='https://reiw-worker.reiw.app',MODULE_TYPE='fsw';
 
 // ---- Schedule configuration ----
 const SCHED=[
-  {k:'A',title:'Schedule A — Cash, Checking, Savings, Money Market &amp; Investment Accounts',side:'asset',cols:[{id:'desc',label:'Institution / Description',type:'text'},{id:'val',label:'Balance',type:'num'}]},
-  {k:'B',title:'Schedule B — Marketable Securities',side:'asset',cols:[{id:'desc',label:'Description (stocks, bonds, funds)',type:'text'},{id:'val',label:'Market Value',type:'num'}]},
-  {k:'C',title:'Schedule C — Accounts Receivable',side:'asset',cols:[{id:'desc',label:'Owed By / Description',type:'text'},{id:'val',label:'Amount',type:'num'}]},
-  {k:'D',title:'Schedule D — Real Estate Investments Owned',side:'dual',cols:[{id:'desc',label:'Property / Address',type:'text'},{id:'val',label:'Market Value',type:'num'},{id:'loan',label:'Loan Balance',type:'num'},{id:'eq',label:'Equity',type:'calc'}]},
-  {k:'E',title:'Schedule E — Personal Residence(s) &amp; Other Assets',side:'asset',cols:[{id:'desc',label:'Description / Address',type:'text'},{id:'val',label:'Market Value',type:'num'}]},
-  {k:'F',title:'Schedule F — Life Insurance',side:'dual',cols:[{id:'desc',label:'Company / Policy',type:'text'},{id:'val',label:'Cash Value',type:'num'},{id:'loan',label:'Loan Against Policy',type:'num'}]},
-  {k:'G',title:'Schedule G — Loans, Charge Accounts, Bills Payable &amp; Unpaid Taxes',side:'liab',cols:[{id:'desc',label:'Creditor / Description',type:'text'},{id:'val',label:'Balance',type:'num'}]}
+  {k:'A',title:'Schedule A — Cash, Checking, Savings, Money Market &amp; Investment Accounts',side:'asset',tip:'Liquid and account assets. Tag each row by type so the statement can subtotal cash, savings, retirement, and investment accounts the way a lender expects (SBA Form 413).',typed:true,types:['Cash on hand / in banks','Savings','Money Market','IRA / Retirement','Brokerage / Investment','Other'],cols:[{id:'desc',label:'Institution / Description',type:'text'},{id:'val',label:'Balance',type:'num'}]},
+  {k:'B',title:'Schedule B — Marketable Securities',side:'asset',tip:'Stocks, bonds, mutual funds, and other securities at current market value.',cols:[{id:'desc',label:'Description (stocks, bonds, funds)',type:'text'},{id:'val',label:'Market Value',type:'num'}]},
+  {k:'C',title:'Schedule C — Accounts Receivable',side:'asset',tip:'Money owed to you — notes receivable and outstanding loans you have made to others.',cols:[{id:'desc',label:'Owed By / Description',type:'text'},{id:'val',label:'Amount',type:'num'}]},
+  {k:'D',title:'Schedule D — Real Estate Investments Owned',side:'dual',tip:'Each investment property carries a market value (asset) and its loan balance (liability), entered once. Equity is computed.',cols:[{id:'desc',label:'Property / Address',type:'text'},{id:'val',label:'Market Value',type:'num',tip:'Current market value, not purchase price.'},{id:'loan',label:'Loan Balance',type:'num',tip:'Current payoff balance of the loan on this property.'},{id:'eq',label:'Equity',type:'calc'}]},
+  {k:'E',title:'Schedule E — Personal Residence(s) &amp; Other Assets',side:'asset',tip:'Your residence, vehicles, and other personal assets at market value. Tag each row by type. Enter the residence mortgage in Schedule G.',typed:true,types:['Residence','Vehicle','Other personal property','Other'],cols:[{id:'desc',label:'Description / Address',type:'text'},{id:'val',label:'Market Value',type:'num'}]},
+  {k:'F',title:'Schedule F — Life Insurance',side:'dual',tip:'Life insurance with a cash value: the cash surrender value is an asset; any loan against the policy is a liability. (Annuities and other instruments belong in Schedule A or E, not here.)',cols:[{id:'desc',label:'Company / Policy',type:'text'},{id:'val',label:'Cash Value',type:'num',tip:'Cash surrender value, not the face / death benefit.'},{id:'loan',label:'Loan Against Policy',type:'num',tip:'Outstanding loan against the policy.'},{id:'eq',label:'Net',type:'calc'}]},
+  {k:'G',title:'Schedule G — Loans, Charge Accounts, Bills Payable &amp; Unpaid Taxes',side:'liab',tip:'Everything you owe. Tag each row by type — notes payable, auto, credit cards, mortgages, unpaid taxes — so the statement can show debt composition the way a lender reads it.',typed:true,types:['Notes Payable','Installment (Auto)','Installment (Other)','Mortgage','Unpaid Taxes','Other'],cols:[{id:'desc',label:'Creditor / Description',type:'text'},{id:'val',label:'Balance',type:'num'}]}
 ];
 
 function blankModel(){const m={asof:'',sched:{},contingent:[]};SCHED.forEach(s=>m.sched[s.k]=[]);return m}
@@ -202,29 +204,34 @@ function renderAll(){
   el('contingentWrap').innerHTML=renderContingent();
   recalc();
 }
-function colHeadHTML(s){return s.cols.map((c,i)=>'<th style="text-align:'+(i===0?'left':'right')+'">'+c.label+'</th>').join('')+'<th></th>'}
+function colHeadHTML(s){let h=s.typed?'<th style="text-align:left">Type</th>':'';h+=s.cols.map((c,i)=>'<th style="text-align:'+(i===0?'left':'right')+'">'+c.label+(c.tip?' <span class="tip" data-tip="'+esc(c.tip)+'">?</span>':'')+'</th>').join('');return h+'<th></th>'}
 function buildRows(s){
   const rows=model.sched[s.k];
-  if(!rows.length)return '<tr><td colspan="'+(s.cols.length+1)+'" style="text-align:center;color:var(--text-muted);background:#fff;font-weight:400">No entries. Click &ldquo;Add row&rdquo; below.</td></tr>';
+  const ncols=s.cols.length+1+(s.typed?1:0);
+  if(!rows.length)return '<tr><td colspan="'+ncols+'" style="text-align:center;color:var(--text-muted);background:#fff;font-weight:400">No entries. Click &ldquo;Add row&rdquo; below.</td></tr>';
   return rows.map((row,i)=>{
+    const typeCell=s.typed?('<td style="text-align:left;background:#fff"><select onchange="onCell(\''+s.k+'\','+i+',\'type\',this.value)" style="width:100%;border:1px solid var(--input-border);border-radius:5px;padding:4px 7px;font-family:inherit;font-size:12px;background:#fff"><option value="">— Type —</option>'+s.types.map(t=>'<option'+(row.type===t?' selected':'')+'>'+t+'</option>').join('')+'</select></td>'):'';
     const cells=s.cols.map((c,ci)=>{
       if(c.type==='text')return '<td style="text-align:left;font-weight:400;background:#fff"><input type="text" value="'+esc(row[c.id]||'')+'" oninput="onCell(\''+s.k+'\','+i+',\''+c.id+'\',this.value)" style="width:100%;border:1px solid var(--input-border);border-radius:5px;padding:4px 7px;font-family:inherit;font-size:12px"></td>';
       if(c.type==='num')return '<td style="background:#fff"><input type="text" inputmode="decimal" value="'+esc(row[c.id]||'')+'" oninput="onCell(\''+s.k+'\','+i+',\''+c.id+'\',this.value)" style="width:110px;text-align:right;border:1px solid var(--input-border);border-radius:5px;padding:4px 7px;font-family:inherit;font-size:12px"></td>';
       if(c.type==='calc')return '<td id="eq-'+s.k+'-'+i+'" style="background:#f8fafd;font-weight:600">—</td>';
       return '<td></td>';
     }).join('');
-    return '<tr>'+cells+'<td style="background:#fff"><button class="remove-loan" title="Remove" onclick="removeRow(\''+s.k+'\','+i+')">&times;</button></td></tr>';
+    return '<tr>'+typeCell+cells+'<td style="background:#fff"><button class="remove-loan" title="Remove" onclick="removeRow(\''+s.k+'\','+i+')">&times;</button></td></tr>';
   }).join('');
 }
 function footHTML(s){
   if(s.side==='dual')return '<tr class="subtotal"><td style="text-align:left">Subtotal</td><td id="sub-'+s.k+'">$0</td><td id="subloan-'+s.k+'">$0</td><td></td><td></td></tr>';
-  return '<tr class="subtotal"><td style="text-align:left">Subtotal</td><td id="sub-'+s.k+'">$0</td><td></td></tr>';
+  const lead=s.typed?'<td colspan="2" style="text-align:left">Subtotal</td>':'<td style="text-align:left">Subtotal</td>';
+  return '<tr class="subtotal">'+lead+'<td id="sub-'+s.k+'">$0</td><td></td></tr>';
 }
 function renderSchedule(s){
-  return '<div class="section"><div class="section-header"><span class="sh">'+s.title+'</span></div><div class="section-body">'+
+  const tip=s.tip?' <span class="tip" data-tip="'+esc(s.tip)+'">?</span>':'';
+  return '<div class="section"><div class="section-header"><span class="sh">'+s.title+'</span>'+tip+'</div><div class="section-body">'+
     '<div class="schedule-wrap"><table class="schedule"><thead><tr>'+colHeadHTML(s)+'</tr></thead>'+
     '<tbody id="tb-'+s.k+'">'+buildRows(s)+'</tbody>'+
     '<tfoot>'+footHTML(s)+'</tfoot></table></div>'+
+    (s.typed?'<div id="cat-'+s.k+'" class="cat-strip" style="margin-top:8px;font-size:11px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:6px"></div>':'')+
     '<div style="margin-top:10px"><button class="btn btn-sm" onclick="addRow(\''+s.k+'\')">+ Add row</button></div>'+
     '</div></div>';
 }
@@ -254,17 +261,19 @@ function onContingent(i,col,val){model.contingent[i][col]=val;markDirty();recalc
 function recalc(){
   let assets=0,liab=0;const subs={};
   SCHED.forEach(s=>{
-    let v=0,l=0;
+    let v=0,l=0;const byType={};
     model.sched[s.k].forEach((row,i)=>{
       const val=parseNum(row.val);v+=val;
+      if(s.typed){const t=row.type||'Unclassified';byType[t]=(byType[t]||0)+val}
       if(s.side==='dual'){const ln=parseNum(row.loan);l+=ln;const eq=el('eq-'+s.k+'-'+i);if(eq)eq.textContent=fmtD(val-ln)}
     });
     if(s.side==='asset')assets+=v;
     else if(s.side==='liab')liab+=v;
     else if(s.side==='dual'){assets+=v;liab+=l}
-    subs[s.k]={v,l};
+    subs[s.k]={v,l,byType:s.typed?byType:null};
     const sc=el('sub-'+s.k);if(sc)sc.textContent=fmtD(v);
     const slc=el('subloan-'+s.k);if(slc)slc.textContent=fmtD(l);
+    if(s.typed){const cat=el('cat-'+s.k);if(cat){const order=s.types.concat(['Unclassified']).filter(t=>byType[t]!=null);cat.innerHTML=order.map(t=>'<span style="background:#f0f4f8;border:1px solid var(--card-border);border-radius:5px;padding:2px 8px">'+esc(t)+': <strong style="color:#1a2744">'+fmtD(byType[t])+'</strong></span>').join('')}}
   });
   let cont=0;model.contingent.forEach(r=>cont+=parseNum(r.val));
   const cx=el('sub-X');if(cx)cx.textContent=fmtD(cont);
@@ -331,9 +340,20 @@ function createPDF(){
   SCHED.forEach(s=>{
     const rows=model.sched[s.k];if(!rows.length)return;
     const dual=s.side==='dual';const ncol=dual?4:2;
-    const colLabels=dual?['Description','Market Value','Loan Balance','Equity']:['Description',s.cols[1].label];
-    const body=rows.map(r=>{const v=parseNum(r.val);if(dual){const l=parseNum(r.loan);return[r.desc||'',money(v),money(l),fmtD(v-l)]}return[r.desc||'',money(v)]});
     const sub=results.subs[s.k]||{v:0,l:0};
+    const colLabels=dual?['Description',s.cols[1].label,s.cols[2].label,s.cols[3].label]:['Description',s.cols[1].label];
+    let body=[];const subIdx=new Set();
+    if(s.typed){
+      const order=s.types.concat(['Unclassified']).filter(t=>(sub.byType||{})[t]!=null);
+      order.forEach(t=>{
+        rows.filter(r=>(r.type||'Unclassified')===t).forEach(r=>body.push([r.desc||'',money(r.val)]));
+        body.push([t+' subtotal',fmtD(sub.byType[t])]);subIdx.add(body.length-1);
+      });
+    }else if(dual){
+      body=rows.map(r=>{const v=parseNum(r.val),l=parseNum(r.loan);return[r.desc||'',money(v),money(l),fmtD(v-l)]});
+    }else{
+      body=rows.map(r=>[r.desc||'',money(r.val)]);
+    }
     const foot=dual?[['Subtotal',fmtD(sub.v),fmtD(sub.l),'']]:[['Subtotal',fmtD(sub.v)]];
     const title=s.title.replace(/&amp;/g,'&');
     doc.autoTable({
@@ -343,7 +363,8 @@ function createPDF(){
       styles:{font:'PJS',fontSize:8,cellPadding:1.6,textColor:[55,65,81],lineColor:[228,236,244],lineWidth:0.1,halign:'right'},
       headStyles:{fillColor:NAVY,textColor:[255,255,255],fontStyle:'bold',fontSize:7.5},
       footStyles:{fillColor:[240,244,248],textColor:NAVY,fontStyle:'bold'},
-      columnStyles:{0:{halign:'left',cellWidth:dual?72:118}}
+      columnStyles:{0:{halign:'left',cellWidth:dual?72:118}},
+      didParseCell:function(d){if(d.section==='body'&&subIdx.has(d.row.index)){d.cell.styles.fontStyle='bold';d.cell.styles.fillColor=[244,247,250]}}
     });
     y=doc.lastAutoTable.finalY+6;
   });
